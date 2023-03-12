@@ -1,12 +1,11 @@
 #pragma once
 
 #include <windows.h>
+#include <d2d1.h>
 
 #define MAX_LOADSTRING 100
 #define SCREEN_WIDTH	800
 #define SCREEN_HEIGHT	600
-
-class CEditWnd;
 
 class CApp
 {
@@ -18,13 +17,13 @@ private:
 
 	HINSTANCE m_hInst = nullptr;
 	HWND m_hWnd = nullptr;
-
-	CEditWnd* m_editWnd;
+	ID2D1HwndRenderTarget* m_pRenderTarget = nullptr;
 
 private:
 	CApp() { }
 	~CApp() {}
 
+	static LRESULT CALLBACK Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 public:
 	static CApp* GetInst()
@@ -33,10 +32,12 @@ public:
 		return m_inst;
 	}
 
-	CEditWnd* GetEditWnd() const { return m_editWnd; }
+	void Input();
+	void Update();
+	void Render();
 
-	HRESULT Init(HINSTANCE hInstance, int nCmdShow);
+	ID2D1HwndRenderTarget* GetRenderTarget() const { return m_pRenderTarget; }
+	HRESULT Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height);
 	int Run();
 
-	LRESULT CALLBACK Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
