@@ -1,6 +1,8 @@
 #include "CObj.h"
 #include "CBitmap.h"
 
+std::list<CObj*> CObj::m_objList;
+
 CObj::CObj()
 {
 }

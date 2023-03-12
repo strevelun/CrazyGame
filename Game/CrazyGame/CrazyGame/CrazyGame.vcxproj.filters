@@ -63,6 +63,12 @@
     <ClCompile Include="CInGameScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CMouse.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CInputManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h">
@@ -105,6 +111,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CInGameScene.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CMouse.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CInputManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

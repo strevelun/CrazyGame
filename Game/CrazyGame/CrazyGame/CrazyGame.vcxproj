@@ -131,7 +131,9 @@
     <ClCompile Include="..\..\D2DCore\CCore.cpp" />
     <ClCompile Include="CBitmap.cpp" />
     <ClCompile Include="CInGameScene.cpp" />
+    <ClCompile Include="CInputManager.cpp" />
     <ClCompile Include="CLayer.cpp" />
+    <ClCompile Include="CMouse.cpp" />
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CrazyGame.cpp" />
     <ClCompile Include="CObj.cpp" />
@@ -148,7 +150,9 @@
     <ClInclude Include="..\..\D2DCore\CCore.h" />
     <ClInclude Include="CBitmap.h" />
     <ClInclude Include="CInGameScene.h" />
+    <ClInclude Include="CInputManager.h" />
     <ClInclude Include="CLayer.h" />
+    <ClInclude Include="CMouse.h" />
     <ClInclude Include="CObj.h" />
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CScene.h" />

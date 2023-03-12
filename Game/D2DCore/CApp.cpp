@@ -2,6 +2,8 @@
 #include "CCore.h"
 #include "../CrazyGame/CrazyGame/CSceneManager.h"
 #include "../CrazyGame/CrazyGame/CLobbyScene.h"
+#include "../CrazyGame/CrazyGame/CInputManager.h"
+#include "../CrazyGame/CrazyGame/CMouse.h"
 
 #include <windowsx.h>
 
@@ -76,6 +78,7 @@ int CApp::Run()
 
 void CApp::Input()
 {
+	CInputManager::GetInst()->Input();
 }
 
 void CApp::Update()
@@ -87,6 +90,7 @@ void CApp::Render()
 	m_pRenderTarget->BeginDraw();
 	m_pRenderTarget->Clear();
 	CSceneManager::GetInst()->Render(m_pRenderTarget);
+	CInputManager::GetInst()->GetMouse()->Render(m_pRenderTarget);
 	m_pRenderTarget->EndDraw();
 }
 

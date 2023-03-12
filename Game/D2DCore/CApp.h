@@ -37,6 +37,7 @@ public:
 	void Render();
 
 	ID2D1HwndRenderTarget* GetRenderTarget() const { return m_pRenderTarget; }
+	HWND GetHwnd() const { return m_hWnd; }
 	HRESULT Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height);
 	int Run();
 
