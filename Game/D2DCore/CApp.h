@@ -40,5 +40,5 @@ public:
 	HWND GetHwnd() const { return m_hWnd; }
 	HRESULT Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height);
 	int Run();
-
+	void ExitGame() { DestroyWindow(m_hWnd); }
 };

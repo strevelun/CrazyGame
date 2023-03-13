@@ -22,7 +22,12 @@ CMouse::~CMouse()
 
 void CMouse::Input()
 {
-
+	if (m_mouseState == eMouseState::Click)
+		m_mouseState = eMouseState::None;
+	else if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+		m_mouseState = eMouseState::Press;
+	else if (m_mouseState == eMouseState::Press)
+		m_mouseState = eMouseState::Click;
 }
 
 void CMouse::Update()
@@ -31,6 +36,10 @@ void CMouse::Update()
 	GetCursorPos(&pt);
 	ScreenToClient(CApp::GetInst()->GetHwnd(), &pt);
 	m_point = D2D1::Point2F(pt.x, pt.y);
+	
+	if (pt.x < 0) pt.x = 0;
+	if (pt.y < 0) pt.y = 0;
+
 	m_rect.left = pt.x;
 	m_rect.top = pt.y;
 	m_rect.right = pt.x + m_size.width / 2;

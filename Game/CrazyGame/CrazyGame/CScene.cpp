@@ -12,10 +12,28 @@ CScene::CScene()
 
 CScene::~CScene()
 {
+	
+	std::list<CLayer*>::iterator iter = m_layerList.begin();
+	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->DeleteAllObj();
+		delete* iter;
+	}
+	m_layerList.clear();
+	
 }
 
 void CScene::Input()
 {
+	std::list<CLayer*>::iterator iter = m_layerList.begin();
+	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->Input();
+	}
 }
 
 void CScene::Update()

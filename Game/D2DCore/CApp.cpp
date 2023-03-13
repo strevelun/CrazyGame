@@ -76,13 +76,16 @@ int CApp::Run()
 	return (int)msg.wParam;
 }
 
+
 void CApp::Input()
 {
 	CInputManager::GetInst()->Input();
+	CSceneManager::GetInst()->Input();
 }
 
 void CApp::Update()
 {
+
 }
 
 void CApp::Render()

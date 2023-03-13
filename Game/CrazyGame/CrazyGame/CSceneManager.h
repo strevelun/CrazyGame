@@ -8,6 +8,7 @@ class CSceneManager
 {
 private:
 	CScene* m_pScene;
+	CScene* m_pPrevScene;
 
 private:
 	static CSceneManager* m_inst;
@@ -29,14 +30,17 @@ public:
 
 	// ¾À ¸¸µé±â
 	template <typename T>
-	void CreateScene()
+	T* CreateScene()
 	{
-		if (m_pScene)
-			delete m_pScene;
+		//if (m_pScene)
+		//	delete m_pScene;
 
 		T* scene = new T;
 
+		m_pPrevScene = m_pScene;
 		m_pScene = scene;
+
+		return scene;
 	}
 
 	void Input();

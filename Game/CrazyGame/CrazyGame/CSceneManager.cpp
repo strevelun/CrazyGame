@@ -13,6 +13,7 @@ CSceneManager::~CSceneManager()
 
 void CSceneManager::Input()
 {
+	m_pScene->Input();
 }
 
 void CSceneManager::Update()
