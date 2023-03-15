@@ -3,6 +3,9 @@
 #include "CResourceManager.h"
 #include "CTile.h"
 #include "Setting.h"
+#include "CUIButton.h"
+#include "CSceneManager.h"
+#include "CLobbyScene.h"
 
 CInGameScene::CInGameScene()
 {
@@ -23,6 +26,15 @@ void CInGameScene::Init()
 	stageFrame->SetBitmap(bitmap);
 	stageFrame->SetRect({ 0, 0, 1420.f, 1080 });
 	layer->AddObj(stageFrame);
+
+	CUIButton* backButton = new CUIButton("BackButton");
+	backButton->SetRect({ 1150, 1010, 1400, 1080 });
+	backButton->SetCallback(this, &CInGameScene::OnBackButtonClicked);
+	layer->AddObj(backButton);
+
+	m_board.resize(m_mapData.gridY);
+	for (int i = 0; i < m_mapData.gridY; i++)
+		m_board[i].resize(m_mapData.gridX);
 
 	layer = CreateLayer("Tile", 0);
 
@@ -51,6 +63,7 @@ void CInGameScene::Init()
 			continue;
 
 		tSprite* sprite = CResourceManager::GetInst()->GetImage("Block", m_mapData.vecBlockData[i].idx);
+		m_board[m_mapData.vecBlockData[i].y][m_mapData.vecBlockData[i].x] = eInGameObjType::Block;
 
 		float right = m_mapData.vecBlockData[i].x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 - (sprite->size.width < 30 ? BOARD_BLOCK_SIZE / 2 + 5 : 0);
 
@@ -69,4 +82,11 @@ void CInGameScene::Init()
 	layer = CreateLayer("Character", 2);
 
 	layer = CreateLayer("Event", 3);
+
+}
+
+void CInGameScene::OnBackButtonClicked(const std::string _strName)
+{
+	CLobbyScene* scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
+	CSceneManager::GetInst()->SetNextScene(scene);
 }

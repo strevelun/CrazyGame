@@ -2,6 +2,7 @@
 #include "CCore.h"
 #include "../CrazyGame/CrazyGame/CSceneManager.h"
 #include "../CrazyGame/CrazyGame/CLobbyScene.h"
+#include "../CrazyGame/CrazyGame/CInGameScene.h"
 #include "../CrazyGame/CrazyGame/CInputManager.h"
 #include "../CrazyGame/CrazyGame/CMouse.h"
 
@@ -41,7 +42,9 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 
 
 	m_pRenderTarget = CCore::GetInst()->CreateRenderTarget(m_hWnd);
-	CSceneManager::GetInst()->CreateScene<CLobbyScene>();
+
+	CLobbyScene *scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
+	CSceneManager::GetInst()->SetScene(scene);
 
 	ShowWindow(m_hWnd, nCmdShow);
 	UpdateWindow(m_hWnd);
@@ -67,6 +70,8 @@ int CApp::Run()
 			Input();
 			Update();
 			Render();
+
+			CSceneManager::GetInst()->NextScene();
 		}
 	}
 

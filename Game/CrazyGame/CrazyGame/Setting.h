@@ -20,6 +20,16 @@ enum class eType
     None
 };
 
+enum class eInGameObjType
+{
+    None,
+    Block,
+    Balloon,
+    Character,
+    Monster,
+    Boss,
+};
+
 typedef struct _tBlockData
 {
     u_int x, y;
@@ -61,3 +71,4 @@ typedef struct _tSprite
         type = sprite.type;
     }
 } tSprite;
+

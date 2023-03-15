@@ -65,7 +65,17 @@ CLobbyScene::~CLobbyScene()
 	
 }
 
-void CLobbyScene::OnMapButtonClicked(std::string _strName)
+void CLobbyScene::OnMapButtonClicked(const std::string _strName)
+{
+	tMapData data = FindMapData(_strName);
+
+	CInGameScene* scene = CSceneManager::GetInst()->CreateScene<CInGameScene>();
+	CSceneManager::GetInst()->SetNextScene(scene);
+	scene->SetMapData(data);
+	scene->Init();
+}
+
+tMapData& CLobbyScene::FindMapData(const std::string& _strName)
 {
 	std::unordered_map<std::string, tMapData>::iterator iter = m_mapData.find(_strName);
 	if (iter == m_mapData.end())
@@ -73,8 +83,5 @@ void CLobbyScene::OnMapButtonClicked(std::string _strName)
 		MessageBox(NULL, L"m_mapData에 해당 키 값의 데이터가 없습니다.", L"오류", MB_OK);
 		CApp::GetInst()->ExitGame();
 	}
-
-	CInGameScene* scene = CSceneManager::GetInst()->CreateScene<CInGameScene>();
-	scene->SetMapData(iter->second);
-	scene->Init();
+	return iter->second;
 }

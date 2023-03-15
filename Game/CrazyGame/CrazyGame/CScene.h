@@ -21,5 +21,6 @@ public:
 	virtual void Render(ID2D1RenderTarget* _pRenderTarget);
 
 	CLayer* CreateLayer(const std::string& _strTag, u_int _zOrder);
+	void Clean();
 };
 

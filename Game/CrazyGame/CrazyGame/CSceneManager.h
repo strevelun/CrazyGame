@@ -8,7 +8,8 @@ class CSceneManager
 {
 private:
 	CScene* m_pScene;
-	CScene* m_pPrevScene;
+	CScene* m_pNextScene ;
+
 
 private:
 	static CSceneManager* m_inst;
@@ -28,23 +29,22 @@ public:
 		if (m_inst != nullptr) { delete m_inst;	m_inst = nullptr; }
 	}
 
-	// ¾À ¸¸µé±â
 	template <typename T>
-	T* CreateScene()
+	T* CreateScene() { return new T(); }
+
+	void SetNextScene( CScene* _scene )
 	{
-		//if (m_pScene)
-		//	delete m_pScene;
+		if (m_pNextScene)	delete m_pNextScene;
 
-		T* scene = new T;
-
-		m_pPrevScene = m_pScene;
-		m_pScene = scene;
-
-		return scene;
+		m_pNextScene = _scene;
 	}
+
+	void SetScene(CScene* _scene) { m_pScene = _scene; }
 
 	void Input();
 	void Update();
 	void Render(ID2D1RenderTarget* _pRenderTarget);
+
+	bool NextScene(void);
 };
 
