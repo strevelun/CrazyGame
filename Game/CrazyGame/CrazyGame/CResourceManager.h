@@ -7,6 +7,7 @@
 #include "Setting.h"
 
 class CBitmap;
+class CAnimation;
 
 class CResourceManager
 {
@@ -16,6 +17,9 @@ private:
 	std::unordered_map<PCWSTR, CBitmap*> m_mapBitmap;
 	std::map<std::string, std::vector<_tSprite*>> m_mapImage; // TODO delete
 	std::vector<CBitmap*> m_vecBitmap;
+	std::map<std::string, CAnimation*> m_mapAnim;
+
+	int m_bitmapIdx = 0;
 
 	CResourceManager();
 	~CResourceManager();
@@ -36,6 +40,7 @@ public:
 	}
 
 	void LoadFiles(std::wstring folderName);
+	void LoadAnimFiles(std::wstring folderName);
 	CBitmap* Load(PCWSTR _wcFileName);
 	tMapData LoadMapData(PCWSTR _wcFileName);
 
@@ -43,5 +48,6 @@ public:
 	CBitmap* GetIdxBitmap(int _idx) const { return m_vecBitmap.at(_idx); }
 
 	void SetIdxBitmap(CBitmap* _bitmap) { m_vecBitmap.push_back(_bitmap); }
+	CAnimation* GetAnimation(const std::string& _str) { return m_mapAnim.at(_str); }
 };
 

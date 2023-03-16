@@ -129,7 +129,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\D2DCore\CApp.cpp" />
     <ClCompile Include="..\..\D2DCore\CCore.cpp" />
+    <ClCompile Include="CAnimation.cpp" />
     <ClCompile Include="CBitmap.cpp" />
+    <ClCompile Include="CBubble.cpp" />
     <ClCompile Include="CInGameScene.cpp" />
     <ClCompile Include="CInputManager.cpp" />
     <ClCompile Include="CLayer.cpp" />
@@ -143,6 +145,7 @@
     <ClCompile Include="CSceneManager.cpp" />
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CTile.cpp" />
+    <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="CUI.cpp" />
     <ClCompile Include="CUIButton.cpp" />
     <ClCompile Include="CUIPanel.cpp" />
@@ -150,7 +153,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h" />
     <ClInclude Include="..\..\D2DCore\CCore.h" />
+    <ClInclude Include="CAnimation.h" />
     <ClInclude Include="CBitmap.h" />
+    <ClInclude Include="CBubble.h" />
     <ClInclude Include="CInGameScene.h" />
     <ClInclude Include="CInputManager.h" />
     <ClInclude Include="CLayer.h" />
@@ -163,6 +168,7 @@
     <ClInclude Include="CSceneManager.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CTile.h" />
+    <ClInclude Include="CTimer.h" />
     <ClInclude Include="CUI.h" />
     <ClInclude Include="CUIButton.h" />
     <ClInclude Include="CUIPanel.h" />

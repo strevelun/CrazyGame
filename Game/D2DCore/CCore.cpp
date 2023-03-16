@@ -1,4 +1,5 @@
 #include "CCore.h"
+#include "CApp.h"
 
 CCore* CCore::m_inst = nullptr;
 
@@ -23,6 +24,26 @@ HRESULT CCore::InitDevice()
 	CoInitialize(nullptr);
 	hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_pWICFactory));
 	if (FAILED(hr)) return hr;
+
+	DWriteCreateFactory(
+		DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory),
+		reinterpret_cast<IUnknown**>(&m_writeFactory)
+	);
+
+	m_writeFactory->CreateTextFormat(
+		L"Arial", // font family name
+		NULL, // font collection
+		DWRITE_FONT_WEIGHT_NORMAL,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		24.0f, // font size
+		L"en-us", // locale name
+		&m_textFormat
+	);
+
+
+
 
 	return hr;
 }

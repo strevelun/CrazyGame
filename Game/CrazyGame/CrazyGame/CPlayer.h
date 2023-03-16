@@ -16,7 +16,7 @@ enum class Dir
 class CPlayer :
     public CObj
 {
-    float m_speed = 5.0f;
+    float m_speed = 15000.0f;
     Dir m_eMoveDir = Dir::None;
     CScene* m_pScene = nullptr;
 

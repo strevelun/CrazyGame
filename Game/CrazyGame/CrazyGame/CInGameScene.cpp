@@ -9,6 +9,7 @@
 #include "CPlayer.h"
 #include "../../D2DCore/CApp.h"
 #include "CMonster.h"
+#include "CBubble.h"
 
 CInGameScene::CInGameScene()
 {
@@ -149,4 +150,36 @@ bool CInGameScene::IsMovable(int _x, int _y)
 	if (m_mapData.gridY <= _y) return false;
 
 	return m_board[_y][_x] != eInGameObjType::Block;
+}
+
+void CInGameScene::PutBubble(D2D1_RECT_F _rect)
+{
+	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int left = _rect.left - stageFrameOffsetX;
+	int bottom = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
+
+	int x = left / BOARD_BLOCK_SIZE;
+	int y = bottom / BOARD_BLOCK_SIZE;
+
+	if (m_mapData.gridX <= x) return;
+	if (m_mapData.gridY <= y) return;
+
+	if (m_board[y][x] != eInGameObjType::Balloon)
+	{
+		CLayer* layer = FindLayer("Event");
+		if (layer)
+		{
+			m_board[y][x] = eInGameObjType::Balloon;
+			CBubble* bubble = new CBubble();
+			bubble->SetAnimation(CResourceManager::GetInst()->GetAnimation("bubble"));
+			bubble->SetRect({
+				(float)x * BOARD_BLOCK_SIZE + stageFrameOffsetX, 
+				(float)y * BOARD_BLOCK_SIZE + stageFrameOffsetY,
+				(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+				(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+				});
+			layer->AddObj(bubble);
+		}
+	}
 }

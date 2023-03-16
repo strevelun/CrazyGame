@@ -2,6 +2,7 @@
 #include "CBitmap.h"
 #include "CScene.h"
 #include "CInGameScene.h"
+#include "CTimer.h"
 
 CPlayer::CPlayer()
 {
@@ -13,8 +14,6 @@ CPlayer::~CPlayer()
 
 void CPlayer::Input()
 {
-
-
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
 		m_eMoveDir = Dir::Left;
@@ -33,6 +32,11 @@ void CPlayer::Input()
 	}
 	else
 		m_eMoveDir = Dir::None;
+
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+	{
+		((CInGameScene*)m_pScene)->PutBubble(m_rect);
+	}
 }
 
 void CPlayer::Update()
@@ -43,45 +47,45 @@ void CPlayer::Update()
 	int right = m_rect.right - stageFrameOffsetX;
 	int top = m_rect.top - stageFrameOffsetY;
 	int bottom = m_rect.bottom - stageFrameOffsetY;
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
 	if (m_eMoveDir == Dir::Left)
 	{
-		int a = (m_rect.left - m_speed);
 		// ÇÁ·¹ÀÓ °¡·Î ±æÀÌ stageFrameOffsetX »©ÁÜ
-		if (((CInGameScene*)m_pScene)->IsMovable(left - m_speed, bottom) && ((CInGameScene*)m_pScene)->IsMovable(left - m_speed, top))
+		if (((CInGameScene*)m_pScene)->IsMovable(left - m_speed * deltaTime, bottom) && ((CInGameScene*)m_pScene)->IsMovable(left - m_speed * deltaTime, top))
 		{
-			m_rect.left -= m_speed;
-			m_rect.right -= m_speed;
+			m_rect.left -= m_speed * deltaTime;
+			m_rect.right -= m_speed * deltaTime;
 		}
 	}
 	else if (m_eMoveDir == Dir::Right)
 	{
-		if (((CInGameScene*)m_pScene)->IsMovable(right + m_speed, bottom) && ((CInGameScene*)m_pScene)->IsMovable(right + m_speed, top))
+		if (((CInGameScene*)m_pScene)->IsMovable(right + m_speed * deltaTime, bottom) && ((CInGameScene*)m_pScene)->IsMovable(right + m_speed * deltaTime, top))
 		{
-			m_rect.left += m_speed;
-			m_rect.right += m_speed;
+			m_rect.left += m_speed * deltaTime;
+			m_rect.right += m_speed * deltaTime;
 		}
 	}
 	else if (m_eMoveDir == Dir::Up)
 	{
-		if (((CInGameScene*)m_pScene)->IsMovable(left, top - m_speed) && ((CInGameScene*)m_pScene)->IsMovable(right, top - m_speed))
+		if (((CInGameScene*)m_pScene)->IsMovable(left, top - m_speed * deltaTime) && ((CInGameScene*)m_pScene)->IsMovable(right, top - m_speed * deltaTime))
 		{
-			m_rect.top -= m_speed;
-			m_rect.bottom -= m_speed;
+			m_rect.top -= m_speed * deltaTime;
+			m_rect.bottom -= m_speed * deltaTime;
 		}
 	}
 	else if (m_eMoveDir == Dir::Down)
 	{
-		if (((CInGameScene*)m_pScene)->IsMovable(left, bottom + m_speed ) && ((CInGameScene*)m_pScene)->IsMovable(right, bottom + m_speed))
+		if (((CInGameScene*)m_pScene)->IsMovable(left, bottom + m_speed * deltaTime) && ((CInGameScene*)m_pScene)->IsMovable(right, bottom + m_speed * deltaTime))
 		{
-			m_rect.top += m_speed;
-			m_rect.bottom += m_speed;
+			m_rect.top += m_speed * deltaTime;
+			m_rect.bottom += m_speed * deltaTime;
 		}
 	}
 
 #ifdef _DEBUG
 	char str[50] = "";
-	sprintf_s(str, "%f, %f, %f, %f\n", m_rect.left, m_rect.top, m_rect.right, m_rect.bottom);
+	sprintf_s(str, "%f\n",  deltaTime);
 	OutputDebugStringA(str);
 #endif
 }

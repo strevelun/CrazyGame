@@ -41,4 +41,5 @@ public:
 	HRESULT Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height);
 	int Run();
 	void ExitGame() { DestroyWindow(m_hWnd); }
+	void DrawIntToText(int _value);
 };

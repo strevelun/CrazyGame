@@ -19,5 +19,6 @@ public:
     void OnBackButtonClicked(const std::string _strName);
 
     bool IsMovable(int _x, int _y);
+    void PutBubble(D2D1_RECT_F _rect);
 };
 

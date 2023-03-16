@@ -2,6 +2,9 @@
 
 #include <d2d1.h>
 #include <wincodec.h>
+#include <dwrite.h>
+
+#pragma comment(lib, "dwrite.lib")
 
 class CCore
 {
@@ -13,6 +16,9 @@ private:
 
 	ID2D1Factory* m_pD2DFactory = nullptr;
 	IWICImagingFactory* m_pWICFactory = nullptr;
+	IDWriteFactory* m_writeFactory = nullptr;
+	IDWriteTextFormat * m_textFormat = nullptr;
+	ID2D1SolidColorBrush* m_brush = nullptr;
 
 private:
 	HRESULT InitDevice();
@@ -40,6 +46,10 @@ public:
 	ID2D1HwndRenderTarget* CreateRenderTarget(HWND _hWnd);
 
 	IWICImagingFactory* GetWICImagingFactory() const { return m_pWICFactory; }
+	IDWriteTextFormat* GetTextFormat() const { return m_textFormat; }
+	ID2D1SolidColorBrush* GetBrush() const { return m_brush; }
+
+	void SetBrush(ID2D1SolidColorBrush* _brush) { m_brush = _brush; }
 
 	void CleanupDevice();
 };

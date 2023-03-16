@@ -6,6 +6,7 @@
 #include "../CrazyGame/CrazyGame/CInputManager.h"
 #include "../CrazyGame/CrazyGame/CMouse.h"
 #include "../CrazyGame/CrazyGame/CResourceManager.h"
+#include "../CrazyGame/CrazyGame/CTimer.h"
 
 #include <windowsx.h>
 
@@ -14,6 +15,7 @@ CApp* CApp::m_inst = nullptr;
 HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 {
 	CCore::GetInst()->Init();
+
 
 
 	m_hInst = hInstance;
@@ -41,12 +43,21 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 		this);
 	if (!m_hWnd) return S_FALSE;
 
-
 	m_pRenderTarget = CCore::GetInst()->CreateRenderTarget(m_hWnd);
+
+	ID2D1SolidColorBrush* brush = nullptr;
+	m_pRenderTarget->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF::Black),
+		&brush
+	);
+
+	CCore::GetInst()->SetBrush(brush);
 
 	CLobbyScene *scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
 	CSceneManager::GetInst()->SetScene(scene);
 	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
+	CResourceManager::GetInst()->LoadAnimFiles(L"resource/anim/");
+	CTimer::GetInst()->SetFrameLimit(30);
 
 	ShowWindow(m_hWnd, nCmdShow);
 	UpdateWindow(m_hWnd);
@@ -69,11 +80,17 @@ int CApp::Run()
 		}
 		else 
 		{
-			Input();
-			Update();
-			Render();
+			if (CTimer::GetInst()->Update())
+			{
+				Input();
+				Update();
+				Render();
 
-			CSceneManager::GetInst()->NextScene();
+				//DrawIntToText(CTimer::GetInst()->GetFps());
+
+
+				CSceneManager::GetInst()->NextScene();
+			}
 		}
 	}
 
@@ -81,6 +98,19 @@ int CApp::Run()
 	CCore::DeleteInst();
 
 	return (int)msg.wParam;
+}
+
+void CApp::DrawIntToText(int _value)
+{
+	std::wstring frameText = std::to_wstring(_value);
+
+	m_pRenderTarget->DrawText(
+		frameText.c_str(),
+		static_cast<UINT32>(frameText.length()),
+		CCore::GetInst()->GetTextFormat(),
+		D2D1::RectF(0, 0, 200, 50), // text layout rectangle
+		CCore::GetInst()->GetBrush()
+	);
 }
 
 

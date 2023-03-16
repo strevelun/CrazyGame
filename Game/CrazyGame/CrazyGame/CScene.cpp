@@ -63,6 +63,20 @@ CLayer* CScene::CreateLayer(const std::string& _strTag, u_int _zOrder)
 	return layer;
 }
 
+CLayer* CScene::FindLayer(const std::string& _strTag)
+{
+	std::list<CLayer*>::iterator iter = m_layerList.begin();
+	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		if (_strTag.compare((*iter)->GetTag()) == 0)
+			return *iter;
+	}
+
+	return nullptr;
+}
+
 void CScene::Clean()
 {
 	std::list<CLayer*>::iterator iter = m_layerList.begin();
