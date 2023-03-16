@@ -57,7 +57,6 @@ CLobbyScene::CLobbyScene()
 	m_mapData.insert(std::make_pair("test.map", mapData));
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
-	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
 }
 
 CLobbyScene::~CLobbyScene()

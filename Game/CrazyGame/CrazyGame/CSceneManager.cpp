@@ -11,6 +11,13 @@ CSceneManager::~CSceneManager()
 {
 }
 
+void CSceneManager::SetNextScene(CScene* _scene)
+{
+	if (m_pNextScene)	delete m_pNextScene;
+
+	m_pNextScene = _scene;
+}
+
 void CSceneManager::Input()
 {
 	m_pScene->Input();

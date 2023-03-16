@@ -5,6 +5,7 @@
 #include "../CrazyGame/CrazyGame/CInGameScene.h"
 #include "../CrazyGame/CrazyGame/CInputManager.h"
 #include "../CrazyGame/CrazyGame/CMouse.h"
+#include "../CrazyGame/CrazyGame/CResourceManager.h"
 
 #include <windowsx.h>
 
@@ -45,6 +46,7 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 
 	CLobbyScene *scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
 	CSceneManager::GetInst()->SetScene(scene);
+	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
 
 	ShowWindow(m_hWnd, nCmdShow);
 	UpdateWindow(m_hWnd);

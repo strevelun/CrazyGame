@@ -10,7 +10,6 @@ private:
 	CScene* m_pScene;
 	CScene* m_pNextScene ;
 
-
 private:
 	static CSceneManager* m_inst;
 
@@ -32,13 +31,7 @@ public:
 	template <typename T>
 	T* CreateScene() { return new T(); }
 
-	void SetNextScene( CScene* _scene )
-	{
-		if (m_pNextScene)	delete m_pNextScene;
-
-		m_pNextScene = _scene;
-	}
-
+	void SetNextScene(CScene* _scene);
 	void SetScene(CScene* _scene) { m_pScene = _scene; }
 
 	void Input();

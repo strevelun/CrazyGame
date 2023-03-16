@@ -3,6 +3,7 @@
 #include <d2d1.h>
 #include <list>
 #include "CLayer.h"
+#include "Setting.h"
 
 class CBitmap;
 class CLayer;
@@ -13,6 +14,7 @@ protected:
 	CBitmap*						m_pBitmap;
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
+	tSprite* m_sprite;
 
 	std::string m_strName;
 
@@ -31,6 +33,8 @@ public:
 	virtual void Input();
 	virtual void Update();
 	virtual void Render(ID2D1RenderTarget* _pRenderTarget);
+
+	void SetSprite(tSprite* _sprite) { m_sprite = _sprite; }
 };
 
 template<typename T>

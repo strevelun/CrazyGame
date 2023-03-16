@@ -133,6 +133,7 @@
     <ClCompile Include="CInGameScene.cpp" />
     <ClCompile Include="CInputManager.cpp" />
     <ClCompile Include="CLayer.cpp" />
+    <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CMouse.cpp" />
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CrazyGame.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="CInGameScene.h" />
     <ClInclude Include="CInputManager.h" />
     <ClInclude Include="CLayer.h" />
+    <ClInclude Include="CMonster.h" />
     <ClInclude Include="CMouse.h" />
     <ClInclude Include="CObj.h" />
     <ClInclude Include="CPlayer.h" />
