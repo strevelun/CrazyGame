@@ -17,5 +17,7 @@ public:
 
     void SetMapData(tMapData _mapData) { m_mapData = _mapData; }
     void OnBackButtonClicked(const std::string _strName);
+
+    bool IsMovable(int _x, int _y);
 };
 

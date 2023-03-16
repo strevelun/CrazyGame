@@ -92,7 +92,7 @@ void CApp::Input()
 
 void CApp::Update()
 {
-
+	CSceneManager::GetInst()->Update();
 }
 
 void CApp::Render()

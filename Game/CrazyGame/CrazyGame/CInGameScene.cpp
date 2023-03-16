@@ -63,7 +63,7 @@ void CInGameScene::Init()
 		layer->AddObj(tile);
 	}
 
-	layer = CreateLayer("Block", 2);
+	layer = CreateLayer("Block",3);
 	for (int i = 0; i < size; i++)
 	{
 		if (m_mapData.vecBlockData[i].type != eType::Block)
@@ -88,7 +88,7 @@ void CInGameScene::Init()
 
 	float x, y;
 	size = m_mapData.vecEventData.size();
-	layer = CreateLayer("Character", 3);
+	layer = CreateLayer("Character", 2);
 	for (int i = 0; i < size; i++)
 	{
 		if (m_mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
@@ -106,6 +106,7 @@ void CInGameScene::Init()
 			CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
 			player->SetBitmap(bitmap);
 			player->SetSprite(sprite);
+			player->SetScene(this);
 			layer->AddObj(player);
 		}
 		else if (m_mapData.vecEventData[i] == eMenuEvent::Spawn_Monster)
@@ -134,4 +135,18 @@ void CInGameScene::OnBackButtonClicked(const std::string _strName)
 {
 	CLobbyScene* scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
 	CSceneManager::GetInst()->SetNextScene(scene);
+}
+
+bool CInGameScene::IsMovable(int _x, int _y)
+{
+	if (_x < 0) return false;
+	if (_y < 0 ) return false;
+
+	_x /= BOARD_BLOCK_SIZE;
+	_y /= BOARD_BLOCK_SIZE;
+
+	if (m_mapData.gridX <= _x) return false;
+	if (m_mapData.gridY <= _y) return false;
+
+	return m_board[_y][_x] != eInGameObjType::Block;
 }

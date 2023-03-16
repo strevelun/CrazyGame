@@ -71,4 +71,3 @@ typedef struct _tSprite
         type = sprite.type;
     }
 } tSprite;
-

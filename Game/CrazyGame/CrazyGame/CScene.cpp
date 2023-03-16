@@ -30,6 +30,13 @@ void CScene::Input()
 
 void CScene::Update()
 {
+	std::list<CLayer*>::iterator iter = m_layerList.begin();
+	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->Update();
+	}
 }
 
 void CScene::Render(ID2D1RenderTarget* _pRenderTarget)
