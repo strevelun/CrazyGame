@@ -1,6 +1,7 @@
 #include "CObj.h"
 #include "CBitmap.h"
 #include "CResourceManager.h"
+#include "CAnimation.h"
 
 CObj::CObj()
 {
@@ -16,6 +17,8 @@ void CObj::Input()
 
 void CObj::Update()
 {
+	if (!m_pAnim) return;
+	m_pAnim->Update();
 }
 
 void CObj::Render(ID2D1RenderTarget* _pRenderTarget)

@@ -57,7 +57,7 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 	CSceneManager::GetInst()->SetScene(scene);
 	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
 	CResourceManager::GetInst()->LoadAnimFiles(L"resource/anim/");
-	CTimer::GetInst()->SetFrameLimit(30);
+	//CTimer::GetInst()->SetFrameLimit(10);
 
 	ShowWindow(m_hWnd, nCmdShow);
 	UpdateWindow(m_hWnd);

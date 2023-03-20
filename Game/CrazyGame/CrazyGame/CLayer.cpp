@@ -1,5 +1,7 @@
 #include "CLayer.h"
 #include "CObj.h"
+#include "CSceneManager.h"
+#include "CInGameScene.h"
 
 CLayer::CLayer()
 {
@@ -25,9 +27,19 @@ void CLayer::Update()
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
-	for (; iter != iterEnd; iter++)
+	for (; iter != iterEnd; )
 	{
-		(*iter)->Update();
+		if (!(*iter)->IsAlive())
+		{
+			((CInGameScene*)CSceneManager::GetInst()->GetScene())->m_board->RemoveObj((*iter)->GetRect());
+			delete* iter;
+			iter = m_objList.erase(iter);
+		}
+		else
+		{
+			(*iter)->Update();
+			++iter;
+		}
 	}
 }
 

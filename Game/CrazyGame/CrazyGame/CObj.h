@@ -7,6 +7,19 @@
 
 class CBitmap;
 class CLayer;
+class CAnimation;
+
+/*
+class CObj
+{
+protected:
+	D2D1_RECT_F						m_rect;
+	D2D1_SIZE_U						m_size;
+
+	std::string m_strName;
+};
+*/
+
 
 class CObj
 {
@@ -15,6 +28,8 @@ protected:
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
 	tSprite* m_sprite;
+	CAnimation* m_pAnim = nullptr;
+	bool m_isAlive = true;
 
 	std::string m_strName;
 
@@ -24,6 +39,7 @@ public:
 
 	void SetBitmap(CBitmap* _bitmap) { m_pBitmap = _bitmap; }
 	void SetRect(D2D1_RECT_F _rect){ m_rect = _rect; }
+	void SetAnimation(CAnimation* _anim) { m_pAnim = _anim; }
 
 	D2D1_RECT_F GetRect() const { return m_rect; }
 
@@ -35,6 +51,7 @@ public:
 	virtual void Render(ID2D1RenderTarget* _pRenderTarget);
 
 	void SetSprite(tSprite* _sprite) { m_sprite = _sprite; }
+	bool IsAlive() const { return m_isAlive; }
 };
 
 template<typename T>

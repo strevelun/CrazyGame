@@ -129,8 +129,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\D2DCore\CApp.cpp" />
     <ClCompile Include="..\..\D2DCore\CCore.cpp" />
+    <ClCompile Include="CAnimationClip.cpp" />
     <ClCompile Include="CAnimation.cpp" />
     <ClCompile Include="CBitmap.cpp" />
+    <ClCompile Include="CBoard.cpp" />
     <ClCompile Include="CBubble.cpp" />
     <ClCompile Include="CInGameScene.cpp" />
     <ClCompile Include="CInputManager.cpp" />
@@ -153,8 +155,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h" />
     <ClInclude Include="..\..\D2DCore\CCore.h" />
+    <ClInclude Include="CAnimationClip.h" />
     <ClInclude Include="CAnimation.h" />
     <ClInclude Include="CBitmap.h" />
+    <ClInclude Include="CBoard.h" />
     <ClInclude Include="CBubble.h" />
     <ClInclude Include="CInGameScene.h" />
     <ClInclude Include="CInputManager.h" />

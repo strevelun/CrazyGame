@@ -8,7 +8,9 @@ class CLayer;
 
 class CScene
 {
+
 	std::list<CLayer*> m_layerList;
+
 
 private:
 	static bool LayerSort(const CLayer* a, const CLayer* b);

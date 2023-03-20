@@ -73,18 +73,18 @@ typedef struct _tSprite
     }
 } tSprite;
 
-typedef struct _tAnimationClip
+typedef struct _tAnimationFrame
 {
     float pivotX = 0.5f, pivotY = 0.5f;
     D2D1_RECT_F rect = {};
     D2D1_SIZE_F size = {};
     u_int idx;
 
-    _tAnimationClip(const _tSpriteData& sprite)
+    _tAnimationFrame(const _tSpriteData& sprite)
     {
         pivotX = sprite.pivotX;
         pivotY = sprite.pivotY;
         rect = sprite.rect;
         size = sprite.size;
     }
-} tAnimationClip;
+} tAnimationFrame;

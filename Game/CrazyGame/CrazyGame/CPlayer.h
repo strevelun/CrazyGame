@@ -3,6 +3,7 @@
 #include "Setting.h"
 
 class CScene;
+class CAnimation;
 
 enum class Dir
 {
@@ -16,7 +17,7 @@ enum class Dir
 class CPlayer :
     public CObj
 {
-    float m_speed = 15000.0f;
+    float m_speed = 210.0f;
     Dir m_eMoveDir = Dir::None;
     CScene* m_pScene = nullptr;
 

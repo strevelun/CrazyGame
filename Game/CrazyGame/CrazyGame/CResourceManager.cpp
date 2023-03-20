@@ -4,6 +4,7 @@
 #include "../../D2DCore/CApp.h"
 #include "Setting.h"
 #include "CAnimation.h"
+#include "CAnimationClip.h"
 
 #include <wincodec.h>
 
@@ -212,13 +213,16 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 
 				fread(arr, sizeof(tSpriteData), clipSize, pFile);
 
-				CAnimation* anim = new CAnimation();
+				CAnimationClip* animClip = new CAnimationClip;
+
+				std::wstring wstring_string(animName);
+				std::string string_string(wstring_string.begin(), wstring_string.end());
 
 				for (int i = 0; i < clipSize; i++)
 				{
-					tAnimationClip* clip = new tAnimationClip(arr[i]);
-					clip->idx = m_bitmapIdx;
-					anim->AddClip(clip);
+					tAnimationFrame* frame = new tAnimationFrame(arr[i]);
+					frame->idx = m_bitmapIdx;
+					animClip->AddFrame(frame);
 				}
 
 				SetIdxBitmap(bitmap);
@@ -226,7 +230,7 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 
 				std::wstring wstrName(animName);
 				std::string strName(wstrName.begin(), wstrName.end());
-				m_mapAnim.insert(std::make_pair(strName, anim));
+				m_mapAnimClip.insert(std::make_pair(strName, animClip));
 
 				delete[] arr;
 				fclose(pFile);

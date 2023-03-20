@@ -3,19 +3,31 @@
 #include "Setting.h"
 
 #include <vector>
+#include <string>
+#include <map>
+
+class CAnimationClip;
+
+/*
+struct FRAME
+{
+	CSprite*	sprite;
+	float		elapsedTime;
+};
+*/
 
 class CAnimation
 {
-	std::vector<tAnimationClip*> m_vecClip;
-	tAnimationClip* m_curClip;
+	std::map<std::string, CAnimationClip*> m_mapClip;
+	CAnimationClip* m_curClip;
 	bool m_bLoop = false;
-	int m_idx;
 
 public:
 	CAnimation();
 	~CAnimation();
-	void AddClip(tAnimationClip* _clip);
-	tAnimationClip* GetCurClip() const { return m_curClip; }
+	void AddClip(std::string _strClipName, CAnimationClip* _clip);
+	void SetClip(std::string _strClipName);
+	CAnimationClip* GetClip(std::string _strClipName) const;
 
 	void Update();
 };

@@ -34,6 +34,8 @@ public:
 	void SetNextScene(CScene* _scene);
 	void SetScene(CScene* _scene) { m_pScene = _scene; }
 
+	CScene* GetScene() const { return m_pScene; }
+
 	void Input();
 	void Update();
 	void Render(ID2D1RenderTarget* _pRenderTarget);

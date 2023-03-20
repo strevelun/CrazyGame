@@ -1,13 +1,16 @@
 #pragma once
 #include "CScene.h"
 #include "Setting.h"
-#include <vector>
+#include "CBoard.h"
 
 class CInGameScene :
     public CScene
 {
-    tMapData m_mapData;
-    std::vector<std::vector<eInGameObjType>> m_board;
+    friend class CPlayer;
+    friend class CLayer;
+
+
+    CBoard* m_board;
 
 public:
     CInGameScene();
@@ -15,10 +18,8 @@ public:
 
     void Init();
 
-    void SetMapData(tMapData _mapData) { m_mapData = _mapData; }
+    void SetMapData(tMapData _mapData) { m_board->SetMapData(_mapData); }
     void OnBackButtonClicked(const std::string _strName);
 
-    bool IsMovable(int _x, int _y);
-    void PutBubble(D2D1_RECT_F _rect);
 };
 

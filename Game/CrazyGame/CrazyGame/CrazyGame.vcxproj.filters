@@ -84,6 +84,12 @@
     <ClCompile Include="CBubble.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CAnimationClip.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CBoard.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h">
@@ -150,6 +156,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CBubble.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CAnimationClip.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CBoard.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

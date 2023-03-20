@@ -31,7 +31,7 @@ bool CTimer::Update()
 		if (m_time < (1.0f / m_frameLimit))
 		{
 			// frameLimit이 클수록 Logic을 실행하는 빈도가 늘어나서 deltaTime이 느려진다.
-			return false; // frameLimit 분의 1로 나눠서 1초 안에 frameLimit번 만큼만 로직을 돌도록
+			return true; // frameLimit 분의 1로 나눠서 1초 안에 frameLimit번 만큼만 로직을 돌도록
 		}
 
 	m_time = 0;

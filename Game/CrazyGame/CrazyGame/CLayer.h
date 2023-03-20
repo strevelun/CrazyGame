@@ -5,6 +5,7 @@
 #include <string>
 
 class CObj;
+class CScene;
 
 class CLayer
 {

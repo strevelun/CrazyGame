@@ -8,6 +8,7 @@
 
 class CBitmap;
 class CAnimation;
+class CAnimationClip;
 
 class CResourceManager
 {
@@ -17,7 +18,7 @@ private:
 	std::unordered_map<PCWSTR, CBitmap*> m_mapBitmap;
 	std::map<std::string, std::vector<_tSprite*>> m_mapImage; // TODO delete
 	std::vector<CBitmap*> m_vecBitmap;
-	std::map<std::string, CAnimation*> m_mapAnim;
+	std::map<std::string, CAnimationClip*> m_mapAnimClip;
 
 	int m_bitmapIdx = 0;
 
@@ -48,6 +49,6 @@ public:
 	CBitmap* GetIdxBitmap(int _idx) const { return m_vecBitmap.at(_idx); }
 
 	void SetIdxBitmap(CBitmap* _bitmap) { m_vecBitmap.push_back(_bitmap); }
-	CAnimation* GetAnimation(const std::string& _str) { return m_mapAnim.at(_str); }
+	CAnimationClip* GetAnimationClip(const std::string& _str) { return m_mapAnimClip.at(_str); }
 };
 
