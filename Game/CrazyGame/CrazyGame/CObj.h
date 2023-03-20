@@ -51,7 +51,11 @@ public:
 	virtual void Render(ID2D1RenderTarget* _pRenderTarget);
 
 	void SetSprite(tSprite* _sprite) { m_sprite = _sprite; }
+	void SetAlive(bool _isAlive) { m_isAlive = _isAlive; }
+	
 	bool IsAlive() const { return m_isAlive; }
+
+	virtual void Die();
 };
 
 template<typename T>

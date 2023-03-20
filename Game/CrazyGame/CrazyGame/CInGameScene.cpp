@@ -72,7 +72,7 @@ void CInGameScene::Init()
 			continue;
 
 		tSprite* sprite = CResourceManager::GetInst()->GetImage("Block", mapData.vecBlockData[i].idx);
-		m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block);
+ 		m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block);
 
 		float right = mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX - (sprite->size.width < 30 ? BOARD_BLOCK_SIZE / 2 + 5 : 0);
 
@@ -90,7 +90,7 @@ void CInGameScene::Init()
 
 	float x, y;
 	size = mapData.vecEventData.size();
-	layer = CreateLayer("Character", 2);
+	layer = CreateLayer("Character", 4);
 	for (int i = 0; i < size; i++)
 	{
 		if (mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
@@ -130,7 +130,7 @@ void CInGameScene::Init()
 		}
 	}
 
-	layer = CreateLayer("Event", 4);
+	layer = CreateLayer("Event", 2);
 }
 
 void CInGameScene::OnBackButtonClicked(const std::string _strName)

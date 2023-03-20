@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "Setting.h"
+#include <string>
+
 class CBoard
 {
     tMapData m_mapData;
@@ -12,11 +14,12 @@ public:
     void SetMapData(tMapData _mapData) { m_mapData = _mapData; }
     void SetBoard();
 
-    bool IsMovable(int _x, int _y);
-    void PutBubble(D2D1_RECT_F _rect);
+    bool IsMovable(int _xpos, int _ypos, bool _isGridPos);
+    void PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
 
     tMapData GetMapData() const { return m_mapData; }
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { m_board[_y][_x] = _type; }
+    void PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
 };
 

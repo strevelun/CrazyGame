@@ -32,6 +32,7 @@ void CLayer::Update()
 		if (!(*iter)->IsAlive())
 		{
 			((CInGameScene*)CSceneManager::GetInst()->GetScene())->m_board->RemoveObj((*iter)->GetRect());
+			(*iter)->Die();
 			delete* iter;
 			iter = m_objList.erase(iter);
 		}
@@ -65,4 +66,19 @@ void CLayer::DeleteAllObj()
 	}
 
 	m_objList.clear();
+}
+
+CObj* CLayer::FindObj(D2D1_RECT_F _rect)
+{
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		if ((*iter)->GetRect().left <= _rect.left && _rect.right <= (*iter)->GetRect().right
+			&& (*iter)->GetRect().top <= _rect.top && _rect.bottom <= (*iter)->GetRect().bottom)
+			return *iter;
+	}
+
+	return nullptr;
 }

@@ -20,7 +20,6 @@ class CAnimation
 {
 	std::map<std::string, CAnimationClip*> m_mapClip;
 	CAnimationClip* m_curClip;
-	bool m_bLoop = false;
 
 public:
 	CAnimation();
@@ -28,6 +27,7 @@ public:
 	void AddClip(std::string _strClipName, CAnimationClip* _clip);
 	void SetClip(std::string _strClipName);
 	CAnimationClip* GetClip(std::string _strClipName) const;
+	CAnimationClip* GetCurClip() const { return m_curClip; }
 
 	void Update();
 };

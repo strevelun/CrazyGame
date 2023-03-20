@@ -22,3 +22,4 @@ void CAnimationClip::Update()
 		m_frameTime = 0.0f;
 	}
 }
+ 

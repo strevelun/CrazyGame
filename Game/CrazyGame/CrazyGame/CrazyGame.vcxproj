@@ -146,6 +146,7 @@
     <ClCompile Include="CLobbyScene.cpp" />
     <ClCompile Include="CSceneManager.cpp" />
     <ClCompile Include="CResourceManager.cpp" />
+    <ClCompile Include="CSplash.cpp" />
     <ClCompile Include="CTile.cpp" />
     <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="CUI.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="CLobbyScene.h" />
     <ClInclude Include="CSceneManager.h" />
     <ClInclude Include="CResourceManager.h" />
+    <ClInclude Include="CSplash.h" />
     <ClInclude Include="CTile.h" />
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CUI.h" />

@@ -28,5 +28,7 @@ public:
 	u_int GetZOrder() const { return m_zOrder; }
 	std::string GetTag() const { return m_strTag; }
 	void DeleteAllObj();
+
+	CObj* FindObj(D2D1_RECT_F _rect);
 };
 

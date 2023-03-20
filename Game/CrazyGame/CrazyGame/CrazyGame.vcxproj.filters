@@ -16,6 +16,9 @@
     <Filter Include="소스 파일\D2DCore">
       <UniqueIdentifier>{532bfb9f-0b4f-4941-b9ea-c7b759101747}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Obj">
+      <UniqueIdentifier>{0f039fdc-0901-451c-85df-1f7a48eb1b1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CrazyGame.cpp">
@@ -34,12 +37,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CLobbyScene.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CObj.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CPlayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CLayer.cpp">
@@ -63,16 +60,7 @@
     <ClCompile Include="CInGameScene.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CMouse.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CInputManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CTile.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CMonster.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CTimer.cpp">
@@ -81,14 +69,32 @@
     <ClCompile Include="CAnimation.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CBubble.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CAnimationClip.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CBoard.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CBubble.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CMouse.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CObj.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CTile.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CSplash.cpp">
+      <Filter>소스 파일\Obj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,12 +111,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CLobbyScene.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CObj.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CLayer.h">
@@ -134,19 +134,10 @@
     <ClInclude Include="CInGameScene.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CMouse.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CInputManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Setting.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CTile.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CMonster.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CTimer.h">
@@ -155,14 +146,32 @@
     <ClInclude Include="CAnimation.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CBubble.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CAnimationClip.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CBoard.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CBubble.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CMouse.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CObj.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CTile.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CSplash.h">
+      <Filter>소스 파일\Obj</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

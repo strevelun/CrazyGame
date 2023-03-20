@@ -42,7 +42,7 @@ void CPlayer::Input()
 
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
-		((CInGameScene*)m_pScene)->m_board->PutBubble(m_rect);
+		((CInGameScene*)m_pScene)->m_board->PutItem(m_rect, "bubble", eInGameObjType::Balloon);
 	}
 }
 
@@ -59,7 +59,8 @@ void CPlayer::Update()
 	if (m_eMoveDir == Dir::Left)
 	{
 		// ÇÁ·¹ÀÓ °¡·Î ±æÀÌ stageFrameOffsetX »©ÁÜ
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom) && ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom, false) 
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top, false))
 		{
 			m_rect.left -= m_speed * deltaTime;
 			m_rect.right -= m_speed * deltaTime;
@@ -67,7 +68,8 @@ void CPlayer::Update()
 	}
 	else if (m_eMoveDir == Dir::Right)
 	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom) && ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom, false) 
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top, false))
 		{
 			m_rect.left += m_speed * deltaTime;
 			m_rect.right += m_speed * deltaTime;
@@ -75,7 +77,8 @@ void CPlayer::Update()
 	}
 	else if (m_eMoveDir == Dir::Up)
 	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left, top - m_speed * deltaTime) && ((CInGameScene*)m_pScene)->m_board->IsMovable(right, top - m_speed * deltaTime))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left, top - m_speed * deltaTime, false) 
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right, top - m_speed * deltaTime, false))
 		{
 			m_rect.top -= m_speed * deltaTime;
 			m_rect.bottom -= m_speed * deltaTime;
@@ -83,7 +86,8 @@ void CPlayer::Update()
 	}
 	else if (m_eMoveDir == Dir::Down)
 	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left, bottom + m_speed * deltaTime) && ((CInGameScene*)m_pScene)->m_board->IsMovable(right, bottom + m_speed * deltaTime))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left, bottom + m_speed * deltaTime, false) 
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right, bottom + m_speed * deltaTime, false))
 		{
 			m_rect.top += m_speed * deltaTime;
 			m_rect.bottom += m_speed * deltaTime;
