@@ -22,7 +22,6 @@ void CBubble::Update()
 	m_elapsedTime += CTimer::GetInst()->GetDeltaTime();
 	if (m_elapsedTime >= m_dieTime)
 	{
-		Die();
 		m_isAlive = false;
 	}
 }
@@ -48,23 +47,53 @@ void CBubble::Die()
 
 	for (int i = 1; i <= m_splashLength; i++)
 	{
-		rect.left -= BOARD_BLOCK_SIZE * i;
-		rect.right -= BOARD_BLOCK_SIZE * i;
-		board->PutSplash(rect, "Explosion_left");
-		rect = m_rect;
-		rect.left += BOARD_BLOCK_SIZE * i;
-		rect.right += BOARD_BLOCK_SIZE * i;
-		board->PutSplash(rect, "Explosion_right");
-		rect = m_rect;
-		rect.top -= BOARD_BLOCK_SIZE * i;
-		rect.bottom -= BOARD_BLOCK_SIZE * i;
-		board->PutSplash(rect, "Explosion_up");
-		rect = m_rect;
-		rect.top += BOARD_BLOCK_SIZE * i;
-		rect.bottom += BOARD_BLOCK_SIZE * i;
-		board->PutSplash(rect, "Explosion_down");
-		rect = m_rect;
+		rect.left -= BOARD_BLOCK_SIZE;
+		rect.right -= BOARD_BLOCK_SIZE;
+		if (board->PutSplash(rect, "Explosion_left") == false)
+		{
+			board->RemoveObj(rect);
+			
+			break;
+		}
 	}
 
+	rect = m_rect;
+
+	for (int i = 1; i <= m_splashLength; i++)
+	{
+		rect.left += BOARD_BLOCK_SIZE;
+		rect.right += BOARD_BLOCK_SIZE;
+		if (board->PutSplash(rect, "Explosion_right") == false)
+		{
+			board->RemoveObj(rect);
+			break;
+		}
+	}
+
+	rect = m_rect;
+
+	for (int i = 1; i <= m_splashLength; i++)
+	{
+		rect.top -= BOARD_BLOCK_SIZE;
+		rect.bottom -= BOARD_BLOCK_SIZE;
+		if (board->PutSplash(rect, "Explosion_up") == false)
+		{
+			board->RemoveObj(rect);
+			break;
+		}
+	}
+
+	rect = m_rect;
+
+	for (int i = 1; i <= m_splashLength; i++)
+	{
+		rect.top += BOARD_BLOCK_SIZE;
+		rect.bottom += BOARD_BLOCK_SIZE;
+		if (board->PutSplash(rect, "Explosion_down") == false)
+		{
+			board->RemoveObj(rect);
+			break;
+		}
+	}
 }
  

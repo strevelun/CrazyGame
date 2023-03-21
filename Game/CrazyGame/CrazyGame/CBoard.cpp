@@ -96,9 +96,14 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 	if (m_mapData.gridY <= y) return;
 
 	m_board[y][x] = eInGameObjType::None;
+	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetScene();
+
+	CLayer* layer = scene->FindLayer("Block");
+	CObj* obj = layer->FindObj(_rect);
+	if (obj != nullptr) obj->SetAlive(false);
 }
 
-void CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
+bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 {
 	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
 	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
@@ -108,21 +113,21 @@ void CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 	int x = left / BOARD_BLOCK_SIZE;
 	int y = bottom / BOARD_BLOCK_SIZE;
 
-	if (m_mapData.gridX <= x) return;
-	if (m_mapData.gridY <= y) return;
+	if (m_mapData.gridX <= x) return false;
+	if (m_mapData.gridY <= y) return false;
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetScene();
 
 	CLayer* layer = scene->FindLayer("Event");
 
 	if (IsMovable(x, y, true) == false)
-		return;
+		return false;
 
 	if (m_board[y][x] == eInGameObjType::Balloon)
 	{
 		CObj* obj = layer->FindObj(_rect);
-		//obj->Die();
 		obj->SetAlive(false);
+		return false;
 	}
 
 	if (layer)
@@ -145,4 +150,6 @@ void CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 			});
 		layer->AddObj(splash);
 	}
+
+	return true;
 }

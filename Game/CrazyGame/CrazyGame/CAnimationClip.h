@@ -17,6 +17,7 @@ public:
     tAnimationFrame* GetCurFrame() const { return m_vecFrame.at(m_frameIdx); }
     size_t GetNumOfFrame() const { return m_vecFrame.size(); }
     size_t GetCurFrameIdx() const { return m_frameIdx; }
+    tAnimationFrame* GetFirstFrame() const { return m_vecFrame.at(0); }
 
     void Update();
     void AddFrame(tAnimationFrame* _frame) { m_vecFrame.push_back(_frame); }

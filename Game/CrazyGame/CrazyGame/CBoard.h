@@ -20,6 +20,6 @@ public:
 
     tMapData GetMapData() const { return m_mapData; }
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { m_board[_y][_x] = _type; }
-    void PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
+    bool PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
 };
 

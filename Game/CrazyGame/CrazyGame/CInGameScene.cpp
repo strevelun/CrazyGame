@@ -105,8 +105,24 @@ void CInGameScene::Init()
 				sprite->rect.top + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY,
 				sprite->rect.right + (x * BOARD_BLOCK_SIZE)   + stageFrameOffsetX ,
 				sprite->rect.bottom + (y * BOARD_BLOCK_SIZE)   + stageFrameOffsetY });
-			CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
-			player->SetBitmap(bitmap);
+			CAnimation* anim = new CAnimation;
+			CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_left");
+			animClip->SetFrametimeLimit(0.1f);
+			anim->AddClip("bazzi_left", animClip);
+			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_right");
+			animClip->SetFrametimeLimit(0.1f);
+			anim->AddClip("bazzi_right", animClip);
+			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_up");
+			animClip->SetFrametimeLimit(0.1f);
+			anim->AddClip("bazzi_up", animClip);
+			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_down");
+			animClip->SetFrametimeLimit(0.1f);
+			anim->AddClip("bazzi_down", animClip);
+			anim->SetClip("bazzi_down");
+			
+			//CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
+			//player->SetBitmap(bitmap);
+			player->SetAnimation(anim);
 			player->SetSprite(sprite);
 			player->SetScene(this);
 			layer->AddObj(player);

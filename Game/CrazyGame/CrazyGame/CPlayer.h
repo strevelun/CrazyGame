@@ -18,8 +18,11 @@ class CPlayer :
     public CObj
 {
     float m_speed = 210.0f;
-    Dir m_eMoveDir = Dir::None;
+    Dir m_eMoveDir = Dir::Down;
+    Dir m_eLastMoveDir = Dir::Down;
     CScene* m_pScene = nullptr;
+    bool m_bFire = false;
+    bool m_isMoving = false;
 
 public:
     CPlayer();
