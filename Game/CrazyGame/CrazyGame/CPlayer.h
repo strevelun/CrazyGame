@@ -1,5 +1,5 @@
 #pragma once
-#include "CObj.h"
+#include "CMoveObj.h"
 #include "Setting.h"
 
 class CScene;
@@ -15,7 +15,7 @@ enum class Dir
 };
 
 class CPlayer :
-    public CObj
+    public CMoveObj
 {
     float m_speed = 210.0f;
     Dir m_eMoveDir = Dir::Down;
@@ -31,6 +31,7 @@ public:
     void Input();
     void Update();
     void Render(ID2D1RenderTarget* _pRenderTarget);
+    void Die() override;
 
     void SetScene(CScene* _pScene) { m_pScene = _pScene; }
 };

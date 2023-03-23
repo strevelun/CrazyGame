@@ -6,6 +6,7 @@
 #include "CAnimation.h"
 #include "CAnimationClip.h"
 #include "CSplash.h"
+#include "CPlayer.h"
 
 CBoard::CBoard()
 {
@@ -86,7 +87,7 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 {
 	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
 	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = _rect.left - stageFrameOffsetX;
+	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
 	int bottom = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
 
 	int x = left / BOARD_BLOCK_SIZE;
@@ -107,7 +108,7 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 {
 	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
 	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = _rect.left - stageFrameOffsetX;
+	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
 	int bottom = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
 
 	int x = left / BOARD_BLOCK_SIZE;
@@ -118,17 +119,27 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	CLayer* layer = scene->FindLayer("Event");
+	CLayer* layer = scene->FindLayer("Character");
 
 	if (IsMovable(x, y, true) == false)
 		return false;
 
+	if (m_board[y][x] == eInGameObjType::Character)
+	{
+		CPlayer* player = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene())->GetPlayer();
+		if(player) 
+			player->SetIsDying(true);
+	}
+
+	layer = scene->FindLayer("Event");
+
 	if (m_board[y][x] == eInGameObjType::Balloon)
 	{
 		CObj* obj = layer->FindObj(_rect);
-		obj->SetAlive(false);
+		if (obj) obj->SetAlive(false);
 		return false;
 	}
+
 
 	if (layer)
 	{

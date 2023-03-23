@@ -96,6 +96,9 @@
     <ClCompile Include="CSplash.cpp">
       <Filter>소스 파일\Obj</Filter>
     </ClCompile>
+    <ClCompile Include="CMoveObj.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h">
@@ -171,6 +174,9 @@
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
     <ClInclude Include="CSplash.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CMoveObj.h">
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
   </ItemGroup>

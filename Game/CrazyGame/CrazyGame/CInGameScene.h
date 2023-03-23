@@ -3,6 +3,8 @@
 #include "Setting.h"
 #include "CBoard.h"
 
+class CPlayer;
+
 class CInGameScene :
     public CScene
 {
@@ -10,7 +12,7 @@ class CInGameScene :
     friend class CBubble;
     friend class CLayer;
 
-
+    CPlayer* m_pPlayer;
     CBoard* m_board;
 
 public:
@@ -19,6 +21,7 @@ public:
 
     void Init();
 
+    CPlayer* GetPlayer() const { return m_pPlayer; }
     void SetMapData(tMapData _mapData) { m_board->SetMapData(_mapData); }
     void OnBackButtonClicked(const std::string _strName);
 

@@ -19,5 +19,7 @@ public:
 
     void OnMapButtonClicked(const std::string _strName);
     tMapData& FindMapData(const std::string& _strName);
+
+    void Init() override;
 };
 

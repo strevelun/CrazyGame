@@ -139,6 +139,7 @@
     <ClCompile Include="CLayer.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CMouse.cpp" />
+    <ClCompile Include="CMoveObj.cpp" />
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CrazyGame.cpp" />
     <ClCompile Include="CObj.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="CLayer.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CMouse.h" />
+    <ClInclude Include="CMoveObj.h" />
     <ClInclude Include="CObj.h" />
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CScene.h" />

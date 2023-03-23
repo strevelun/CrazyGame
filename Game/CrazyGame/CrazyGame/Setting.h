@@ -78,7 +78,7 @@ typedef struct _tAnimationFrame
     float pivotX = 0.5f, pivotY = 0.5f;
     D2D1_RECT_F rect = {};
     D2D1_SIZE_F size = {};
-    u_int idx;
+    u_int bitmapIdx;
 
     _tAnimationFrame(const _tSpriteData& sprite)
     {

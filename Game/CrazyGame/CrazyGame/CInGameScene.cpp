@@ -100,8 +100,8 @@ void CInGameScene::Init()
 			y = i / mapData.gridY;
 			x = i % mapData.gridY;
 			m_board->SetInGameObjType(x, y, eInGameObjType::Character);
-			CPlayer* player = new CPlayer();
-			player->SetRect({
+			m_pPlayer = new CPlayer();
+			m_pPlayer->SetRect({
 				sprite->rect.left + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
 				sprite->rect.top + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY,
 				sprite->rect.right + (x * BOARD_BLOCK_SIZE)   + stageFrameOffsetX ,
@@ -120,13 +120,18 @@ void CInGameScene::Init()
 			animClip->SetFrametimeLimit(0.1f);
 			anim->AddClip("bazzi_down", animClip);
 			anim->SetClip("bazzi_down");
-			
+
+			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_die");
+			animClip->SetLoop(false);
+			animClip->SetFrametimeLimit(0.2f);
+			anim->AddClip("bazzi_die", animClip);
+
 			//CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
 			//player->SetBitmap(bitmap);
-			player->SetAnimation(anim);
-			player->SetSprite(sprite);
-			player->SetScene(this);
-			layer->AddObj(player);
+			m_pPlayer->SetAnimation(anim);
+			m_pPlayer->SetSprite(sprite);
+			m_pPlayer->SetScene(this);
+			layer->AddObj(m_pPlayer);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster)
 		{

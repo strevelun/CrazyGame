@@ -17,6 +17,8 @@ CPlayer::~CPlayer()
 
 void CPlayer::Input()
 {
+	if (m_isDying) return;
+
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
 		m_eMoveDir = Dir::Left;
@@ -58,6 +60,19 @@ void CPlayer::Update()
 	int top = m_rect.top - stageFrameOffsetY;
 	int bottom = m_rect.bottom - stageFrameOffsetY;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+
+	m_prevXPos = m_xpos;
+	m_prevYPos = m_ypos;
+	m_xpos = left / BOARD_BLOCK_SIZE;
+	m_ypos = top / BOARD_BLOCK_SIZE;
+
+	if (m_prevXPos != m_xpos || m_prevYPos != m_ypos)
+	{
+		auto scene = dynamic_cast<CInGameScene*>(m_pScene);
+		scene->m_board->SetInGameObjType(m_prevXPos, m_prevYPos, eInGameObjType::None);
+		scene->m_board->SetInGameObjType(m_xpos, m_ypos, eInGameObjType::Character);
+	}
 
 	if (m_eMoveDir == Dir::Left)
 	{
@@ -122,14 +137,28 @@ void CPlayer::Update()
 
 void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 {
-	/*
-	if (!m_pBitmap) return;
+	CAnimationClip* clip = nullptr;
+	tAnimationFrame* frame = nullptr;
 
-	_pRenderTarget->DrawBitmap(m_pBitmap->GetBitmap(), m_rect,
-		1.0f,
-		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		m_sprite->rect);
-		*/
+	if (m_isDying == true)
+	{
+		m_pAnim->SetClip("bazzi_die");
+		clip = m_pAnim->GetClip("bazzi_die");
+		if (!clip) return;
+		frame = clip->GetCurFrame();
+
+		if (clip->IsCurClipEnd())
+		{
+			m_isAlive = false;
+			return;
+		}
+
+		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
+			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+			frame->rect);
+		return;
+	}
+
 	std::string strDir = "";
 	switch (m_eLastMoveDir)
 	{
@@ -147,21 +176,25 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 		break;
 	}
 
-	CAnimationClip* clip = m_pAnim->GetClip(strDir);
+	clip = m_pAnim->GetClip(strDir);
 	if (!clip) return;
 	
 	if (m_isMoving)
 	{
-		tAnimationFrame* frame = clip->GetCurFrame();
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->idx)->GetBitmap(),
+		frame = clip->GetCurFrame();
+		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 			frame->rect);
 	}
 	else
 	{
-		tAnimationFrame* frame = clip->GetFirstFrame();
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->idx)->GetBitmap(),
+		frame = clip->GetFirstFrame();
+		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 			frame->rect);
 	}
+}
+
+void CPlayer::Die()
+{
 }

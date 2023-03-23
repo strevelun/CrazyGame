@@ -1,7 +1,7 @@
 #pragma once
-#include "CObj.h"
+#include "CMoveObj.h"
 class CMonster :
-    public CObj
+    public CMoveObj
 {
 public:
     CMonster();

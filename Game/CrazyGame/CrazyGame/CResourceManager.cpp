@@ -221,7 +221,7 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 				for (int i = 0; i < clipSize; i++)
 				{
 					tAnimationFrame* frame = new tAnimationFrame(arr[i]);
-					frame->idx = m_bitmapIdx;
+					frame->bitmapIdx = m_bitmapIdx;
 					animClip->AddFrame(frame);
 				}
 

@@ -32,7 +32,7 @@ void CBubble::Render(ID2D1RenderTarget* _pRenderTarget)
 	if (!clip) return;
 	tAnimationFrame* frame = clip->GetCurFrame();
 
-	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->idx)->GetBitmap(),
+	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		frame->rect);
 }

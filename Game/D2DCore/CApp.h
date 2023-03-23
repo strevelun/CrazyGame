@@ -23,7 +23,6 @@ private:
 	CApp() { }
 	~CApp() {}
 
-	static LRESULT CALLBACK Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 public:
 	static CApp* GetInst()
@@ -50,5 +49,6 @@ public:
 	HRESULT Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height);
 	int Run();
 	void ExitGame() { DestroyWindow(m_hWnd); }
-	void DrawIntToText(int _value);
+
+	LRESULT CALLBACK Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };

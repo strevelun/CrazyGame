@@ -11,6 +11,7 @@
 #include <windowsx.h>
 
 CApp* CApp::m_inst = nullptr;
+LRESULT CALLBACK WndProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam);
 
 HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 {
@@ -23,7 +24,7 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 	WNDCLASSEX wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = Proc;
+	wcex.lpfnWndProc = WndProc;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = sizeof(LONG_PTR);
 	wcex.hInstance = m_hInst;
@@ -98,20 +99,6 @@ int CApp::Run()
 	return (int)msg.wParam;
 }
 
-void CApp::DrawIntToText(int _value)
-{
-	std::wstring frameText = std::to_wstring(_value);
-
-	m_pRenderTarget->DrawText(
-		frameText.c_str(),
-		static_cast<UINT32>(frameText.length()),
-		CCore::GetInst()->GetTextFormat(),
-		D2D1::RectF(0, 0, 200, 50), // text layout rectangle
-		CCore::GetInst()->GetBrush()
-	);
-}
-
-
 void CApp::Input()
 {
 	CInputManager::GetInst()->Input();
@@ -132,7 +119,7 @@ void CApp::Render()
 	m_pRenderTarget->EndDraw();
 }
 
-LRESULT CApp::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CApp::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -153,4 +140,31 @@ LRESULT CApp::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+LRESULT CALLBACK WndProc(HWND _hWnd, UINT _msg, WPARAM _wParam, LPARAM _lParam)
+{
+	CApp* pApp = nullptr;
+
+	if (_msg == WM_NCCREATE)
+	{
+		LPCREATESTRUCT pCS = (LPCREATESTRUCT)_lParam;
+		SetLastError(0);
+		pApp = (CApp*)pCS->lpCreateParams;
+		if (!SetWindowLongPtr(_hWnd, GWLP_USERDATA, (LONG_PTR)pApp))
+		{
+			if (GetLastError() != 0) return E_FAIL;
+		}
+	}
+	else
+	{
+		pApp = reinterpret_cast<CApp*>(GetWindowLongPtr(_hWnd, GWLP_USERDATA));
+	}
+
+	if (pApp)
+	{
+		return pApp->Proc(_hWnd, _msg, _wParam, _lParam);
+	}
+
+	return DefWindowProc(_hWnd, _msg, _wParam, _lParam);
 }
