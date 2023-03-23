@@ -32,6 +32,15 @@ public:
 		return m_inst;
 	}
 
+	static void DestroyInst()
+	{
+		if (m_inst)
+		{
+			delete m_inst;
+			m_inst = nullptr;
+		}
+	}
+
 	void Input();
 	void Update();
 	void Render();

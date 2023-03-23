@@ -39,7 +39,7 @@ void CBubble::Render(ID2D1RenderTarget* _pRenderTarget)
 
 void CBubble::Die()
 {
-	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetScene()))->m_board;
+	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
 
 	board->PutSplash(m_rect, "Explosion_center");
 

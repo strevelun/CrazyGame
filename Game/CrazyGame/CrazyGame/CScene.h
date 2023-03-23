@@ -18,6 +18,7 @@ private:
 public:
 	CScene();
 	~CScene();
+	virtual void Init();
 	virtual void Input();
 	virtual void Update();
 	virtual void Render(ID2D1RenderTarget* _pRenderTarget);

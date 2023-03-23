@@ -53,8 +53,10 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 
 	CCore::GetInst()->SetBrush(brush);
 
-	CLobbyScene *scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
-	CSceneManager::GetInst()->SetScene(scene);
+	CSceneManager::GetInst()->AddScene("LobbyScene", CSceneManager::GetInst()->CreateScene<CLobbyScene>());
+	CSceneManager::GetInst()->AddScene("InGameScene", CSceneManager::GetInst()->CreateScene<CInGameScene>());
+	CSceneManager::GetInst()->ChangeScene("LobbyScene");
+
 	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
 	CResourceManager::GetInst()->LoadAnimFiles(L"resource/anim/");
 	//CTimer::GetInst()->SetFrameLimit(10);
@@ -82,14 +84,10 @@ int CApp::Run()
 		{
 			if (CTimer::GetInst()->Update())
 			{
+				CSceneManager::GetInst()->CheckNextScene();
 				Input();
 				Update();
 				Render();
-
-				//DrawIntToText(CTimer::GetInst()->GetFps());
-
-
-				CSceneManager::GetInst()->NextScene();
 			}
 		}
 	}

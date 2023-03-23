@@ -25,6 +25,7 @@ CInGameScene::~CInGameScene()
 
 void CInGameScene::Init()
 {
+
 	CBitmap* bitmap = CResourceManager::GetInst()->Load(L"StageFrame.png");
 
 	CLayer* layer = CreateLayer("InGameUI", 0);
@@ -151,6 +152,7 @@ void CInGameScene::Init()
 
 void CInGameScene::OnBackButtonClicked(const std::string _strName)
 {
-	CLobbyScene* scene = CSceneManager::GetInst()->CreateScene<CLobbyScene>();
-	CSceneManager::GetInst()->SetNextScene(scene);
+	CLobbyScene* scene = dynamic_cast<CLobbyScene*>(CSceneManager::GetInst()->GetScene("LobbyScene"));
+	CSceneManager::GetInst()->ChangeScene("LobbyScene");
+	
 }

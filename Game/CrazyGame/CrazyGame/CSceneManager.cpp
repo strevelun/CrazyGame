@@ -11,11 +11,17 @@ CSceneManager::~CSceneManager()
 {
 }
 
-void CSceneManager::SetNextScene(CScene* _scene)
+void CSceneManager::AddScene(std::string _strSceneName, CScene* _scene)
 {
-	if (m_pNextScene)	delete m_pNextScene;
+	m_mapScene.insert(std::make_pair(_strSceneName, _scene));
+}
 
-	m_pNextScene = _scene;
+CScene* CSceneManager::GetScene(const std::string& _strKey)
+{
+	auto scene = m_mapScene.find(_strKey);
+	if (scene == m_mapScene.end()) return nullptr;
+
+	return scene->second;
 }
 
 void CSceneManager::Input()
@@ -34,19 +40,33 @@ void CSceneManager::Render(ID2D1RenderTarget* _pRenderTarget)
 	m_pScene->Render(_pRenderTarget);
 }
 
-bool CSceneManager::NextScene(void)
+bool CSceneManager::CheckNextScene(void)
 {
 	if (m_pNextScene == nullptr) return false;
 
-	if (m_pScene)
+	if (m_pScene != m_pNextScene)
 	{
-		m_pScene->Clean();
-		delete m_pScene;
-		m_pScene = nullptr;
+		if (m_pScene)
+		{
+			m_pScene->Clean();
+			delete m_pScene;
+		}
+		m_pScene = m_pNextScene;
+		m_pScene->Init();
 	}
 
-	m_pScene = m_pNextScene;
 	m_pNextScene = nullptr;
+
+	return true;
+}
+
+bool CSceneManager::ChangeScene(const std::string& _strKey)
+{
+	auto scene = m_mapScene.find(_strKey);
+	if (scene == m_mapScene.end()) return false;
+
+	CScene* pScene = scene->second;
+	m_pNextScene = pScene;
 
 	return true;
 }

@@ -68,10 +68,9 @@ void CLobbyScene::OnMapButtonClicked(const std::string _strName)
 {
 	tMapData data = FindMapData(_strName);
 
-	CInGameScene* scene = CSceneManager::GetInst()->CreateScene<CInGameScene>();
-	CSceneManager::GetInst()->SetNextScene(scene);
+	CInGameScene* scene = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetScene("InGameScene"));
+	CSceneManager::GetInst()->ChangeScene("InGameScene");
 	scene->SetMapData(data);
-	scene->Init();
 }
 
 tMapData& CLobbyScene::FindMapData(const std::string& _strName)

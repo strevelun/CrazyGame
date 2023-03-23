@@ -17,6 +17,10 @@ CScene::~CScene()
 	
 }
 
+void CScene::Init()
+{
+}
+
 void CScene::Input()
 {
 	std::list<CLayer*>::iterator iter = m_layerList.begin();

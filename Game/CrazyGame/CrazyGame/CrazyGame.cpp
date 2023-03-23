@@ -8,6 +8,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	if (FAILED(CApp::GetInst()->Init(hInstance, nCmdShow, 1920, 1080)))
 		return 0;
 
-	return CApp::GetInst()->Run();
+	int ret = CApp::GetInst()->Run();
+	CApp::DestroyInst();
+	return ret;
 }
 

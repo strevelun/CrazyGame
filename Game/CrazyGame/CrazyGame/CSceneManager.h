@@ -1,6 +1,9 @@
 #pragma once
 
 #include <d2d1.h>
+#include <list>
+#include <map>
+#include <string>
 
 class CScene;
 
@@ -8,7 +11,8 @@ class CSceneManager
 {
 private:
 	CScene* m_pScene;
-	CScene* m_pNextScene ;
+	CScene* m_pNextScene;
+	std::map<std::string, CScene*> m_mapScene;
 
 private:
 	static CSceneManager* m_inst;
@@ -29,17 +33,24 @@ public:
 	}
 
 	template <typename T>
-	T* CreateScene() { return new T(); }
+	T* CreateScene() 
+	{ 
+		T* scene = new T();
+		//m_pScene = scene;
+		return scene; 
+	}
 
-	void SetNextScene(CScene* _scene);
-	void SetScene(CScene* _scene) { m_pScene = _scene; }
+	void AddScene(std::string _strSceneName, CScene* _scene);
 
-	CScene* GetScene() const { return m_pScene; }
+	CScene* GetCurScene() const { return m_pScene; }
+	CScene* GetScene(const std::string& _strKey);
 
 	void Input();
 	void Update();
 	void Render(ID2D1RenderTarget* _pRenderTarget);
 
-	bool NextScene(void);
+	bool CheckNextScene(void);
+
+	bool ChangeScene(const std::string& _strKey);
 };
 
