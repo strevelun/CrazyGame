@@ -13,6 +13,8 @@ CPlayer::CPlayer()
 
 CPlayer::~CPlayer()
 {
+	// bazzi_die¸¸ µû·Î ÇØÁ¦
+	delete m_pAnim->GetClip("bazzi_die");
 }
 
 void CPlayer::Input()
@@ -57,28 +59,34 @@ void CPlayer::Update()
 	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
 	int left = m_rect.left - stageFrameOffsetX;
 	int right = m_rect.right - stageFrameOffsetX;
-	int top = m_rect.top - stageFrameOffsetY;
+	int top = m_rect.top - stageFrameOffsetY ;
 	int bottom = m_rect.bottom - stageFrameOffsetY;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
 
 	m_prevXPos = m_xpos;
 	m_prevYPos = m_ypos;
-	m_xpos = left / BOARD_BLOCK_SIZE;
-	m_ypos = top / BOARD_BLOCK_SIZE;
+	m_xpos = (left + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+	m_ypos = (top + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%d, %d\n", m_xpos, m_ypos);
+	OutputDebugStringA(str);
+#endif
 
 	if (m_prevXPos != m_xpos || m_prevYPos != m_ypos)
 	{
 		auto scene = dynamic_cast<CInGameScene*>(m_pScene);
-		scene->m_board->SetInGameObjType(m_prevXPos, m_prevYPos, eInGameObjType::None);
-		scene->m_board->SetInGameObjType(m_xpos, m_ypos, eInGameObjType::Character);
+		scene->m_board->SetObjTypeInMoveObjBoard(m_prevXPos, m_prevYPos, eInGameObjType::None);
+		scene->m_board->SetObjTypeInMoveObjBoard(m_xpos, m_ypos, eInGameObjType::Character);
 	}
 
 	if (m_eMoveDir == Dir::Left)
 	{
 		// ÇÁ·¹ÀÓ °¡·Î ±æÀÌ stageFrameOffsetX »©ÁÜ
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.2f), false) 
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.2f), false))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false) 
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.3f), false))
 		{
 			m_rect.left -= m_speed * deltaTime;
 			m_rect.right -= m_speed * deltaTime;
@@ -88,8 +96,8 @@ void CPlayer::Update()
 	}
 	else if (m_eMoveDir == Dir::Right)
 	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.2f), false)
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.2f), false))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.3f), false))
 		{
 			m_rect.left += m_speed * deltaTime;
 			m_rect.right += m_speed * deltaTime;
@@ -99,8 +107,8 @@ void CPlayer::Update()
 	}
 	else if (m_eMoveDir == Dir::Up)
 	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.2f), top - m_speed * deltaTime, false)
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.2f), top - m_speed * deltaTime, false))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime, false)
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.3f), top - m_speed * deltaTime, false))
 		{
 			m_rect.top -= m_speed * deltaTime;
 			m_rect.bottom -= m_speed * deltaTime;
@@ -110,8 +118,8 @@ void CPlayer::Update()
 	}
 	else if (m_eMoveDir == Dir::Down)
 	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.2f), bottom + m_speed * deltaTime, false)
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.2f), bottom + m_speed * deltaTime, false))
+		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
+			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.3f), bottom + m_speed * deltaTime, false))
 		{
 			m_rect.top += m_speed * deltaTime;
 			m_rect.bottom += m_speed * deltaTime;
@@ -128,11 +136,6 @@ void CPlayer::Update()
 		m_bFire = false;
 	}
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%f\n",  deltaTime);
-	OutputDebugStringA(str);
-#endif
 }
 
 void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
@@ -197,4 +200,6 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 
 void CPlayer::Die()
 {
+	MessageBox(NULL, L"»ç¸Á", L"»ç¸Á", MB_OK);
+
 }

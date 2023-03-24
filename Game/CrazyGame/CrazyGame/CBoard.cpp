@@ -8,6 +8,17 @@
 #include "CSplash.h"
 #include "CPlayer.h"
 
+void CBoard::RectToPos(D2D1_RECT_F _rect, int& _x, int& _y)
+{
+	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
+	int top = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
+
+	_x = left / BOARD_BLOCK_SIZE;
+	_y = top / BOARD_BLOCK_SIZE;
+}
+
 CBoard::CBoard()
 {
 }
@@ -22,6 +33,10 @@ void CBoard::SetBoard()
 	m_board.resize(m_mapData.gridY);
 	for (int i = 0; i < m_mapData.gridY; i++)
 		m_board[i].resize(m_mapData.gridX);
+
+	m_moveObjBoard.resize(m_mapData.gridY);
+	for (int i = 0; i < m_mapData.gridY; i++)
+		m_moveObjBoard[i].resize(m_mapData.gridX);
 }
 
 bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
@@ -43,13 +58,14 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 
 void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjType _type)
 {
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = (_rect.left - stageFrameOffsetX) + BOARD_BLOCK_SIZE / 2;
-	int bottom = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
+	int x, y;
+	RectToPos(_rect, x, y);
 
-	int x = left / BOARD_BLOCK_SIZE;
-	int y = bottom / BOARD_BLOCK_SIZE;
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%d, %d에 물풍선 놓음\n",x, y );
+	OutputDebugStringA(str);
+#endif
 
 	if (m_mapData.gridX <= x) return;
 	if (m_mapData.gridY <= y) return;
@@ -73,10 +89,10 @@ void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjTyp
 			bubble->SetAnimation(anim);
 
 			bubble->SetRect({
-				(float)x * BOARD_BLOCK_SIZE + stageFrameOffsetX,
-				(float)y * BOARD_BLOCK_SIZE + stageFrameOffsetY,
-				(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
-				(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+				(float)x * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
+				(float)y * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
+				(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
+				(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
 				});
 			layer->AddObj(bubble);
 		}
@@ -85,13 +101,8 @@ void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjTyp
 
 void CBoard::RemoveObj(D2D1_RECT_F _rect)
 {
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
-	int bottom = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
-
-	int x = left / BOARD_BLOCK_SIZE;
-	int y = bottom / BOARD_BLOCK_SIZE;
+	int x, y;
+	RectToPos(_rect, x, y);
 
 	if (m_mapData.gridX <= x) return;
 	if (m_mapData.gridY <= y) return;
@@ -106,13 +117,8 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 
 bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 {
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
-	int bottom = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
-
-	int x = left / BOARD_BLOCK_SIZE;
-	int y = bottom / BOARD_BLOCK_SIZE;
+	int x, y;
+	RectToPos(_rect, x, y);
 
 	if (m_mapData.gridX <= x) return false;
 	if (m_mapData.gridY <= y) return false;
@@ -124,7 +130,7 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 	if (IsMovable(x, y, true) == false)
 		return false;
 
-	if (m_board[y][x] == eInGameObjType::Character)
+	if (m_moveObjBoard[y][x] == eInGameObjType::Character)
 	{
 		CPlayer* player = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene())->GetPlayer();
 		if(player) 
@@ -154,10 +160,10 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 		splash->SetAnimation(anim);
 
 		splash->SetRect({
-			(float)x * BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)y * BOARD_BLOCK_SIZE + stageFrameOffsetY,
-			(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+			(float)x * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
+			(float)y * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
+			(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
+			(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
 			});
 		layer->AddObj(splash);
 	}

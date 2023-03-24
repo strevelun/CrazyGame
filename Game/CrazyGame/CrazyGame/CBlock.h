@@ -1,14 +1,18 @@
 #pragma once
 #include "CStaticObj.h"
-#include "Setting.h"
-class CTile :
+
+class CItem;
+
+class CBlock :
     public CStaticObj
 {
+    CItem* m_pItem = nullptr;
 
 public:
-    CTile();
-    ~CTile();
-
+    CBlock();
+    ~CBlock();
     void Render(ID2D1RenderTarget* _pRenderTarget);
+
+    void Die() override;
 };
 

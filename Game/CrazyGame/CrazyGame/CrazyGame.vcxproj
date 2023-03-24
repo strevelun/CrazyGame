@@ -132,10 +132,12 @@
     <ClCompile Include="CAnimationClip.cpp" />
     <ClCompile Include="CAnimation.cpp" />
     <ClCompile Include="CBitmap.cpp" />
+    <ClCompile Include="CBlock.cpp" />
     <ClCompile Include="CBoard.cpp" />
     <ClCompile Include="CBubble.cpp" />
     <ClCompile Include="CInGameScene.cpp" />
     <ClCompile Include="CInputManager.cpp" />
+    <ClCompile Include="CItem.cpp" />
     <ClCompile Include="CLayer.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CMouse.cpp" />
@@ -148,6 +150,7 @@
     <ClCompile Include="CSceneManager.cpp" />
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CSplash.cpp" />
+    <ClCompile Include="CStaticObj.cpp" />
     <ClCompile Include="CTile.cpp" />
     <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="CUI.cpp" />
@@ -160,10 +163,12 @@
     <ClInclude Include="CAnimationClip.h" />
     <ClInclude Include="CAnimation.h" />
     <ClInclude Include="CBitmap.h" />
+    <ClInclude Include="CBlock.h" />
     <ClInclude Include="CBoard.h" />
     <ClInclude Include="CBubble.h" />
     <ClInclude Include="CInGameScene.h" />
     <ClInclude Include="CInputManager.h" />
+    <ClInclude Include="CItem.h" />
     <ClInclude Include="CLayer.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CMouse.h" />
@@ -175,6 +180,7 @@
     <ClInclude Include="CSceneManager.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CSplash.h" />
+    <ClInclude Include="CStaticObj.h" />
     <ClInclude Include="CTile.h" />
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CUI.h" />

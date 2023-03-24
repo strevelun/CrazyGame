@@ -20,12 +20,6 @@ bool CTimer::Update()
 	m_time += m_deltaTime;
 	m_tick = tick;
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%f\n", m_deltaTime);
-	OutputDebugStringA(str);
-#endif
-
 	m_elapsedTime += m_deltaTime;
 	if (m_frameLimit > 0)
 		if (m_time < (1.0f / m_frameLimit))

@@ -99,6 +99,15 @@
     <ClCompile Include="CMoveObj.cpp">
       <Filter>소스 파일\Obj</Filter>
     </ClCompile>
+    <ClCompile Include="CItem.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CStaticObj.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CBlock.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h">
@@ -177,6 +186,15 @@
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
     <ClInclude Include="CMoveObj.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CItem.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CStaticObj.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CBlock.h">
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
   </ItemGroup>

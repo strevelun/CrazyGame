@@ -7,6 +7,11 @@ class CBoard
 {
     tMapData m_mapData;
     std::vector<std::vector<eInGameObjType>> m_board;
+    std::vector<std::vector<eInGameObjType>> m_moveObjBoard;
+
+private:
+
+    void RectToPos(D2D1_RECT_F _rect, int& _x, int& _y);
 
 public:
     CBoard();
@@ -20,6 +25,7 @@ public:
 
     tMapData GetMapData() const { return m_mapData; }
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { m_board[_y][_x] = _type; }
+    void SetObjTypeInMoveObjBoard(int _x, int _y, eInGameObjType _type) { m_moveObjBoard[_y][_x] = _type; }
     bool PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
 };
 

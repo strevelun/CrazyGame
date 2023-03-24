@@ -12,6 +12,7 @@
 #include "CBubble.h"
 #include "CAnimation.h"
 #include "CAnimationClip.h"
+#include "CBlock.h"
 
 CInGameScene::CInGameScene()
 {
@@ -77,16 +78,16 @@ void CInGameScene::Init()
 
 		float right = mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX - (sprite->size.width < 30 ? BOARD_BLOCK_SIZE / 2 + 5 : 0);
 
-		CTile* tile = new CTile();
-		tile->SetRect(D2D1::RectF(
+		CBlock* block = new CBlock();
+		block->SetRect(D2D1::RectF(
 			mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + stageFrameOffsetX,
 			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE - (sprite->size.height * ((float)BOARD_BLOCK_SIZE / 40)) + 137 - (sprite->size.width < 30 ? 7 : 0),
 			right,
 			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE  - (sprite->size.width < 30 ? 7 : 0) + stageFrameOffsetY
 		));
-		tile->SetBitmapIdx(mapData.vecBlockData[i].idx);
-		tile->SetSprite(sprite);
-		layer->AddObj(tile);
+		block->SetBitmapIdx(mapData.vecBlockData[i].idx);
+		block->SetSprite(sprite);
+		layer->AddObj(block);
 	}
 
 	float x, y;
@@ -121,7 +122,7 @@ void CInGameScene::Init()
 			anim->AddClip("bazzi_down", animClip);
 			anim->SetClip("bazzi_down");
 
-			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_die");
+			animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_die"));
 			animClip->SetLoop(false);
 			animClip->SetFrametimeLimit(0.2f);
 			anim->AddClip("bazzi_die", animClip);

@@ -49,7 +49,6 @@ bool CSceneManager::CheckNextScene(void)
 		if (m_pScene)
 		{
 			m_pScene->Clean();
-
 		}
 		m_pScene = m_pNextScene;
 		m_pScene->Init();

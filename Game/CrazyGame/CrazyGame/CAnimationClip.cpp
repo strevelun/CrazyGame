@@ -18,7 +18,11 @@ void CAnimationClip::Update()
 	m_frameTime += CTimer::GetInst()->GetDeltaTime();
 	if (m_frameTime >= m_frameTimeLimit)
 	{
-		if (IsCurClipEnd() && !m_isLoop) return;
+		if (IsCurClipEnd() && !m_isLoop)
+		{
+			m_frameIdx = 0;
+			return;
+		}
 		m_frameIdx = ++m_frameIdx % m_vecFrame.size();
 		m_frameTime = 0.0f;
 	}

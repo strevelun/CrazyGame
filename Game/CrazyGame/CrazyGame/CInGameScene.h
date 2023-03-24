@@ -8,6 +8,7 @@ class CPlayer;
 class CInGameScene :
     public CScene
 {
+    friend class CBlock;
     friend class CPlayer;
     friend class CBubble;
     friend class CLayer;

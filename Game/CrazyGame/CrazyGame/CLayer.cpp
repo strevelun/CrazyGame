@@ -58,7 +58,7 @@ void CLayer::Render(ID2D1RenderTarget* _pRenderTarget)
 void CLayer::DeleteAllObj()
 {
 	std::list<CObj*>::iterator iter = m_objList.begin();
-	std::list<CObj*>::iterator iterEnd = m_objList.end();
+ 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
 	for (; iter != iterEnd; iter++)
 	{

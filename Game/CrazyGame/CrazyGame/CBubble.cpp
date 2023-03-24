@@ -41,7 +41,12 @@ void CBubble::Die()
 {
 	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
 
-	board->PutSplash(m_rect, "Explosion_center");
+
+	if (board->PutSplash(m_rect, "Explosion_center") == false)
+	{
+		board->RemoveObj(m_rect);
+	
+	}
 
 	D2D1_RECT_F rect = m_rect;
 
@@ -52,7 +57,6 @@ void CBubble::Die()
 		if (board->PutSplash(rect, "Explosion_left") == false)
 		{
 			board->RemoveObj(rect);
-			
 			break;
 		}
 	}

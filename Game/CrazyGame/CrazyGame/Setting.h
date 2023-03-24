@@ -27,6 +27,7 @@ enum class eInGameObjType
     Block,
     Balloon,
     Character,
+    Item,
     Monster,
     Boss,
 };
