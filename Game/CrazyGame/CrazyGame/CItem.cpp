@@ -4,9 +4,17 @@
 #include "CAnimation.h"
 #include "CAnimationClip.h"
 
+CItem::CItem()
+{
+}
+
+CItem::~CItem()
+{
+}
+
 void CItem::Render(ID2D1RenderTarget* _pRenderTarget)
 {
-	CAnimationClip* clip = m_pAnim->GetClip("Gift_Boom");
+	CAnimationClip* clip = m_pAnim->GetClip(m_itemName);
 	if (!clip) return;
 	tAnimationFrame* frame = clip->GetCurFrame();
 

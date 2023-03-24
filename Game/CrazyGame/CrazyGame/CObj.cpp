@@ -11,6 +11,17 @@ CObj::~CObj()
 {
 }
 
+void CObj::RectToPos(D2D1_RECT_F _rect, int& _x, int& _y)
+{
+	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
+	int top = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
+
+	_x = left / BOARD_BLOCK_SIZE;
+	_y = top / BOARD_BLOCK_SIZE;
+}
+
 void CObj::Input()
 {
 }

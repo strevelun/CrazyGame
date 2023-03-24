@@ -45,6 +45,7 @@ public:
 
 	template <typename T>
 	static T* CreateObj(CLayer* _pLayer = nullptr);
+	static void RectToPos(D2D1_RECT_F _rect, int& _x, int& _y);
 
 	virtual void Input();
 	virtual void Update();

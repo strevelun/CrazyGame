@@ -8,16 +8,7 @@
 #include "CSplash.h"
 #include "CPlayer.h"
 
-void CBoard::RectToPos(D2D1_RECT_F _rect, int& _x, int& _y)
-{
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = _rect.left - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2;
-	int top = _rect.top - stageFrameOffsetY + BOARD_BLOCK_SIZE / 2;
 
-	_x = left / BOARD_BLOCK_SIZE;
-	_y = top / BOARD_BLOCK_SIZE;
-}
 
 CBoard::CBoard()
 {
@@ -59,7 +50,7 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjType _type)
 {
 	int x, y;
-	RectToPos(_rect, x, y);
+	CObj::RectToPos(_rect, x, y);
 
 #ifdef _DEBUG
 	char str[50] = "";
@@ -102,7 +93,7 @@ void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjTyp
 void CBoard::RemoveObj(D2D1_RECT_F _rect)
 {
 	int x, y;
-	RectToPos(_rect, x, y);
+	CObj::RectToPos(_rect, x, y);
 
 	if (m_mapData.gridX <= x) return;
 	if (m_mapData.gridY <= y) return;
@@ -118,7 +109,7 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 {
 	int x, y;
-	RectToPos(_rect, x, y);
+	CObj::RectToPos(_rect, x, y);
 
 	if (m_mapData.gridX <= x) return false;
 	if (m_mapData.gridY <= y) return false;

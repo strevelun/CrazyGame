@@ -9,9 +9,6 @@ class CBoard
     std::vector<std::vector<eInGameObjType>> m_board;
     std::vector<std::vector<eInGameObjType>> m_moveObjBoard;
 
-private:
-
-    void RectToPos(D2D1_RECT_F _rect, int& _x, int& _y);
 
 public:
     CBoard();

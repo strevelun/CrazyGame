@@ -32,6 +32,22 @@ enum class eInGameObjType
     Boss,
 };
 
+enum class Item
+{
+    Gift_Boom,
+    Gift_Bubble,
+    Gift_Dart,
+    Gift_Devil,
+    Gift_Owl,
+    Gift_Potion,
+    Gift_Shoes,
+    Gift_Skate,
+    Gift_Turtle,
+    Gift_UFO,
+    Gift_None
+
+};
+
 typedef struct _tBlockData
 {
     u_int x, y;
