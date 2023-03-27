@@ -8,6 +8,7 @@
 #include "CSplash.h"
 #include "CPlayer.h"
 #include "CObj.h"
+#include "CItem.h"
  
 CBoard::CBoard()
 {
@@ -158,4 +159,9 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 	}
 
 	return true;
+}
+
+CItem* CBoard::GetItem(D2D1_RECT_F _rect)
+{
+	return nullptr;
 }

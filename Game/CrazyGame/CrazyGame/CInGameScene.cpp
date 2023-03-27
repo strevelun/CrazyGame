@@ -104,8 +104,8 @@ void CInGameScene::Init()
 		if (mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
 		{
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 0);
-			y = i / mapData.gridY;
-			x = i % mapData.gridY;
+			y = (i / (mapData.gridX));
+			x = i % mapData.gridX;
 			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Character);
 			m_pPlayer = new CPlayer();
 			m_pPlayer->SetRect({
@@ -147,8 +147,8 @@ void CInGameScene::Init()
 		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster)
 		{
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 1);
-			y = i / mapData.gridY;
-			x = i % mapData.gridY;
+			y = i / mapData.gridX;
+			x = i % mapData.gridX;
 			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Boss);
 			CMonster* monster = new CMonster();
 			monster->SetRect({

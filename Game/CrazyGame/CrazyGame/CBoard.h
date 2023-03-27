@@ -4,6 +4,7 @@
 #include <string>
 
 class CObj;
+class CItem;
 
 class CBoard
 {
@@ -26,5 +27,7 @@ public:
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { m_board[_y][_x] = _type; }
     void SetObjTypeInMoveObjBoard(int _x, int _y, eInGameObjType _type) { m_moveObjBoard[_y][_x] = _type; }
     bool PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
+
+    CItem* GetItem(D2D1_RECT_F _rect);
 };
 

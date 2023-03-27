@@ -7,6 +7,7 @@
 #include "CAnimationClip.h"
 #include "CResourceManager.h"
 #include "CBubble.h"
+#include "CItem.h"
 
 CPlayer::CPlayer()
 {
@@ -85,6 +86,10 @@ void CPlayer::Update()
 
 	MoveOnMoveObjBoard();
 
+	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
+
+	CItem* item = board->GetItem(m_rect);
+
 	switch (m_state)
 	{
 	case Player_State::Ready:
@@ -96,8 +101,8 @@ void CPlayer::Update()
 	case Player_State::Move:
 		if (m_eMoveDir == Dir::Left)
 		{
-			if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
+			if (board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+				&& board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
 			{
 				m_rect.left -= m_speed * deltaTime;
 				m_rect.right -= m_speed * deltaTime;
@@ -106,8 +111,8 @@ void CPlayer::Update()
 		}
 		else if (m_eMoveDir == Dir::Right)
 		{
-			if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
+			if (board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+				&& board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
 			{
 				m_rect.left += m_speed * deltaTime;
 				m_rect.right += m_speed * deltaTime;
@@ -116,8 +121,8 @@ void CPlayer::Update()
 		}
 		else if (m_eMoveDir == Dir::Up)
 		{
-			if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false)
-				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false))
+			if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false)
+				&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false))
 			{
 				m_rect.top -= m_speed * deltaTime;
 				m_rect.bottom -= m_speed * deltaTime;
@@ -126,8 +131,8 @@ void CPlayer::Update()
 		}
 		else if (m_eMoveDir == Dir::Down)
 		{
-			if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
-				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false))
+			if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
+				&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false))
 			{
 				m_rect.top += m_speed * deltaTime;
 				m_rect.bottom += m_speed * deltaTime;
