@@ -7,9 +7,8 @@
 #include "CAnimationClip.h"
 #include "CSplash.h"
 #include "CPlayer.h"
-
-
-
+#include "CObj.h"
+ 
 CBoard::CBoard()
 {
 }
@@ -44,10 +43,10 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 	if (m_mapData.gridX <= _xpos) return false;
 	if (m_mapData.gridY <= _ypos) return false;
 
-	return m_board[_ypos][_xpos] != eInGameObjType::Block;
+	return m_board[_ypos][_xpos] != eInGameObjType::Block && m_board[_ypos][_xpos] != eInGameObjType::Balloon;
 }
 
-void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjType _type)
+void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type)
 {
 	int x, y;
 	CObj::RectToPos(_rect, x, y);
@@ -69,7 +68,6 @@ void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjTyp
 		if (layer)
 		{
 			m_board[y][x] = _type;
-			CBubble* bubble = new CBubble(); // T
 			CAnimation* anim = new CAnimation;
 			CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_animClipName);
 			animClip->SetFrametimeLimit(0.25f);
@@ -77,15 +75,15 @@ void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjTyp
 
 			anim->AddClip(_animClipName, newAnimClip);
 			anim->SetClip(_animClipName);
-			bubble->SetAnimation(anim);
+			_obj->SetAnimation(anim);
 
-			bubble->SetRect({
+			_obj->SetRect({
 				(float)x * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
 				(float)y * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
 				(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
 				(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
 				});
-			layer->AddObj(bubble);
+			layer->AddObj(_obj);
 		}
 	}
 }

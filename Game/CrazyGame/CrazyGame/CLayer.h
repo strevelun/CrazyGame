@@ -21,6 +21,8 @@ public:
 	void Update();
 	void Render(ID2D1RenderTarget* _pRenderTarget);
 
+	static bool ObjYPosSort(CObj* _obj1, CObj* _obj2);
+
 	void SetZOrder(u_int _zOrder) { m_zOrder = _zOrder; }
 	void SetTag(std::string _strTag) { m_strTag = _strTag; }
 	void AddObj(CObj* _obj) { m_objList.push_back(_obj); }

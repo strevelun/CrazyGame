@@ -56,7 +56,15 @@ void CScene::Render(ID2D1RenderTarget* _pRenderTarget)
 
 CLayer* CScene::CreateLayer(const std::string& _strTag, u_int _zOrder)
 {
-	CLayer* layer = new CLayer;
+	CLayer* layer = FindLayer(_strTag);
+
+	if (layer != nullptr)
+	{
+		return layer;
+	}
+		
+
+	layer = new CLayer;
 	layer->SetTag(_strTag);
 	layer->SetZOrder(_zOrder);
 

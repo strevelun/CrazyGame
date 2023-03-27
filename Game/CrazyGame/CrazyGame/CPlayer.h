@@ -23,6 +23,7 @@ class CPlayer :
     CScene* m_pScene = nullptr;
     bool m_bFire = false;
     bool m_isMoving = false;
+    bool m_isReady = false;
 
 public:
     CPlayer();

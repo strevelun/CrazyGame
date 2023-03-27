@@ -3,6 +3,8 @@
 #include "Setting.h"
 #include <string>
 
+class CObj;
+
 class CBoard
 {
     tMapData m_mapData;
@@ -17,7 +19,8 @@ public:
     void SetBoard();
 
     bool IsMovable(int _xpos, int _ypos, bool _isGridPos);
-    void PutItem(D2D1_RECT_F _rect, std::string _animClipName, eInGameObjType _type);
+
+    void PutItem(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
 
     tMapData GetMapData() const { return m_mapData; }

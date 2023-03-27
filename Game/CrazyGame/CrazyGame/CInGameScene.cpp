@@ -87,12 +87,17 @@ void CInGameScene::Init()
 		));
 		block->SetBitmapIdx(mapData.vecBlockData[i].idx);
 		block->SetSprite(sprite);
+		if (sprite->size.width < 30)
+		{
+			layer = CreateLayer("Flag", INT_MAX);
+			layer->AddObj(block);
+			layer = FindLayer("Block");
+		}
 		layer->AddObj(block);
 	}
 
 	float x, y;
 	size = mapData.vecEventData.size();
-	layer = CreateLayer("Character", 4);
 	for (int i = 0; i < size; i++)
 	{
 		if (mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
@@ -120,15 +125,19 @@ void CInGameScene::Init()
 			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_down");
 			animClip->SetFrametimeLimit(0.1f);
 			anim->AddClip("bazzi_down", animClip);
-			anim->SetClip("bazzi_down");
 
 			animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_die"));
 			animClip->SetLoop(false);
 			animClip->SetFrametimeLimit(0.2f);
 			anim->AddClip("bazzi_die", animClip);
 
-			//CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
-			//player->SetBitmap(bitmap);
+			animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_ready"));
+			animClip->SetLoop(false);
+			animClip->SetFrametimeLimit(0.1f);
+			anim->AddClip("bazzi_ready", animClip);
+			anim->SetClip("bazzi_ready");
+
+			
 			m_pPlayer->SetAnimation(anim);
 			m_pPlayer->SetSprite(sprite);
 			m_pPlayer->SetScene(this);

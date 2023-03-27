@@ -2,6 +2,9 @@
 #include "CObj.h"
 #include "CSceneManager.h"
 #include "CInGameScene.h"
+#include "CPlayer.h"
+
+#include <algorithm>
 
 CLayer::CLayer()
 {
@@ -49,10 +52,18 @@ void CLayer::Render(ID2D1RenderTarget* _pRenderTarget)
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
+	if(m_strTag.compare("Block") == 0)
+		m_objList.sort(CLayer::ObjYPosSort);
+
 	for (; iter != iterEnd; iter++)
 	{
-		(*iter)->Render(_pRenderTarget);
+		(*iter)->Render(_pRenderTarget);	
 	}
+}
+
+bool CLayer::ObjYPosSort(CObj* _obj1, CObj* _obj2)
+{
+	return _obj1->GetRect().bottom < _obj2->GetRect().bottom;
 }
 
 void CLayer::DeleteAllObj()

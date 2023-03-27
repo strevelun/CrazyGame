@@ -24,9 +24,15 @@ protected:
 class CObj
 {
 protected:
+	friend class CLayer;
+
 	CBitmap*						m_pBitmap;
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
+
+	int m_xpos, m_ypos;
+	int m_prevXPos, m_prevYPos;
+
 	tSprite* m_sprite;
 	CAnimation* m_pAnim = nullptr;
 	bool m_isAlive = true;

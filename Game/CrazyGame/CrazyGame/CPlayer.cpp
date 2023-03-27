@@ -6,6 +6,7 @@
 #include "CAnimation.h"
 #include "CAnimationClip.h"
 #include "CResourceManager.h"
+#include "CBubble.h"
 
 CPlayer::CPlayer()
 {
@@ -17,9 +18,14 @@ CPlayer::~CPlayer()
 	delete m_pAnim->GetClip("bazzi_die");
 }
 
+
 void CPlayer::Input()
 {
-	if (m_isDying) return;
+	if (m_isDying || !m_isReady)
+	{
+		m_eMoveDir = Dir::None;
+		return;
+	}
 
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
@@ -132,7 +138,8 @@ void CPlayer::Update()
 
 	if (m_bFire)
 	{
-		((CInGameScene*)m_pScene)->m_board->PutItem(m_rect, "bubble", eInGameObjType::Balloon);
+		CBubble* bubble = new CBubble();
+		((CInGameScene*)m_pScene)->m_board->PutItem(m_rect, "bubble", bubble, eInGameObjType::Balloon);
 		m_bFire = false;
 	}
 
@@ -142,6 +149,25 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 {
 	CAnimationClip* clip = nullptr;
 	tAnimationFrame* frame = nullptr;
+
+	if (!m_isReady)
+	{
+		m_pAnim->SetClip("bazzi_ready");
+		clip = m_pAnim->GetClip("bazzi_ready");
+		if (!clip) return;
+		frame = clip->GetCurFrame();
+
+		if (clip->IsCurClipEnd())
+		{
+			m_isReady = true;
+			return;
+		}
+
+		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
+			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+			frame->rect);
+		return;
+	}
 
 	if (m_isDying == true)
 	{
