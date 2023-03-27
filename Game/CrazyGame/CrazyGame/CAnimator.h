@@ -16,16 +16,16 @@ struct FRAME
 };
 */
 
-class CAnimation
+class CAnimator
 {
 	std::map<std::string, CAnimationClip*> m_mapClip;
 	CAnimationClip* m_curClip;
 
 public:
-	CAnimation();
-	~CAnimation();
+	CAnimator();
+	~CAnimator();
 	void AddClip(std::string _strClipName, CAnimationClip* _clip);
-	void SetClip(std::string _strClipName);
+	void PlayClip(std::string _strClipName);
 	CAnimationClip* GetClip(std::string _strClipName) const;
 	CAnimationClip* GetCurClip() const { return m_curClip; }
 

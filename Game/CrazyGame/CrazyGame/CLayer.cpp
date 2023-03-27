@@ -34,7 +34,7 @@ void CLayer::Update()
 	{
 		if (!(*iter)->IsAlive())
 		{
-			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj((*iter)->GetRect());
+			//((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj((*iter)->GetRect());
 			(*iter)->Die();
 			delete* iter;
 			iter = m_objList.erase(iter);

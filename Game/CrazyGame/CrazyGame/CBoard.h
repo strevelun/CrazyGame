@@ -11,7 +11,6 @@ class CBoard
     std::vector<std::vector<eInGameObjType>> m_board;
     std::vector<std::vector<eInGameObjType>> m_moveObjBoard;
 
-
 public:
     CBoard();
     ~CBoard();

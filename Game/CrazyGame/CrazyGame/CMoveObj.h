@@ -4,12 +4,17 @@ class CMoveObj :
     public CObj
 {
 protected:
-    bool m_isDying = false;
+    CScene* m_pScene = nullptr;
 
 public:
     CMoveObj();
     ~CMoveObj();
 
-    void SetIsDying(bool _isDying) { m_isDying = _isDying; }
+
+protected:
+    void MoveOnMoveObjBoard();
+
+public:
+    void SetScene(CScene* _pScene) { m_pScene = _pScene; }
 };
 

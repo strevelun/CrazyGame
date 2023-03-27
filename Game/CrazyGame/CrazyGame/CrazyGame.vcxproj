@@ -130,7 +130,7 @@
     <ClCompile Include="..\..\D2DCore\CApp.cpp" />
     <ClCompile Include="..\..\D2DCore\CCore.cpp" />
     <ClCompile Include="CAnimationClip.cpp" />
-    <ClCompile Include="CAnimation.cpp" />
+    <ClCompile Include="CAnimator.cpp" />
     <ClCompile Include="CBitmap.cpp" />
     <ClCompile Include="CBlock.cpp" />
     <ClCompile Include="CBoard.cpp" />
@@ -161,7 +161,7 @@
     <ClInclude Include="..\..\D2DCore\CApp.h" />
     <ClInclude Include="..\..\D2DCore\CCore.h" />
     <ClInclude Include="CAnimationClip.h" />
-    <ClInclude Include="CAnimation.h" />
+    <ClInclude Include="CAnimator.h" />
     <ClInclude Include="CBitmap.h" />
     <ClInclude Include="CBlock.h" />
     <ClInclude Include="CBoard.h" />

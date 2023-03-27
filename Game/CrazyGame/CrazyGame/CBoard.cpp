@@ -3,7 +3,7 @@
 #include "CSceneManager.h"
 #include "CBubble.h"
 #include "CResourceManager.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CAnimationClip.h"
 #include "CSplash.h"
 #include "CPlayer.h"
@@ -43,7 +43,7 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 	if (m_mapData.gridX <= _xpos) return false;
 	if (m_mapData.gridY <= _ypos) return false;
 
-	return m_board[_ypos][_xpos] != eInGameObjType::Block && m_board[_ypos][_xpos] != eInGameObjType::Balloon;
+	return m_board[_ypos][_xpos] == eInGameObjType::None || m_board[_ypos][_xpos] == eInGameObjType::Item;
 }
 
 void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type)
@@ -68,13 +68,13 @@ void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, e
 		if (layer)
 		{
 			m_board[y][x] = _type;
-			CAnimation* anim = new CAnimation;
+			CAnimator* anim = new CAnimator;
 			CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_animClipName);
 			animClip->SetFrametimeLimit(0.25f);
 			CAnimationClip* newAnimClip = new CAnimationClip(*animClip);
 
 			anim->AddClip(_animClipName, newAnimClip);
-			anim->SetClip(_animClipName);
+			anim->PlayClip(_animClipName);
 			_obj->SetAnimation(anim);
 
 			_obj->SetRect({
@@ -116,14 +116,14 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 	CLayer* layer = scene->FindLayer("Character");
 
-	if (IsMovable(x, y, true) == false)
+	if (IsMovable(x, y, true) == false && m_board[y][x] == eInGameObjType::Block_Destructible)
 		return false;
 
 	if (m_moveObjBoard[y][x] == eInGameObjType::Character)
 	{
 		CPlayer* player = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene())->GetPlayer();
-		if(player) 
-			player->SetIsDying(true);
+		if (player)
+			player->Die();
 	}
 
 	layer = scene->FindLayer("Event");
@@ -139,13 +139,13 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 	if (layer)
 	{
 		CSplash* splash = new CSplash();
-		CAnimation* anim = new CAnimation;
+		CAnimator* anim = new CAnimator;
 		CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_animClipName);
 		animClip->SetFrametimeLimit(0.1f);
 		CAnimationClip* newAnimClip = new CAnimationClip(*animClip);
 		splash->SetClipName(_animClipName);
 		anim->AddClip(_animClipName, newAnimClip);
-		anim->SetClip(_animClipName);
+		anim->PlayClip(_animClipName);
 		splash->SetAnimation(anim);
 
 		splash->SetRect({

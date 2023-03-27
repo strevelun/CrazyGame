@@ -4,7 +4,7 @@
 #include "CBitmap.h"
 #include "CSceneManager.h"
 #include "CInGameScene.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CAnimationClip.h"
 
 #include <random>
@@ -79,11 +79,11 @@ void CBlock::Die()
 		m_pItem = CObj::CreateObj<CItem>(pLayer);
 	m_pItem->SetRect(m_rect);
 	
-	CAnimation* anim = new CAnimation();
+	CAnimator* anim = new CAnimator();
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(strName);
 	animClip->SetFrametimeLimit(0.2f);
 	anim->AddClip(strName, animClip);
-	anim->SetClip(strName);
+	anim->PlayClip(strName);
 	m_pItem->SetAnimation(anim);
 	m_pItem->SetItemName(strName);
 	int x, y;

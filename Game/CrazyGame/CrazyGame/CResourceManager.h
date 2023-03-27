@@ -7,7 +7,7 @@
 #include "Setting.h"
 
 class CBitmap;
-class CAnimation;
+class CAnimator;
 class CAnimationClip;
 
 class CResourceManager

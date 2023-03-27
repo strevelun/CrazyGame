@@ -7,7 +7,7 @@
 
 class CBitmap;
 class CLayer;
-class CAnimation;
+class CAnimator;
 
 /*
 class CObj
@@ -34,7 +34,7 @@ protected:
 	int m_prevXPos, m_prevYPos;
 
 	tSprite* m_sprite;
-	CAnimation* m_pAnim = nullptr;
+	CAnimator* m_pAnim = nullptr;
 	bool m_isAlive = true;
 
 	std::string m_strName;
@@ -45,7 +45,7 @@ public:
 
 	void SetBitmap(CBitmap* _bitmap) { m_pBitmap = _bitmap; }
 	void SetRect(D2D1_RECT_F _rect){ m_rect = _rect; }
-	void SetAnimation(CAnimation* _anim) { m_pAnim = _anim; }
+	void SetAnimation(CAnimator* _anim) { m_pAnim = _anim; }
 
 	D2D1_RECT_F GetRect() const { return m_rect; }
 

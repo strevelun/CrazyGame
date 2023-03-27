@@ -10,6 +10,7 @@ class CInGameScene :
 {
     friend class CBlock;
     friend class CPlayer;
+    friend class CMoveObj;
     friend class CBubble;
     friend class CLayer;
 

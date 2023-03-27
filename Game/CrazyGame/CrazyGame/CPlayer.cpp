@@ -3,7 +3,7 @@
 #include "CScene.h"
 #include "CInGameScene.h"
 #include "CTimer.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CAnimationClip.h"
 #include "CResourceManager.h"
 #include "CBubble.h"
@@ -21,35 +21,37 @@ CPlayer::~CPlayer()
 
 void CPlayer::Input()
 {
-	if (m_isDying || !m_isReady)
-	{
-		m_eMoveDir = Dir::None;
+	if (m_state == Player_State::Ready || m_state == Player_State::Die)
 		return;
-	}
 
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
 		m_eMoveDir = Dir::Left;
 		m_eLastMoveDir = m_eMoveDir;
+		m_state = Player_State::Move;
 	}
 	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 	{
 		m_eMoveDir = Dir::Right;
 		m_eLastMoveDir = m_eMoveDir;
+		m_state = Player_State::Move;
 	}
 	else if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
 		m_eMoveDir = Dir::Up;
 		m_eLastMoveDir = m_eMoveDir;
+		m_state = Player_State::Move;
 	}
 	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
 		m_eMoveDir = Dir::Down;
 		m_eLastMoveDir = m_eMoveDir;
+		m_state = Player_State::Move;
 	}
 	else
 	{
 		m_eMoveDir = Dir::None;
+		m_state = Player_State::Idle;
 	}
 
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
@@ -81,60 +83,64 @@ void CPlayer::Update()
 	OutputDebugStringA(str);
 #endif
 
-	if (m_prevXPos != m_xpos || m_prevYPos != m_ypos)
+	MoveOnMoveObjBoard();
+
+	switch (m_state)
 	{
-		auto scene = dynamic_cast<CInGameScene*>(m_pScene);
-		scene->m_board->SetObjTypeInMoveObjBoard(m_prevXPos, m_prevYPos, eInGameObjType::None);
-		scene->m_board->SetObjTypeInMoveObjBoard(m_xpos, m_ypos, eInGameObjType::Character);
+	case Player_State::Ready:
+		m_pAnim->PlayClip("bazzi_ready");
+
+		break;
+	case Player_State::Idle:
+		break;
+	case Player_State::Move:
+		if (m_eMoveDir == Dir::Left)
+		{
+			if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
+			{
+				m_rect.left -= m_speed * deltaTime;
+				m_rect.right -= m_speed * deltaTime;
+				m_pAnim->PlayClip("bazzi_left");
+			}
+		}
+		else if (m_eMoveDir == Dir::Right)
+		{
+			if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
+			{
+				m_rect.left += m_speed * deltaTime;
+				m_rect.right += m_speed * deltaTime;
+				m_pAnim->PlayClip("bazzi_right");
+			}
+		}
+		else if (m_eMoveDir == Dir::Up)
+		{
+			if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false)
+				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false))
+			{
+				m_rect.top -= m_speed * deltaTime;
+				m_rect.bottom -= m_speed * deltaTime;
+				m_pAnim->PlayClip("bazzi_up");
+			}
+		}
+		else if (m_eMoveDir == Dir::Down)
+		{
+			if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
+				&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false))
+			{
+				m_rect.top += m_speed * deltaTime;
+				m_rect.bottom += m_speed * deltaTime;
+				m_pAnim->PlayClip("bazzi_down");
+			}
+		}
+		break;
+	case Player_State::Die:
+		m_pAnim->PlayClip("bazzi_die");
+		break;
 	}
 
-	if (m_eMoveDir == Dir::Left)
-	{
-		// ÇÁ·¹ÀÓ °¡·Î ±æÀÌ stageFrameOffsetX »©ÁÜ
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false) 
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.3f), false))
-		{
-			m_rect.left -= m_speed * deltaTime;
-			m_rect.right -= m_speed * deltaTime;
-			m_pAnim->SetClip("bazzi_left");
-			m_isMoving = true;
-		}
-	}
-	else if (m_eMoveDir == Dir::Right)
-	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.3f), false))
-		{
-			m_rect.left += m_speed * deltaTime;
-			m_rect.right += m_speed * deltaTime;
-			m_pAnim->SetClip("bazzi_right");
-			m_isMoving = true;
-		}
-	}
-	else if (m_eMoveDir == Dir::Up)
-	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime, false)
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.3f), top - m_speed * deltaTime, false))
-		{
-			m_rect.top -= m_speed * deltaTime;
-			m_rect.bottom -= m_speed * deltaTime;
-			m_pAnim->SetClip("bazzi_up");
-			m_isMoving = true;
-		}
-	}
-	else if (m_eMoveDir == Dir::Down)
-	{
-		if (((CInGameScene*)m_pScene)->m_board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
-			&& ((CInGameScene*)m_pScene)->m_board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.3f), bottom + m_speed * deltaTime, false))
-		{
-			m_rect.top += m_speed * deltaTime;
-			m_rect.bottom += m_speed * deltaTime;
-			m_pAnim->SetClip("bazzi_down");
-			m_isMoving = true;
-		}
-	}
-	else
-		m_isMoving = false;
+
 
 	if (m_bFire)
 	{
@@ -150,28 +156,53 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 	CAnimationClip* clip = nullptr;
 	tAnimationFrame* frame = nullptr;
 
-	if (!m_isReady)
+	switch (m_state)
 	{
-		m_pAnim->SetClip("bazzi_ready");
+	case Player_State::Ready:
+	{
 		clip = m_pAnim->GetClip("bazzi_ready");
 		if (!clip) return;
 		frame = clip->GetCurFrame();
 
 		if (clip->IsCurClipEnd())
 		{
-			m_isReady = true;
+			m_state = Player_State::Idle;
 			return;
 		}
 
 		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 			frame->rect);
-		return;
 	}
-
-	if (m_isDying == true)
+	break;
+	case Player_State::Idle:
 	{
-		m_pAnim->SetClip("bazzi_die");
+		std::string strDir = GetStrDir(m_eLastMoveDir);
+
+		clip = m_pAnim->GetClip(strDir);
+		if (!clip) return;
+		frame = clip->GetFirstFrame();
+
+		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
+			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+			frame->rect);
+	}
+		break;
+	case Player_State::Move:
+	{
+		std::string strDir = GetStrDir(m_eLastMoveDir);
+
+		clip = m_pAnim->GetClip(strDir);
+		if (!clip) return;
+		frame = clip->GetCurFrame();
+
+		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
+			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+			frame->rect);
+	}
+		break;
+	case Player_State::Die:
+	{
 		clip = m_pAnim->GetClip("bazzi_die");
 		if (!clip) return;
 		frame = clip->GetCurFrame();
@@ -185,11 +216,22 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 			frame->rect);
-		return;
 	}
+		break;
+	}
+}
 
+void CPlayer::Die()
+{
+	m_state = Player_State::Die;
+	//MessageBox(NULL, L"»ç¸Á", L"»ç¸Á", MB_OK);
+
+}
+
+std::string CPlayer::GetStrDir(Dir _dir)
+{
 	std::string strDir = "";
-	switch (m_eLastMoveDir)
+	switch (_dir)
 	{
 	case Dir::Up:
 		strDir = "bazzi_up";
@@ -205,27 +247,5 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 		break;
 	}
 
-	clip = m_pAnim->GetClip(strDir);
-	if (!clip) return;
-	
-	if (m_isMoving)
-	{
-		frame = clip->GetCurFrame();
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
-	}
-	else
-	{
-		frame = clip->GetFirstFrame();
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
-	}
-}
-
-void CPlayer::Die()
-{
-	MessageBox(NULL, L"»ç¸Á", L"»ç¸Á", MB_OK);
-
+	return strDir;
 }

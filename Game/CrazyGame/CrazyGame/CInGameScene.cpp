@@ -10,7 +10,7 @@
 #include "../../D2DCore/CApp.h"
 #include "CMonster.h"
 #include "CBubble.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CAnimationClip.h"
 #include "CBlock.h"
 
@@ -74,7 +74,7 @@ void CInGameScene::Init()
 			continue;
 
 		tSprite* sprite = CResourceManager::GetInst()->GetImage("Block", mapData.vecBlockData[i].idx);
- 		m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block);
+		m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block_Destructible);
 
 		float right = mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX - (sprite->size.width < 30 ? BOARD_BLOCK_SIZE / 2 + 5 : 0);
 
@@ -93,7 +93,8 @@ void CInGameScene::Init()
 			layer->AddObj(block);
 			layer = FindLayer("Block");
 		}
-		layer->AddObj(block);
+		else 
+			layer->AddObj(block);
 	}
 
 	float x, y;
@@ -105,14 +106,14 @@ void CInGameScene::Init()
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 0);
 			y = i / mapData.gridY;
 			x = i % mapData.gridY;
-			m_board->SetInGameObjType(x, y, eInGameObjType::Character);
+			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Character);
 			m_pPlayer = new CPlayer();
 			m_pPlayer->SetRect({
 				sprite->rect.left + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
 				sprite->rect.top + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY,
 				sprite->rect.right + (x * BOARD_BLOCK_SIZE)   + stageFrameOffsetX ,
 				sprite->rect.bottom + (y * BOARD_BLOCK_SIZE)   + stageFrameOffsetY });
-			CAnimation* anim = new CAnimation;
+			CAnimator* anim = new CAnimator;
 			CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_left");
 			animClip->SetFrametimeLimit(0.1f);
 			anim->AddClip("bazzi_left", animClip);
@@ -135,7 +136,7 @@ void CInGameScene::Init()
 			animClip->SetLoop(false);
 			animClip->SetFrametimeLimit(0.1f);
 			anim->AddClip("bazzi_ready", animClip);
-			anim->SetClip("bazzi_ready");
+			anim->PlayClip("bazzi_ready");
 
 			
 			m_pPlayer->SetAnimation(anim);
@@ -148,7 +149,7 @@ void CInGameScene::Init()
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 1);
 			y = i / mapData.gridY;
 			x = i % mapData.gridY;
-			m_board->SetInGameObjType(x, y, eInGameObjType::Boss);
+			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Boss);
 			CMonster* monster = new CMonster();
 			monster->SetRect({
 				(x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
@@ -158,7 +159,14 @@ void CInGameScene::Init()
 			CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
 			monster->SetBitmap(bitmap);
 			monster->SetSprite(sprite);
+			monster->SetScene(this);
 			layer->AddObj(monster);
+		}
+		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)
+		{
+			y = i / mapData.gridY;
+			x = i % mapData.gridY;
+			m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block_InDestructible);
 		}
 	}
 

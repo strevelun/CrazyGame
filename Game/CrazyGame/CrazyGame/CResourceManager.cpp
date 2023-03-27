@@ -3,7 +3,7 @@
 #include "CBitmap.h"
 #include "../../D2DCore/CApp.h"
 #include "Setting.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CAnimationClip.h"
 
 #include <wincodec.h>

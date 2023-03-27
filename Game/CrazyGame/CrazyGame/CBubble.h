@@ -1,7 +1,7 @@
 #pragma once
 #include "CObj.h"
 
-class CAnimation;
+class CAnimator;
 
 class CBubble :
     public CObj

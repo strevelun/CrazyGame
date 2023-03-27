@@ -1,5 +1,5 @@
 #include "CBubble.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "Setting.h"
 #include "CResourceManager.h"
 #include "CBitmap.h"
@@ -41,11 +41,9 @@ void CBubble::Die()
 {
 	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
 
-
 	if (board->PutSplash(m_rect, "Explosion_center") == false)
 	{
 		board->RemoveObj(m_rect);
-	
 	}
 
 	D2D1_RECT_F rect = m_rect;

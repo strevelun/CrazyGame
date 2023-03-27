@@ -1,7 +1,7 @@
 #include "CSplash.h"
 #include "CAnimationClip.h"
 #include "CResourceManager.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CBitmap.h"
 
 void CSplash::Update()

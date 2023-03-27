@@ -24,7 +24,8 @@ enum class eType
 enum class eInGameObjType
 {
     None,
-    Block,
+    Block_Destructible,
+    Block_InDestructible,
     Balloon,
     Character,
     Item,

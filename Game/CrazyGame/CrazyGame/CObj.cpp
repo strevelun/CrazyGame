@@ -1,7 +1,7 @@
 #include "CObj.h"
 #include "CBitmap.h"
 #include "CResourceManager.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 
 CObj::CObj()
 {

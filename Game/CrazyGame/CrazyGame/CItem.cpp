@@ -1,7 +1,7 @@
 #include "CItem.h"
 #include "CResourceManager.h"
 #include "CBitmap.h"
-#include "CAnimation.h"
+#include "CAnimator.h"
 #include "CAnimationClip.h"
 
 CItem::CItem()

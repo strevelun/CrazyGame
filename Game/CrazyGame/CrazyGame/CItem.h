@@ -12,5 +12,6 @@ public:
     ~CItem();
     void Render(ID2D1RenderTarget* _pRenderTarget);
     void SetItemName(std::string _itemName) { m_itemName = _itemName; }
+    std::string GetItemName() { return m_itemName; }
 };
 
