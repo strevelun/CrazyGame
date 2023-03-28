@@ -88,8 +88,6 @@ void CPlayer::Update()
 
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
 
-	CItem* item = board->GetItem(m_rect);
-
 	switch (m_state)
 	{
 	case Player_State::Ready:
@@ -145,12 +143,21 @@ void CPlayer::Update()
 		break;
 	}
 
-
+	CItem* item = board->GetItem(m_rect);
+	if (item)
+	{
+		switch (item->GetItemEnum())
+		{
+		case eItem::Gift_Skate:
+			m_speed += 100;
+			break;
+		}
+	}
 
 	if (m_bFire)
 	{
 		CBubble* bubble = new CBubble();
-		((CInGameScene*)m_pScene)->m_board->PutItem(m_rect, "bubble", bubble, eInGameObjType::Balloon);
+		((CInGameScene*)m_pScene)->m_board->PutObj(m_rect, "bubble", bubble, eInGameObjType::Balloon);
 		m_bFire = false;
 	}
 

@@ -57,6 +57,7 @@ void CBubble::Die()
 			board->RemoveObj(rect);
 			break;
 		}
+
 	}
 
 	rect = m_rect;

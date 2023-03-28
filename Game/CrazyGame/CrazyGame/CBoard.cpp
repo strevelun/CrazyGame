@@ -28,6 +28,10 @@ void CBoard::SetBoard()
 	m_moveObjBoard.resize(m_mapData.gridY);
 	for (int i = 0; i < m_mapData.gridY; i++)
 		m_moveObjBoard[i].resize(m_mapData.gridX);
+
+	m_itemBoard.resize(m_mapData.gridY);
+	for (int i = 0; i < m_mapData.gridY; i++)
+		m_itemBoard[i].resize(m_mapData.gridX);
 }
 
 bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
@@ -47,7 +51,7 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 	return m_board[_ypos][_xpos] == eInGameObjType::None || m_board[_ypos][_xpos] == eInGameObjType::Item;
 }
 
-void CBoard::PutItem(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type)
+void CBoard::PutObj(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type)
 {
 	int x, y;
 	CObj::RectToPos(_rect, x, y);
@@ -97,12 +101,14 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 	if (m_mapData.gridX <= x) return;
 	if (m_mapData.gridY <= y) return;
 
-	m_board[y][x] = eInGameObjType::None;
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
 	CLayer* layer = scene->FindLayer("Block");
 	CObj* obj = layer->FindObj(_rect);
-	if (obj != nullptr) obj->SetAlive(false);
+	if (obj != nullptr && m_board[y][x] != eInGameObjType::Block_InDestructible) 
+		obj->SetAlive(false);
+
+	m_board[y][x] = eInGameObjType::None;
 }
 
 bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
@@ -117,9 +123,17 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 	CLayer* layer = scene->FindLayer("Character");
 
-	if (IsMovable(x, y, true) == false && m_board[y][x] == eInGameObjType::Block_Destructible)
+	// 가는 길에 부서질 수 없는 블록이면 true리턴함 -> 
+	if (m_board[y][x] == eInGameObjType::Block_InDestructible)
 		return false;
 
+	// 아이템 또는 빈 공간이 아니거나 부서질 수 있는 블록이면 false를 리턴하여 제거.
+	if (IsMovable(x, y, true) == false 
+		|| m_board[y][x] == eInGameObjType::Block_Destructible
+		)
+		return false;
+
+	// 캐릭터가 있다면 다이
 	if (m_moveObjBoard[y][x] == eInGameObjType::Character)
 	{
 		CPlayer* player = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene())->GetPlayer();
@@ -129,6 +143,7 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 	layer = scene->FindLayer("Event");
 
+	// 가는 길에 풍선이 있다면
 	if (m_board[y][x] == eInGameObjType::Balloon)
 	{
 		CObj* obj = layer->FindObj(_rect);
@@ -163,5 +178,23 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 CItem* CBoard::GetItem(D2D1_RECT_F _rect)
 {
-	return nullptr;
+	// 레이어에서 아이템 die하고  
+	int x, y;
+	CObj::RectToPos(_rect, x, y);
+
+	CItem* item = m_itemBoard[y][x];
+	if (!item)
+		return nullptr;
+	item->Die();
+	m_itemBoard[y][x] = nullptr;
+
+	return item;
+}
+
+void CBoard::PutItem(D2D1_RECT_F _rect, CItem* _pItem)
+{
+	int x, y;
+	CObj::RectToPos(_rect, x, y);
+
+	m_itemBoard[y][x] = _pItem;
 }

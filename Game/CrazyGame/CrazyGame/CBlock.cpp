@@ -35,48 +35,52 @@ void CBlock::Die()
 
 	std::random_device random;                              
 	std::mt19937 engine(random());                        
-	std::uniform_int_distribution<int> distribution(0, (int)Item::Gift_None - 1);
+	std::uniform_int_distribution<int> distribution(0, (int)eItem::Gift_None - 1);
 	auto generated = distribution(engine);
+
+	CInGameScene* scene = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene());
+
+	CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+	if (pLayer != nullptr)
+		m_pItem = CObj::CreateObj<CItem>(pLayer);
 
 	std::string strName;
 
-	switch ((Item)generated)
+	switch ((eItem)generated)
 	{
-	case Item::Gift_Boom:
+	case eItem::Gift_Boom:
 		strName = "Gift_Boom";
 		break;
-	case Item::Gift_Bubble:
+	case eItem::Gift_Bubble:
 		strName = "Gift_Bubble";
 		break;
-	case Item::Gift_Dart:
+	case eItem::Gift_Dart:
 		strName = "Gift_Dart";
 		break;
-	case Item::Gift_Devil:
+	case eItem::Gift_Devil:
 		strName = "Gift_Devil";
 		break;
-	case Item::Gift_Owl:
+	case eItem::Gift_Owl:
 		strName = "Gift_Owl";
 		break;
-	case Item::Gift_Potion:
+	case eItem::Gift_Potion:
 		strName = "Gift_Potion";
 		break;
-	case Item::Gift_Shoes:
+	case eItem::Gift_Shoes:
 		strName = "Gift_Shoes";
 		break;
-	case Item::Gift_Skate:
+	case eItem::Gift_Skate:
 		strName = "Gift_Skate";
 		break;
-	case Item::Gift_Turtle:
+	case eItem::Gift_Turtle:
 		strName = "Gift_Turtle";
 		break;
-	case Item::Gift_UFO:
+	case eItem::Gift_UFO:
 		strName = "Gift_UFO";
 		break;
 	}
 
-	CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
-	if(pLayer != nullptr)
-		m_pItem = CObj::CreateObj<CItem>(pLayer);
+	scene->m_board->PutItem(m_rect, m_pItem);
 	m_pItem->SetRect(m_rect);
 	
 	CAnimator* anim = new CAnimator();
@@ -86,7 +90,8 @@ void CBlock::Die()
 	anim->PlayClip(strName);
 	m_pItem->SetAnimation(anim);
 	m_pItem->SetItemName(strName);
+	m_pItem->SetItemEnum((eItem)generated);
 	int x, y;
 	CObj::RectToPos(m_rect, x, y);
-	dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene())->m_board->SetInGameObjType(x, y, eInGameObjType::Item);
+	scene->m_board->SetInGameObjType(x, y, eInGameObjType::Item);
 }

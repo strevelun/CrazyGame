@@ -22,3 +22,8 @@ void CItem::Render(ID2D1RenderTarget* _pRenderTarget)
 		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		frame->rect);
 }
+
+void CItem::Die()
+{
+	m_isAlive = false;
+}

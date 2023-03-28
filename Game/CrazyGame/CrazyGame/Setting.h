@@ -33,7 +33,7 @@ enum class eInGameObjType
     Boss,
 };
 
-enum class Item
+enum class eItem
 {
     Gift_Boom,
     Gift_Bubble,

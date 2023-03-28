@@ -11,6 +11,7 @@ class CBoard
     tMapData m_mapData;
     std::vector<std::vector<eInGameObjType>> m_board;
     std::vector<std::vector<eInGameObjType>> m_moveObjBoard;
+    std::vector<std::vector<CItem*>> m_itemBoard;
 
 public:
     CBoard();
@@ -19,8 +20,9 @@ public:
     void SetBoard();
 
     bool IsMovable(int _xpos, int _ypos, bool _isGridPos);
+    bool IsPlaceable(int _xpos, int _ypos, bool _isGridPos);
 
-    void PutItem(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type);
+    void PutObj(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
 
     tMapData GetMapData() const { return m_mapData; }
@@ -29,5 +31,6 @@ public:
     bool PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
 
     CItem* GetItem(D2D1_RECT_F _rect);
+    void PutItem(D2D1_RECT_F _rect, CItem* _pItem);
 };
 

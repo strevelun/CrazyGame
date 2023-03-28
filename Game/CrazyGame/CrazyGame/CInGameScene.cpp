@@ -104,7 +104,7 @@ void CInGameScene::Init()
 		if (mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
 		{
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 0);
-			y = (i / (mapData.gridX));
+			y = i / mapData.gridX;
 			x = i % mapData.gridX;
 			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Character);
 			m_pPlayer = new CPlayer();
@@ -170,7 +170,7 @@ void CInGameScene::Init()
 		}
 	}
 
-	layer = CreateLayer("Event", 2);
+	layer = CreateLayer("Event", 4);
 }
 
 void CInGameScene::OnBackButtonClicked(const std::string _strName)

@@ -5,13 +5,19 @@
 class CItem :
     public CStaticObj
 {
+    eItem m_eItem;
     std::string m_itemName;
 
 public:
     CItem();
     ~CItem();
     void Render(ID2D1RenderTarget* _pRenderTarget);
-    void SetItemName(std::string _itemName) { m_itemName = _itemName; }
+    void SetItemEnum(eItem _eItem) { m_eItem = _eItem; }
+    void SetItemName(std::string _strName) { m_itemName = _strName; }
+    
+    eItem GetItemEnum() { return m_eItem; }
     std::string GetItemName() { return m_itemName; }
+
+    void Die() override;
 };
 
