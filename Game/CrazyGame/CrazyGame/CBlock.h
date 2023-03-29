@@ -11,6 +11,7 @@ class CBlock :
 public:
     CBlock();
     ~CBlock();
+
     void Render(ID2D1RenderTarget* _pRenderTarget);
 
     void Die() override;

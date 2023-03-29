@@ -134,9 +134,9 @@ void CInGameScene::Init()
 
 			animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_ready"));
 			animClip->SetLoop(false);
-			animClip->SetFrametimeLimit(0.1f);
+			animClip->SetFrametimeLimit(0.2f);
 			anim->AddClip("bazzi_ready", animClip);
-			anim->PlayClip("bazzi_ready");
+			anim->SetClip("bazzi_ready");
 
 			
 			m_pPlayer->SetAnimation(anim);

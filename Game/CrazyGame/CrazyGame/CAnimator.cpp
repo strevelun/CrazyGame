@@ -14,7 +14,7 @@ void CAnimator::AddClip(std::string _strClipName, CAnimationClip* _clip)
 	m_mapClip.insert(std::make_pair(_strClipName, _clip));
 }
 
-void CAnimator::PlayClip(std::string _strClipName)
+void CAnimator::SetClip(std::string _strClipName)
 {
 	std::map<std::string, CAnimationClip*>::iterator iter = m_mapClip.find(_strClipName);
 	if (iter == m_mapClip.end())

@@ -80,18 +80,10 @@ void CBlock::Die()
 		break;
 	}
 
-	scene->m_board->PutItem(m_rect, m_pItem);
-	m_pItem->SetRect(m_rect);
+	m_pItem->Init(m_rect, (eItem)generated, strName);
 	
-	CAnimator* anim = new CAnimator();
-	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(strName);
-	animClip->SetFrametimeLimit(0.2f);
-	anim->AddClip(strName, animClip);
-	anim->PlayClip(strName);
-	m_pItem->SetAnimation(anim);
-	m_pItem->SetItemName(strName);
-	m_pItem->SetItemEnum((eItem)generated);
 	int x, y;
 	CObj::RectToPos(m_rect, x, y);
 	scene->m_board->SetInGameObjType(x, y, eInGameObjType::Item);
+	scene->m_board->PutItem(m_rect, m_pItem);
 }

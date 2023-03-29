@@ -30,6 +30,9 @@ void CLayer::Update()
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
+	if (m_strTag.compare("Block") == 0)
+		m_objList.sort(CLayer::ObjYPosSort);
+
 	for (; iter != iterEnd; )
 	{
 		if (!(*iter)->IsAlive())
@@ -52,8 +55,6 @@ void CLayer::Render(ID2D1RenderTarget* _pRenderTarget)
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
-	if(m_strTag.compare("Block") == 0)
-		m_objList.sort(CLayer::ObjYPosSort);
 
 	for (; iter != iterEnd; iter++)
 	{

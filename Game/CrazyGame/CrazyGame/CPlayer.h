@@ -30,6 +30,7 @@ class CPlayer :
     Dir m_eLastMoveDir = Dir::Down;
     bool m_bFire = false;
     Player_State m_state = Player_State::Ready;
+    Player_State m_prevState = Player_State::Ready;
 
 private:
 
@@ -41,6 +42,9 @@ public:
     void Update();
     void Render(ID2D1RenderTarget* _pRenderTarget);
     void Die() override;
+
+    // state func
+    void MoveState();
 
     std::string GetStrDir(Dir _dir);
 };

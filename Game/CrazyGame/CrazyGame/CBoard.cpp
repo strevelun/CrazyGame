@@ -79,7 +79,7 @@ void CBoard::PutObj(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eI
 			CAnimationClip* newAnimClip = new CAnimationClip(*animClip);
 
 			anim->AddClip(_animClipName, newAnimClip);
-			anim->PlayClip(_animClipName);
+			anim->SetClip(_animClipName);
 			_obj->SetAnimation(anim);
 
 			_obj->SetRect({
@@ -161,7 +161,7 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 		CAnimationClip* newAnimClip = new CAnimationClip(*animClip);
 		splash->SetClipName(_animClipName);
 		anim->AddClip(_animClipName, newAnimClip);
-		anim->PlayClip(_animClipName);
+		anim->SetClip(_animClipName);
 		splash->SetAnimation(anim);
 
 		splash->SetRect({

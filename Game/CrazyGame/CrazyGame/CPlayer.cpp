@@ -64,19 +64,8 @@ void CPlayer::Input()
 void CPlayer::Update()
 {
 	CObj::Update();
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = m_rect.left - stageFrameOffsetX;
-	int right = m_rect.right - stageFrameOffsetX;
-	int top = m_rect.top - stageFrameOffsetY ;
-	int bottom = m_rect.bottom - stageFrameOffsetY;
-	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
-
-	m_prevXPos = m_xpos;
-	m_prevYPos = m_ypos;
-	m_xpos = (left + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
-	m_ypos = (top + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+	CObj::RectToPos(m_rect, m_xpos, m_ypos);
 
 #ifdef _DEBUG
 	char str[50] = "";
@@ -84,72 +73,54 @@ void CPlayer::Update()
 	OutputDebugStringA(str);
 #endif
 
-	MoveOnMoveObjBoard();
 
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
+
+	// ÇöÀç != ÀÌÀü »óÅÂ : PlayClip 
 
 	switch (m_state)
 	{
 	case Player_State::Ready:
-		m_pAnim->PlayClip("bazzi_ready");
+		m_pAnim->SetClip("bazzi_ready");
 
 		break;
 	case Player_State::Idle:
 		break;
 	case Player_State::Move:
-		if (m_eMoveDir == Dir::Left)
-		{
-			if (board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-				&& board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
-			{
-				m_rect.left -= m_speed * deltaTime;
-				m_rect.right -= m_speed * deltaTime;
-				m_pAnim->PlayClip("bazzi_left");
-			}
-		}
-		else if (m_eMoveDir == Dir::Right)
-		{
-			if (board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-				&& board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
-			{
-				m_rect.left += m_speed * deltaTime;
-				m_rect.right += m_speed * deltaTime;
-				m_pAnim->PlayClip("bazzi_right");
-			}
-		}
-		else if (m_eMoveDir == Dir::Up)
-		{
-			if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false)
-				&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false))
-			{
-				m_rect.top -= m_speed * deltaTime;
-				m_rect.bottom -= m_speed * deltaTime;
-				m_pAnim->PlayClip("bazzi_up");
-			}
-		}
-		else if (m_eMoveDir == Dir::Down)
-		{
-			if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
-				&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false))
-			{
-				m_rect.top += m_speed * deltaTime;
-				m_rect.bottom += m_speed * deltaTime;
-				m_pAnim->PlayClip("bazzi_down");
-			}
-		}
+		MoveOnMoveObjBoard();
+		MoveState();
 		break;
 	case Player_State::Die:
-		m_pAnim->PlayClip("bazzi_die");
+		//m_pAnim->PlayClip("bazzi_die");
 		break;
 	}
 
 	CItem* item = board->GetItem(m_rect);
+
 	if (item)
 	{
 		switch (item->GetItemEnum())
 		{
 		case eItem::Gift_Skate:
 			m_speed += 100;
+			break;
+		case eItem::Gift_Turtle:
+			break;
+		case eItem::Gift_UFO:
+			break;
+		case eItem::Gift_Boom:
+			break;
+		case eItem::Gift_Bubble:
+			break;
+		case eItem::Gift_Dart:
+			break;
+		case eItem::Gift_Devil:
+			break;
+		case eItem::Gift_Owl:
+			break;
+		case eItem::Gift_Potion:
+			break;
+		case eItem::Gift_Shoes:
 			break;
 		}
 	}
@@ -168,6 +139,8 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 	CAnimationClip* clip = nullptr;
 	tAnimationFrame* frame = nullptr;
 
+	m_pAnim->GetCurClip()->Update();
+
 	switch (m_state)
 	{
 	case Player_State::Ready:
@@ -181,10 +154,6 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 			m_state = Player_State::Idle;
 			return;
 		}
-
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
 	}
 	break;
 	case Player_State::Idle:
@@ -194,10 +163,6 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 		clip = m_pAnim->GetClip(strDir);
 		if (!clip) return;
 		frame = clip->GetFirstFrame();
-
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
 	}
 		break;
 	case Player_State::Move:
@@ -207,10 +172,6 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 		clip = m_pAnim->GetClip(strDir);
 		if (!clip) return;
 		frame = clip->GetCurFrame();
-
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
 	}
 		break;
 	case Player_State::Die:
@@ -224,13 +185,13 @@ void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
 			m_isAlive = false;
 			return;
 		}
-
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
 	}
 		break;
 	}
+
+	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
+		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+		frame->rect);
 }
 
 void CPlayer::Die()
@@ -238,6 +199,62 @@ void CPlayer::Die()
 	m_state = Player_State::Die;
 	//MessageBox(NULL, L"»ç¸Á", L"»ç¸Á", MB_OK);
 
+}
+
+void CPlayer::MoveState()
+{
+	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int left = m_rect.left - stageFrameOffsetX;
+	int right = m_rect.right - stageFrameOffsetX;
+	int top = m_rect.top - stageFrameOffsetY;
+	int bottom = m_rect.bottom - stageFrameOffsetY;
+	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	int x = 0, y = 0;
+
+	if (m_eMoveDir == Dir::Left)
+	{
+		if (board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+			&& board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
+		{
+			x = -1;
+			m_pAnim->SetClip("bazzi_left"); 
+		}
+	}
+	else if (m_eMoveDir == Dir::Right)
+	{
+		if (board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
+			&& board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
+		{
+			x = 1;
+			m_pAnim->SetClip("bazzi_right");
+		}
+	}
+	else if (m_eMoveDir == Dir::Up)
+	{
+		if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false)
+			&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false))
+		{
+			y = -1;
+			m_pAnim->SetClip("bazzi_up");
+		}
+	}
+	else if (m_eMoveDir == Dir::Down)
+	{
+		if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
+			&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false))
+		{
+			y = 1;
+			m_pAnim->SetClip("bazzi_down");
+		}
+	}
+
+	m_rect.left += m_speed * deltaTime * x;
+	m_rect.right += m_speed * deltaTime * x;
+	m_rect.top += m_speed * deltaTime * y;
+	m_rect.bottom += m_speed * deltaTime * y;
 }
 
 std::string CPlayer::GetStrDir(Dir _dir)

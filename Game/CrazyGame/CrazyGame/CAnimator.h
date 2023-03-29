@@ -25,7 +25,7 @@ public:
 	CAnimator();
 	~CAnimator();
 	void AddClip(std::string _strClipName, CAnimationClip* _clip);
-	void PlayClip(std::string _strClipName);
+	void SetClip(std::string _strClipName);
 	CAnimationClip* GetClip(std::string _strClipName) const;
 	CAnimationClip* GetCurClip() const { return m_curClip; }
 
