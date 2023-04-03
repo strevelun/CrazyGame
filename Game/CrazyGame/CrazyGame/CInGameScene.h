@@ -26,6 +26,6 @@ public:
     CPlayer* GetPlayer() const { return m_pPlayer; }
     void SetMapData(tMapData _mapData) { m_board->SetMapData(_mapData); }
     void OnBackButtonClicked(const std::string _strName);
-
+    CBoard* GetBoard() const { return m_board; }
 };
 

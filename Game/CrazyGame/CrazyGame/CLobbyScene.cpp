@@ -47,18 +47,16 @@ void CLobbyScene::Init()
 	CLayer* layer = CreateLayer("MapChoiceButton", INT_MAX);
 
 	// ¹é±×¶ó¿îµå
-	CUIPanel* background = new CUIPanel();
+	CUIPanel* background = new CUIPanel({ 0, 0, 1920.f, 1080.f });
 	background->SetBitmap(bitmap);
-	background->SetRect({ 0, 0, 1920.f, 1080.f });
 	layer->AddObj(background);
 
 	// ºô¸®Áö¸Ê ¹öÆ°
 	bitmap = CResourceManager::GetInst()->Load(L"map_select_village.png");
 	u_int width = bitmap->GetBitmap()->GetPixelSize().width;
 	u_int height = bitmap->GetBitmap()->GetPixelSize().height;
-	CUIButton* btn = new CUIButton("village.map");
+	CUIButton* btn = new CUIButton({ 510.f, 800.f, 510.f + width, 800.f + height }, "village.map");
 	btn->SetBitmap(bitmap);
-	btn->SetRect({ 510.f, 800.f, 510.f + width, 800.f + height });
 	layer->AddObj(btn);
 	tMapData mapData = CResourceManager::GetInst()->LoadMapData(L"village.map");
 	m_mapData.insert(std::make_pair("village.map", mapData));
@@ -68,9 +66,8 @@ void CLobbyScene::Init()
 	bitmap = CResourceManager::GetInst()->Load(L"map_select_pirate.png");
 	width = bitmap->GetBitmap()->GetPixelSize().width;
 	height = bitmap->GetBitmap()->GetPixelSize().height;
-	btn = new CUIButton("pirate.map");
+	btn = new CUIButton({ 810.f, 800.f, 810.f + width, 800.f + height }, "pirate.map");
 	btn->SetBitmap(bitmap);
-	btn->SetRect({ 810.f, 800.f, 810.f + width, 800.f + height });
 	layer->AddObj(btn);
 	mapData = CResourceManager::GetInst()->LoadMapData(L"pirate.map");
 	m_mapData.insert(std::make_pair("pirate.map", mapData));
@@ -80,9 +77,8 @@ void CLobbyScene::Init()
 	bitmap = CResourceManager::GetInst()->Load(L"map_select_test.png");
 	width = bitmap->GetBitmap()->GetPixelSize().width;
 	height = bitmap->GetBitmap()->GetPixelSize().height;
-	btn = new CUIButton("test.map");
+	btn = new CUIButton({ 1110.f, 800.f, 1110.f + width, 800.f + height }, "test.map");
 	btn->SetBitmap(bitmap);
-	btn->SetRect({ 1110.f, 800.f, 1110.f + width, 800.f + height });
 	layer->AddObj(btn);
 	mapData = CResourceManager::GetInst()->LoadMapData(L"test.map");
 	m_mapData.insert(std::make_pair("test.map", mapData));

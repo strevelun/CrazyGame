@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
-#include "Setting.h"
 #include <string>
+
+#include "Setting.h"
 
 class CObj;
 class CItem;
@@ -20,10 +21,11 @@ public:
     void SetBoard();
 
     bool IsMovable(int _xpos, int _ypos, bool _isGridPos);
-    bool IsPlaceable(int _xpos, int _ypos, bool _isGridPos);
+	bool IsGameObjType(int x, int y, eInGameObjType _type);
 
-    void PutObj(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type);
+    void PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
+	void RemoveObj(int _xpos, int _ypos);
 
     tMapData GetMapData() const { return m_mapData; }
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { m_board[_y][_x] = _type; }
@@ -33,4 +35,3 @@ public:
     CItem* GetItem(D2D1_RECT_F _rect);
     void PutItem(D2D1_RECT_F _rect, CItem* _pItem);
 };
-

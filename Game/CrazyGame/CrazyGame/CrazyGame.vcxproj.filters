@@ -161,9 +161,6 @@
     <ClInclude Include="CAnimationClip.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CBoard.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CBubble.h">
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
@@ -196,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="CBlock.h">
       <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CBoard.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

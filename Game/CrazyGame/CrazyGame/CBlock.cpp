@@ -9,7 +9,7 @@
 
 #include <random>
 
-CBlock::CBlock()
+CBlock::CBlock(const D2D1_RECT_F& _rect) : CStaticObj( _rect )
 {
 	//m_pItem = new CItem();
 }
@@ -42,7 +42,10 @@ void CBlock::Die()
 
 	CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
 	if (pLayer != nullptr)
-		m_pItem = CObj::CreateObj<CItem>(pLayer);
+	{
+		m_pItem = new CItem(m_rect);
+		pLayer->AddObj(m_pItem);
+	}
 
 	std::string strName;
 
@@ -80,10 +83,8 @@ void CBlock::Die()
 		break;
 	}
 
-	m_pItem->Init(m_rect, (eItem)generated, strName);
+	m_pItem->Init((eItem)generated, strName);
 	
-	int x, y;
-	CObj::RectToPos(m_rect, x, y);
-	scene->m_board->SetInGameObjType(x, y, eInGameObjType::Item);
+	scene->m_board->SetInGameObjType(m_xpos, m_ypos, eInGameObjType::Item);
 	scene->m_board->PutItem(m_rect, m_pItem);
 }

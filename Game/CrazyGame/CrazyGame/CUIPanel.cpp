@@ -1,6 +1,6 @@
 #include "CUIPanel.h"
 
-CUIPanel::CUIPanel()
+CUIPanel::CUIPanel(const D2D1_RECT_F& _rect) : CUI(_rect)
 {
 }
 

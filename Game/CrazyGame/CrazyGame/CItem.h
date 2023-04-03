@@ -9,9 +9,9 @@ class CItem :
     std::string m_itemName;
 
 public:
-    CItem();
+    CItem(const D2D1_RECT_F _rect);
     ~CItem();
-    void Init(D2D1_RECT_F _rect, eItem _eItem, std::string _strName);
+    void Init(eItem _eItem, std::string _strName);
     void Render(ID2D1RenderTarget* _pRenderTarget);
     void SetItemEnum(eItem _eItem) { m_eItem = _eItem; }
     void SetItemName(std::string _strName) { m_itemName = _strName; }

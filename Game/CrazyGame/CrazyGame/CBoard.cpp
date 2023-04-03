@@ -51,44 +51,36 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 	return m_board[_ypos][_xpos] == eInGameObjType::None || m_board[_ypos][_xpos] == eInGameObjType::Item;
 }
 
-void CBoard::PutObj(D2D1_RECT_F _rect, std::string _animClipName, CObj* _obj, eInGameObjType _type)
+bool CBoard::IsGameObjType(int x, int y, eInGameObjType _type)
 {
-	int x, y;
-	CObj::RectToPos(_rect, x, y);
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%d, %d에 물풍선 놓음\n",x, y );
-	OutputDebugStringA(str);
-#endif
+	if (m_mapData.gridX <= x) return false;
+	if (m_mapData.gridY <= y) return false;
 
-	if (m_mapData.gridX <= x) return;
-	if (m_mapData.gridY <= y) return;
+
+	if (_type == eInGameObjType::Character || _type == eInGameObjType::Monster
+		|| _type == eInGameObjType::Boss)
+		return m_moveObjBoard[y][x] == _type;
+	else
+		return m_board[y][x] == _type;
+}
+
+void CBoard::PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type)
+{
+	if (m_mapData.gridX <= _xpos) return;
+	if (m_mapData.gridY <= _ypos) return;
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	if (m_board[y][x] != eInGameObjType::Balloon)
+	if (m_board[_ypos][_xpos] != eInGameObjType::Balloon)
 	{
 		CLayer* layer = scene->FindLayer("Event");
+
 		if (layer)
 		{
-			m_board[y][x] = _type;
-			CAnimator* anim = new CAnimator;
-			CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_animClipName);
-			animClip->SetFrametimeLimit(0.25f);
-			CAnimationClip* newAnimClip = new CAnimationClip(*animClip);
-
-			anim->AddClip(_animClipName, newAnimClip);
-			anim->SetClip(_animClipName);
-			_obj->SetAnimation(anim);
-
-			_obj->SetRect({
-				(float)x * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-				(float)y * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
-				(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-				(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
-				});
-			layer->AddObj(_obj);
+			m_board[_ypos][_xpos] = _type;
+			if(_obj != nullptr)
+				layer->AddObj(_obj);
 		}
 	}
 }
@@ -111,6 +103,21 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 	m_board[y][x] = eInGameObjType::None;
 }
 
+void CBoard::RemoveObj(int _xpos, int _ypos)
+{
+	if (m_mapData.gridX <= _xpos) return;
+	if (m_mapData.gridY <= _ypos) return;
+
+	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
+
+	CLayer* layer = scene->FindLayer("Block");
+	CObj* obj = layer->FindObj(_xpos, _ypos);
+	if (obj != nullptr && m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
+		obj->SetAlive(false);
+
+	m_board[_ypos][_xpos] = eInGameObjType::None;
+}
+
 bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 {
 	int x, y;
@@ -121,55 +128,17 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	CLayer* layer = scene->FindLayer("Character");
-
-	// 가는 길에 부서질 수 없는 블록이면 true리턴함 -> 
-	if (m_board[y][x] == eInGameObjType::Block_InDestructible)
-		return false;
-
-	// 아이템 또는 빈 공간이 아니거나 부서질 수 있는 블록이면 false를 리턴하여 제거.
-	if (IsMovable(x, y, true) == false 
-		|| m_board[y][x] == eInGameObjType::Block_Destructible
-		)
-		return false;
-
-	// 캐릭터가 있다면 다이
-	if (m_moveObjBoard[y][x] == eInGameObjType::Character)
-	{
-		CPlayer* player = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene())->GetPlayer();
-		if (player)
-			player->Die();
-	}
-
-	layer = scene->FindLayer("Event");
-
-	// 가는 길에 풍선이 있다면
-	if (m_board[y][x] == eInGameObjType::Balloon)
-	{
-		CObj* obj = layer->FindObj(_rect);
-		if (obj) obj->SetAlive(false);
-		return false;
-	}
-
+	 CLayer*  layer = scene->FindLayer("Event");
 
 	if (layer)
 	{
-		CSplash* splash = new CSplash();
-		CAnimator* anim = new CAnimator;
-		CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_animClipName);
-		animClip->SetFrametimeLimit(0.1f);
-		CAnimationClip* newAnimClip = new CAnimationClip(*animClip);
-		splash->SetClipName(_animClipName);
-		anim->AddClip(_animClipName, newAnimClip);
-		anim->SetClip(_animClipName);
-		splash->SetAnimation(anim);
-
-		splash->SetRect({
+		CSplash* splash = new CSplash({
 			(float)x * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
 			(float)y * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
 			(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
 			(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
-			});
+			}, _animClipName);
+
 		layer->AddObj(splash);
 	}
 

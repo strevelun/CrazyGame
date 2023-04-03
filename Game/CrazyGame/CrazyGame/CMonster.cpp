@@ -1,7 +1,7 @@
 #include "CMonster.h"
 #include "CBitmap.h"
 
-CMonster::CMonster()
+CMonster::CMonster(const D2D1_RECT_F& _rect) : CMoveObj(_rect)
 {
 }
 

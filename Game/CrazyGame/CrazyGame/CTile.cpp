@@ -2,7 +2,7 @@
 #include "CResourceManager.h"
 #include "CBitmap.h"
 
-CTile::CTile()
+CTile::CTile(const D2D1_RECT_F& _rect) : CStaticObj(_rect)
 {
 }
 

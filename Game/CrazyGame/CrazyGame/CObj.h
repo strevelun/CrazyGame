@@ -26,14 +26,14 @@ class CObj
 protected:
 	friend class CLayer;
 
-	CBitmap*						m_pBitmap;
+	CBitmap* m_pBitmap;
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
 
 	int m_xpos, m_ypos;
 	int m_prevXPos, m_prevYPos;
 
-	tSprite* m_sprite;
+	tSprite* m_sprite; // 	CBitmap*						m_pBitmap;
 	CAnimator* m_pAnim = nullptr;
 	bool m_isAlive = true;
 
@@ -41,13 +41,14 @@ protected:
 
 public:
 	CObj();
+	CObj(const D2D1_RECT_F& _rect);
 	~CObj();
 
 	void SetBitmap(CBitmap* _bitmap) { m_pBitmap = _bitmap; }
-	void SetRect(D2D1_RECT_F _rect){ m_rect = _rect; }
 	void SetAnimation(CAnimator* _anim) { m_pAnim = _anim; }
 
 	D2D1_RECT_F GetRect() const { return m_rect; }
+	D2D1_POINT_2U GetPoint() const { return D2D1::Point2U(m_xpos, m_ypos); }
 
 	template <typename T>
 	static T* CreateObj(CLayer* _pLayer = nullptr);

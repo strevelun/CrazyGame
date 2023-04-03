@@ -32,5 +32,6 @@ public:
 	void DeleteAllObj();
 
 	CObj* FindObj(D2D1_RECT_F _rect);
+	CObj* FindObj(int _xpos, int _ypos);
 };
 

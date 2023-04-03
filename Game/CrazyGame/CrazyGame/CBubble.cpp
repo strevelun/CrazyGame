@@ -1,15 +1,19 @@
 #include "CBubble.h"
-#include "CAnimator.h"
 #include "Setting.h"
 #include "CResourceManager.h"
 #include "CBitmap.h"
 #include "CTimer.h"
-#include "CAnimationClip.h"
 #include "CSceneManager.h"
 #include "CInGameScene.h"
 
-CBubble::CBubble()
-{
+
+CBubble::CBubble(const D2D1_RECT_F& _rect) : CObj(_rect)
+{	
+	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip("bubble"));
+	m_animClip.SetFrametimeLimit(0.25f);
+
+	m_animator.AddClip("bubble", &m_animClip);
+	m_animator.SetClip("bubble");
 }
 
 CBubble::~CBubble()
@@ -18,7 +22,10 @@ CBubble::~CBubble()
 
 void CBubble::Update()
 {
-	CObj::Update();
+	// CObj::Update();
+
+	m_animator.Update();
+
 	m_elapsedTime += CTimer::GetInst()->GetDeltaTime();
 	if (m_elapsedTime >= m_dieTime)
 	{
@@ -27,10 +34,8 @@ void CBubble::Update()
 }
 
 void CBubble::Render(ID2D1RenderTarget* _pRenderTarget)
-{
-	CAnimationClip* clip = m_pAnim->GetClip("bubble");
-	if (!clip) return;
-	tAnimationFrame* frame = clip->GetCurFrame();
+{;
+	tAnimationFrame* frame = m_animClip.GetCurFrame();
 
 	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
@@ -40,11 +45,9 @@ void CBubble::Render(ID2D1RenderTarget* _pRenderTarget)
 void CBubble::Die()
 {
 	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
+	int xpos, ypos;
 
-	if (board->PutSplash(m_rect, "Explosion_center") == false)
-	{
-		board->RemoveObj(m_rect);
-	}
+	board->PutSplash(m_rect, "Explosion_center");
 
 	D2D1_RECT_F rect = m_rect;
 
@@ -52,12 +55,15 @@ void CBubble::Die()
 	{
 		rect.left -= BOARD_BLOCK_SIZE;
 		rect.right -= BOARD_BLOCK_SIZE;
-		if (board->PutSplash(rect, "Explosion_left") == false)
+		CObj::RectToPos(rect, xpos, ypos);
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+			break;
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(rect);
+			board->RemoveObj(xpos, ypos);
 			break;
 		}
-
+		board->PutSplash(rect, "Explosion_left");
 	}
 
 	rect = m_rect;
@@ -66,11 +72,15 @@ void CBubble::Die()
 	{
 		rect.left += BOARD_BLOCK_SIZE;
 		rect.right += BOARD_BLOCK_SIZE;
-		if (board->PutSplash(rect, "Explosion_right") == false)
+		CObj::RectToPos(rect, xpos, ypos);
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+			break;
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(rect);
+			board->RemoveObj(xpos, ypos);
 			break;
 		}
+		board->PutSplash(rect, "Explosion_right");
 	}
 
 	rect = m_rect;
@@ -79,11 +89,15 @@ void CBubble::Die()
 	{
 		rect.top -= BOARD_BLOCK_SIZE;
 		rect.bottom -= BOARD_BLOCK_SIZE;
-		if (board->PutSplash(rect, "Explosion_up") == false)
+		CObj::RectToPos(rect, xpos, ypos);
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+			break;
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(rect);
+			board->RemoveObj(xpos, ypos);
 			break;
 		}
+		board->PutSplash(rect, "Explosion_up");
 	}
 
 	rect = m_rect;
@@ -92,11 +106,15 @@ void CBubble::Die()
 	{
 		rect.top += BOARD_BLOCK_SIZE;
 		rect.bottom += BOARD_BLOCK_SIZE;
-		if (board->PutSplash(rect, "Explosion_down") == false)
+		CObj::RectToPos(rect, xpos, ypos);
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+			break;
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(rect);
+			board->RemoveObj(xpos, ypos);
 			break;
 		}
+		board->PutSplash(rect, "Explosion_down");
 	}
 }
  

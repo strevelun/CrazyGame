@@ -4,7 +4,7 @@
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 
-CItem::CItem()
+CItem::CItem(const D2D1_RECT_F _rect) : CStaticObj(_rect)
 {
 
 }
@@ -13,7 +13,7 @@ CItem::~CItem()
 {
 }
 
-void CItem::Init(D2D1_RECT_F _rect, eItem _eItem, std::string _strName)
+void CItem::Init(eItem _eItem, std::string _strName)
 {
 	CAnimator* anim = new CAnimator();
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_strName);
@@ -23,7 +23,6 @@ void CItem::Init(D2D1_RECT_F _rect, eItem _eItem, std::string _strName)
 	SetAnimation(anim);
 	SetItemName(_strName);
 	SetItemEnum((eItem)_eItem);
-	m_rect = _rect;
 }
 
 void CItem::Render(ID2D1RenderTarget* _pRenderTarget)

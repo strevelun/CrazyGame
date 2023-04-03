@@ -94,3 +94,18 @@ CObj* CLayer::FindObj(D2D1_RECT_F _rect)
 
 	return nullptr;
 }
+
+CObj* CLayer::FindObj(int _xpos, int _ypos)
+{
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		D2D1_POINT_2U point = (*iter)->GetPoint();
+		if (point.x == _xpos && point.y == _ypos)
+			return *iter;
+	}
+
+	return nullptr;
+}

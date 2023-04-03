@@ -3,21 +3,64 @@
 #include "CResourceManager.h"
 #include "CAnimator.h"
 #include "CBitmap.h"
+#include "CSceneManager.h"
+#include "CInGameScene.h"
+#include "CBoard.h"
+#include "CItem.h"
+#include "CPlayer.h"
+
+CSplash::CSplash(const D2D1_RECT_F& _rect, std::string _animClipName) : CObj(_rect)
+{
+	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip(_animClipName));
+	m_animClip.SetFrametimeLimit(0.1f);
+	m_animator.AddClip(_animClipName, &m_animClip);
+	m_animator.SetClip(_animClipName);
+
+	m_rect = _rect;
+	CObj::RectToPos(m_rect, m_xpos, m_ypos);
+}
+
+CSplash::~CSplash()
+{
+}
 
 void CSplash::Update()
 {
-	CObj::Update();
-	CAnimationClip* clip = m_pAnim->GetCurClip();
+	CScene* scene = CSceneManager::GetInst()->GetCurScene();
+	CBoard* pBoard = dynamic_cast<CInGameScene*>(scene)->GetBoard();
+	
+	if (pBoard->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Item))
+	{
+		pBoard->RemoveObj(m_rect);
+	}
 
-	if (clip->GetNumOfFrame() - 1 <= clip->GetCurFrameIdx())
+	if (pBoard->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Balloon))
+	{
+		CLayer* layer = scene->FindLayer("Event");		
+		CObj* obj = layer->FindObj(m_rect);
+		if (obj)
+		{
+			obj->SetAlive(false);
+			pBoard->RemoveObj(m_rect);
+		}
+	}
+
+	if (pBoard->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Character))
+	{
+		CPlayer* player = dynamic_cast<CInGameScene*>(scene)->GetPlayer();
+		if (player)
+			player->Die();
+	}
+
+	m_animator.Update();
+
+	if (m_animClip.GetNumOfFrame() - 1 <= m_animClip.GetCurFrameIdx())
 		m_isAlive = false;
 }
 
 void CSplash::Render(ID2D1RenderTarget* _pRenderTarget)
 {
-	CAnimationClip* clip = m_pAnim->GetClip(m_clipName);
-	if (!clip) return;
-	tAnimationFrame* frame = clip->GetCurFrame();
+	tAnimationFrame* frame = m_animClip.GetCurFrame();
 
 	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,

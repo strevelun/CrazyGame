@@ -9,7 +9,7 @@ class CBlock :
     CItem* m_pItem = nullptr;
 
 public:
-    CBlock();
+    CBlock(const D2D1_RECT_F& _rect);
     ~CBlock();
 
     void Render(ID2D1RenderTarget* _pRenderTarget);

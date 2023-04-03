@@ -4,6 +4,7 @@
 
 class CScene;
 class CAnimator;
+class CAnimationClip;
 
 enum class Dir
 {
@@ -31,11 +32,12 @@ class CPlayer :
     bool m_bFire = false;
     Player_State m_state = Player_State::Ready;
     Player_State m_prevState = Player_State::Ready;
+    CAnimationClip* m_animDir[4];
 
 private:
 
 public:
-    CPlayer();
+    CPlayer(const D2D1_RECT_F& _rect);
     ~CPlayer();
 
     void Input();

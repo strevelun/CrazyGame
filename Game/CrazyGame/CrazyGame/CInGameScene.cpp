@@ -31,13 +31,11 @@ void CInGameScene::Init()
 
 	CLayer* layer = CreateLayer("InGameUI", 0);
 
-	CUIPanel* stageFrame = new CUIPanel();
+	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 1420.f, 1080 });
 	stageFrame->SetBitmap(bitmap);
-	stageFrame->SetRect({ 0, 0, 1420.f, 1080 });
 	layer->AddObj(stageFrame);
 
-	CUIButton* backButton = new CUIButton("BackButton");
-	backButton->SetRect({ 1150, 1010, 1400, 1080 });
+	CUIButton* backButton = new CUIButton({ 1150, 1010, 1400, 1080 }, "BackButton");
 	backButton->SetCallback(this, &CInGameScene::OnBackButtonClicked);
 	layer->AddObj(backButton);
 
@@ -55,13 +53,12 @@ void CInGameScene::Init()
 		if (mapData.vecBlockData[i].type != eType::Tile)
 			continue;
 
-		CTile* tile = new CTile();
-		tile->SetRect(D2D1::RectF(
+		CTile* tile = new CTile(D2D1::RectF(
 			mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + stageFrameOffsetX,
 			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + stageFrameOffsetY,
-			mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE  + stageFrameOffsetX,
-			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE  + stageFrameOffsetY
-			));
+			mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+		));
 		tile->SetBitmapIdx(mapData.vecBlockData[i].idx);
 		tile->SetSprite(CResourceManager::GetInst()->GetImage("Tile", mapData.vecBlockData[i].idx));
 		layer->AddObj(tile);
@@ -78,13 +75,13 @@ void CInGameScene::Init()
 
 		float right = mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX - (sprite->size.width < 30 ? BOARD_BLOCK_SIZE / 2 + 5 : 0);
 
-		CBlock* block = new CBlock();
-		block->SetRect(D2D1::RectF(
+		CBlock* block = new CBlock(D2D1::RectF(
 			mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + stageFrameOffsetX,
 			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE - (sprite->size.height * ((float)BOARD_BLOCK_SIZE / 40)) + 137 - (sprite->size.width < 30 ? 7 : 0),
 			right,
-			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE  - (sprite->size.width < 30 ? 7 : 0) + stageFrameOffsetY
+			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE - (sprite->size.width < 30 ? 7 : 0) + stageFrameOffsetY
 		));
+
 		block->SetBitmapIdx(mapData.vecBlockData[i].idx);
 		block->SetSprite(sprite);
 		if (sprite->size.width < 30)
@@ -107,39 +104,12 @@ void CInGameScene::Init()
 			y = i / mapData.gridX;
 			x = i % mapData.gridX;
 			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Character);
-			m_pPlayer = new CPlayer();
-			m_pPlayer->SetRect({
+			m_pPlayer = new CPlayer({
 				sprite->rect.left + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
 				sprite->rect.top + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY,
-				sprite->rect.right + (x * BOARD_BLOCK_SIZE)   + stageFrameOffsetX ,
-				sprite->rect.bottom + (y * BOARD_BLOCK_SIZE)   + stageFrameOffsetY });
-			CAnimator* anim = new CAnimator;
-			CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_left");
-			animClip->SetFrametimeLimit(0.1f);
-			anim->AddClip("bazzi_left", animClip);
-			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_right");
-			animClip->SetFrametimeLimit(0.1f);
-			anim->AddClip("bazzi_right", animClip);
-			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_up");
-			animClip->SetFrametimeLimit(0.1f);
-			anim->AddClip("bazzi_up", animClip);
-			animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_down");
-			animClip->SetFrametimeLimit(0.1f);
-			anim->AddClip("bazzi_down", animClip);
-
-			animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_die"));
-			animClip->SetLoop(false);
-			animClip->SetFrametimeLimit(0.2f);
-			anim->AddClip("bazzi_die", animClip);
-
-			animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_ready"));
-			animClip->SetLoop(false);
-			animClip->SetFrametimeLimit(0.2f);
-			anim->AddClip("bazzi_ready", animClip);
-			anim->SetClip("bazzi_ready");
-
-			
-			m_pPlayer->SetAnimation(anim);
+				sprite->rect.right + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX ,
+				sprite->rect.bottom + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY });
+ 
 			m_pPlayer->SetSprite(sprite);
 			m_pPlayer->SetScene(this);
 			layer->AddObj(m_pPlayer);
@@ -150,10 +120,9 @@ void CInGameScene::Init()
 			y = i / mapData.gridX;
 			x = i % mapData.gridX;
 			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Boss);
-			CMonster* monster = new CMonster();
-			monster->SetRect({
+			CMonster* monster = new CMonster({
 				(x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
-				(y * BOARD_BLOCK_SIZE)  + stageFrameOffsetY - sprite->size.height * 1.0f + BOARD_BLOCK_SIZE,
+				(y * BOARD_BLOCK_SIZE) + stageFrameOffsetY - sprite->size.height * 1.0f + BOARD_BLOCK_SIZE,
 				(x * BOARD_BLOCK_SIZE) + sprite->size.width + stageFrameOffsetX ,
 				(y * BOARD_BLOCK_SIZE) + sprite->size.height + stageFrameOffsetY - sprite->size.height * 1.0f + BOARD_BLOCK_SIZE });
 			CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
