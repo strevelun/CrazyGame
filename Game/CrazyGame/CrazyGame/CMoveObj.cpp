@@ -13,8 +13,8 @@ CMoveObj::~CMoveObj()
 void CMoveObj::MoveOnMoveObjBoard(eInGameObjType _type)
 {
 	auto scene = dynamic_cast<CInGameScene*>(m_pScene);
-	scene->m_board->SetObjTypeInMoveObjBoard(m_prevXPos, m_prevYPos, eInGameObjType::None);
-	scene->m_board->SetObjTypeInMoveObjBoard(m_xpos, m_ypos, _type);
-	m_prevXPos = m_xpos;
-	m_prevYPos = m_ypos;
+	scene->m_board->SetObjTypeInMoveObjBoard(m_prevCellXPos, m_prevCellYPos, eInGameObjType::None);
+	scene->m_board->SetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos, _type);
+	m_prevCellXPos = m_cellXPos;
+	m_prevCellYPos = m_cellYPos;
 }

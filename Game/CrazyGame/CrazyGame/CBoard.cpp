@@ -34,11 +34,8 @@ void CBoard::SetBoard()
 		m_itemBoard[i].resize(m_mapData.gridX);
 }
 
-bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
+bool CBoard::IsMovable(u_int _xpos, u_int _ypos, bool _isGridPos)
 {
-	if (_xpos < 0) return false;
-	if (_ypos < 0) return false;
-
 	if (_isGridPos == false)
 	{
 		_xpos /= BOARD_BLOCK_SIZE;
@@ -49,6 +46,17 @@ bool CBoard::IsMovable(int _xpos, int _ypos, bool _isGridPos)
 	if (m_mapData.gridY <= _ypos) return false;
 
 	return m_board[_ypos][_xpos] == eInGameObjType::None || m_board[_ypos][_xpos] == eInGameObjType::Item;
+}
+
+bool CBoard::IsMovable(u_int _xpos, u_int _ypos)
+{
+	if (m_mapData.gridX <= _xpos) return false;
+	if (m_mapData.gridY <= _ypos) return false;
+
+	if (m_board[_ypos][_xpos] == eInGameObjType::Block_Destructible || m_board[_ypos][_xpos] == eInGameObjType::Block_InDestructible)
+		return false;
+
+	return true;
 }
 
 bool CBoard::IsGameObjType(int x, int y, eInGameObjType _type)

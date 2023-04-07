@@ -20,7 +20,8 @@ public:
     void SetMapData(tMapData _mapData) { m_mapData = _mapData; }
     void SetBoard();
 
-    bool IsMovable(int _xpos, int _ypos, bool _isGridPos);
+    bool IsMovable(u_int _xpos, u_int _ypos, bool _isGridPos);
+    bool IsMovable(u_int _xpos, u_int _ypos);
 	bool IsGameObjType(int x, int y, eInGameObjType _type);
 
     void PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type);

@@ -10,7 +10,7 @@ CObj::CObj()
 CObj::CObj(const D2D1_RECT_F& _rect)
 {
 	m_rect = _rect;
-	CObj::RectToPos(_rect, m_xpos, m_ypos);
+	CObj::RectToPos(_rect, m_cellXPos, m_cellYPos);
 }
 
 CObj::~CObj()

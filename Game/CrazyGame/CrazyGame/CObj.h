@@ -30,8 +30,9 @@ protected:
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
 
-	int m_xpos, m_ypos;
-	int m_prevXPos, m_prevYPos;
+	float m_xpos, m_ypos;
+	int m_cellXPos, m_cellYPos;
+	int m_prevCellXPos, m_prevCellYPos;
 
 	tSprite* m_sprite; // 	CBitmap*						m_pBitmap;
 	CAnimator* m_pAnim = nullptr;
@@ -48,7 +49,7 @@ public:
 	void SetAnimation(CAnimator* _anim) { m_pAnim = _anim; }
 
 	D2D1_RECT_F GetRect() const { return m_rect; }
-	D2D1_POINT_2U GetPoint() const { return D2D1::Point2U(m_xpos, m_ypos); }
+	D2D1_POINT_2U GetPoint() const { return D2D1::Point2U(m_cellXPos, m_cellYPos); }
 
 	template <typename T>
 	static T* CreateObj(CLayer* _pLayer = nullptr);

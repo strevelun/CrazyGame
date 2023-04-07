@@ -6,14 +6,7 @@ class CScene;
 class CAnimator;
 class CAnimationClip;
 
-enum class Dir
-{
-    Up,
-    Down,
-    Right,
-    Left,
-    None
-};
+
 
 enum class Player_State
 {
@@ -33,6 +26,7 @@ class CPlayer :
     Player_State m_state = Player_State::Ready;
     Player_State m_prevState = Player_State::Ready;
     CAnimationClip* m_animDir[4];
+    bool m_bKickable = true;
 
 private:
 

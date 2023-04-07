@@ -49,6 +49,15 @@ enum class eItem
 
 };
 
+enum class Dir
+{
+    Up,
+    Down,
+    Right,
+    Left,
+    None
+};
+
 typedef struct _tBlockData
 {
     u_int x, y;

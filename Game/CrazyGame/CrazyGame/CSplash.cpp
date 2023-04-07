@@ -17,7 +17,7 @@ CSplash::CSplash(const D2D1_RECT_F& _rect, std::string _animClipName) : CObj(_re
 	m_animator.SetClip(_animClipName);
 
 	m_rect = _rect;
-	CObj::RectToPos(m_rect, m_xpos, m_ypos);
+	CObj::RectToPos(m_rect, m_cellXPos, m_cellYPos);
 }
 
 CSplash::~CSplash()
@@ -29,12 +29,12 @@ void CSplash::Update()
 	CScene* scene = CSceneManager::GetInst()->GetCurScene();
 	CBoard* pBoard = dynamic_cast<CInGameScene*>(scene)->GetBoard();
 	
-	if (pBoard->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Item))
+	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item))
 	{
 		pBoard->RemoveObj(m_rect);
 	}
 
-	if (pBoard->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Balloon))
+	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
 	{
 		CLayer* layer = scene->FindLayer("Event");		
 		CObj* obj = layer->FindObj(m_rect);
@@ -45,7 +45,7 @@ void CSplash::Update()
 		}
 	}
 
-	if (pBoard->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Character))
+	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Character))
 	{
 		CPlayer* player = dynamic_cast<CInGameScene*>(scene)->GetPlayer();
 		if (player)

@@ -24,9 +24,62 @@ void CBubble::Update()
 {
 	// CObj::Update();
 
+	CBoard* pBoard = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
+
+	float speed = 1000;
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	int x = 0, y = 0;
+
+
+
+	if (m_bMoving)
+	{
+		D2D1_RECT_F rect = m_rect;
+
+		switch (m_eMovingDir)
+		{
+		case Dir::Left:
+			x = -1;
+			rect.left -= BOARD_BLOCK_SIZE / 2;
+			break;
+		case Dir::Right:
+			x = 1;
+			rect.right += BOARD_BLOCK_SIZE / 2;
+			break;
+		case Dir::Up:
+			y = -1;
+			rect.top -= BOARD_BLOCK_SIZE / 2;
+			break;
+		case Dir::Down:
+			y = 1;
+			rect.bottom += BOARD_BLOCK_SIZE / 2;
+			break;
+		}
+
+		
+		CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
+
+		if (!pBoard->IsMovable(m_cellXPos, m_cellYPos))
+		{
+			int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+			int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+			m_bMoving = false;
+			m_rect.left = (m_cellXPos - x) * BOARD_BLOCK_SIZE + stageFrameOffsetX;
+			m_rect.right = (m_cellXPos - x) * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
+			return;
+		}
+
+		m_rect.left += speed * deltaTime * x;
+		m_rect.right += speed * deltaTime * x;
+		m_rect.top += speed * deltaTime * y;
+		m_rect.bottom += speed * deltaTime * y;
+
+	}
+
 	m_animator.Update();
 
-	m_elapsedTime += CTimer::GetInst()->GetDeltaTime();
+	m_elapsedTime += deltaTime;
 	if (m_elapsedTime >= m_dieTime)
 	{
 		m_isAlive = false;
@@ -40,6 +93,12 @@ void CBubble::Render(ID2D1RenderTarget* _pRenderTarget)
 	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
 		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		frame->rect);
+}
+
+void CBubble::Move(Dir _eDir)
+{
+	m_bMoving = true;
+	m_eMovingDir = _eDir;
 }
 
 void CBubble::Die()
