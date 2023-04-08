@@ -31,8 +31,8 @@ void CInGameScene::Init()
 
 	CLayer* layer = CreateLayer("InGameUI", 0);
 
-	//CUIPanel* stageFrame = new CUIPanel({ 0, 0, 1420.f, 1080 });
-	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 800.f, 600.f });
+	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 1420.f, 1080 });
+	//CUIPanel* stageFrame = new CUIPanel({ 0, 0, 800.f, 600.f });
 	stageFrame->SetBitmap(bitmap);
 	layer->AddObj(stageFrame);
 
@@ -44,8 +44,8 @@ void CInGameScene::Init()
 
 	layer = CreateLayer("Tile", 1);
 
-	int stageFrameOffsetX = 20;
-	int stageFrameOffsetY = 40;
+	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
 
 	tMapData mapData = m_board->GetMapData();
 	u_int size = mapData.vecBlockData.size();

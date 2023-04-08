@@ -40,7 +40,7 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect) : CMoveObj(_rect)
 	for (int i = 0; i < (int)Dir::None; i++)
 	{
 		m_animDir[i] = m_pAnim->GetClip(GetStrDir((Dir)i));
-	}
+	}	
 
 	m_xpos = _rect.left + (BOARD_BLOCK_SIZE / 2);
 	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);
@@ -101,9 +101,13 @@ void CPlayer::Update()
 
 	D2D1_RECT_F rect = m_rect;
 	rect.top += 20;
-	CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
+	//CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
 
+	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
 
+	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE ;
 
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
 
@@ -166,7 +170,7 @@ if (m_bFire)
 		(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
 		});
 	D2D1_POINT_2U point = bubble->GetPoint();
-	((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
+ 	((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
 	m_bFire = false;
 }
 }
@@ -249,83 +253,39 @@ void CPlayer::MoveState()
 
 #ifdef _DEBUG
 	char str[50] = "";
-	sprintf_s(str, "%f\n", m_xpos);
+	sprintf_s(str, "%d, %d -> %f, %f\n", m_cellXPos, m_cellYPos, m_xpos, m_ypos);
 	OutputDebugStringA(str);
 #endif
 
 
 	if (m_eMoveDir == Dir::Left)
 	{
-		/*
-		if (!board->IsMovable(cellX - 1, cellY))
-		{
-			// m_xpos °¡ Áß¾ÓÀÇ ¹ÝÀ» ³ÑÀ» ¼ö ¾øÀ½. 
-			if( ÇöÀçÁÂÇ¥ >= ¼¿Áß¾ÓÁÂÇ¥ ) m_pos--
-		}
-		else
-		{
-			m_xpos--;
-		}
-		*/
-
 		if (!board->IsMovable(m_cellXPos - 1, m_cellYPos)) // ÇöÀç ¼¿ ÁÂÇ¥ - 1ÀÌ ¸ø°¡´Â °÷ÀÌ¶ó¸é
 		{
-			if (m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) <= m_xpos)
-				m_xpos--;
+			if (m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX <= m_xpos)
+				x = -1;
 		}
-
-		xpos = (centerX - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
-		ypos = centerY / BOARD_BLOCK_SIZE;
-		if (!board->IsMovable(xpos, temp / BOARD_BLOCK_SIZE) && bottom < (ypos + 1) * BOARD_BLOCK_SIZE
-			&& board->IsMovable(xpos, bottom / BOARD_BLOCK_SIZE))
-		{
-			y = 1;
-		}
-		else if (!board->IsMovable(xpos, temp / BOARD_BLOCK_SIZE) && top < (ypos - 1) * BOARD_BLOCK_SIZE
-			&& board->IsMovable(xpos, top / BOARD_BLOCK_SIZE))
-		{
-			y = -1;
-		}
-		else if(board->IsMovable(xpos, ypos))
-		{
+		else
 			x = -1;
-		}
-
-		if (m_bKickable)
-		{
-			if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
-			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
-				CObj* pObj = pLayer->FindObj(xpos, ypos);
-				if (pObj)
-				{
-					((CBubble*)pObj)->Move(m_eMoveDir);
-				}
-			}
-		}
-
+		
 		m_pAnim->SetClip("bazzi_left");
 	}
 	else if (m_eMoveDir == Dir::Right)
 	{
-		xpos = (centerX + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
-		ypos = centerY / BOARD_BLOCK_SIZE;
-		if (!board->IsMovable(xpos, temp / BOARD_BLOCK_SIZE) && bottom < (ypos + 1) * BOARD_BLOCK_SIZE
-			&& board->IsMovable(xpos, bottom / BOARD_BLOCK_SIZE))
+		if (!board->IsMovable(m_cellXPos + 1, m_cellYPos))
 		{
-			y = 1;
+			if (m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX >= m_xpos)
+				x = 1;
 		}
-		else if (board->IsMovable(xpos, ypos))
-		{
+		else
 			x = 1;
-		}
 
 		if (m_bKickable)
 		{
-			if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
+			if (board->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
-				CObj* pObj = pLayer->FindObj(xpos, ypos);
+				CObj* pObj = pLayer->FindObj(m_xpos, m_ypos);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(m_eMoveDir);
@@ -337,63 +297,26 @@ void CPlayer::MoveState()
 	}
 	else if (m_eMoveDir == Dir::Up)
 	{
-		xpos = centerX / BOARD_BLOCK_SIZE;
-		ypos = (centerY - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
-		if (board->IsMovable(xpos, ypos))
+		if (!board->IsMovable(m_cellXPos, m_cellYPos - 1))
 		{
-			y = -1;
-			m_pAnim->SetClip("bazzi_up");
+			if (m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY <= m_ypos)
+				y = -1;
 		}
+		else
+			y = -1;
+		m_pAnim->SetClip("bazzi_up");
 	}
 	else if (m_eMoveDir == Dir::Down)
 	{
-		xpos = centerX / BOARD_BLOCK_SIZE;
-		ypos = (centerY + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
-		if (board->IsMovable(xpos, ypos))
+		if (!board->IsMovable(m_cellXPos, m_cellYPos + 1))
 		{
+			if (m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY>= m_ypos)
+				y = 1;
+		}
+		else
 			y = 1;
 			m_pAnim->SetClip("bazzi_down");
-		}
 	}
-
-	/*
-	if (m_eMoveDir == Dir::Left)
-	{
-		if (board->IsMovable(left - m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-			&& board->IsMovable(left - m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
-		{
-			x = -1;
-			m_pAnim->SetClip("bazzi_left"); 
-		}
-	}
-	else if (m_eMoveDir == Dir::Right)
-	{
-		if (board->IsMovable(right + m_speed * deltaTime, bottom - (BOARD_BLOCK_SIZE * 0.1f), false)
-			&& board->IsMovable(right + m_speed * deltaTime, top + (BOARD_BLOCK_SIZE * 0.5f), false))
-		{
-			x = 1;
-			m_pAnim->SetClip("bazzi_right");
-		}
-	}
-	else if (m_eMoveDir == Dir::Up)
-	{
-		if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false)
-			&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), top - m_speed * deltaTime + (BOARD_BLOCK_SIZE * 0.5f), false))
-		{
-			y = -1;
-			m_pAnim->SetClip("bazzi_up");
-		}
-	}
-	else if (m_eMoveDir == Dir::Down)
-	{
-		if (board->IsMovable(left + (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false)
-			&& board->IsMovable(right - (BOARD_BLOCK_SIZE * 0.1f), bottom + m_speed * deltaTime, false))
-		{
-			y = 1;
-			m_pAnim->SetClip("bazzi_down");
-		}
-	}
-	*/
 
 	if (m_eMoveDir != Dir::None)
 	{
