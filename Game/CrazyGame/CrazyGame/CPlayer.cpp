@@ -246,39 +246,87 @@ void CPlayer::MoveState()
 
 	int x = 0, y = 0;
 	int xpos, ypos;
-	int temp = bottom - BOARD_BLOCK_SIZE; // 캐릭터 목부분
 
-	int cellPixelX = m_cellXPos * BOARD_BLOCK_SIZE / 2;
-	int cellPixelY = m_cellYPos * BOARD_BLOCK_SIZE / 2;
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%d, %d -> %f, %f\n", m_cellXPos, m_cellYPos, m_xpos, m_ypos);
-	OutputDebugStringA(str);
-#endif
 
+	int cellUpYPos = (m_ypos  + 5- stageFrameOffsetY - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+	int cellDownYPos = (m_ypos - 5- stageFrameOffsetY + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+	int cellLeftXPos = (m_xpos + 5- stageFrameOffsetX - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+	int cellRightXPos = (m_xpos - 5 - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE; 
 
 	if (m_eMoveDir == Dir::Left)
 	{
-		if (!board->IsMovable(m_cellXPos - 1, m_cellYPos)) // 현재 셀 좌표 - 1이 못가는 곳이라면
+		int limit = m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX;
+		// 위로
+		if (!board->IsMovable(m_cellXPos - 1, cellDownYPos)) // 발끝을 기준으로 x-1에 블록이 있을 경우
 		{
-			if (m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX <= m_xpos)
+			if (limit < m_xpos)
 				x = -1;
+			else 
+			{
+				if (cellDownYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetY > m_ypos
+					&& board->IsMovable(m_cellXPos - 1, cellDownYPos - 1))
+				{
+					y = -1;
+				}
+			}
+		}
+		// 아래로
+		else if (!board->IsMovable(m_cellXPos - 1, cellUpYPos))
+		{
+			if (limit < m_xpos)
+				x = -1;
+			else
+			{
+				if (cellUpYPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetY < m_ypos
+					&& board->IsMovable(m_cellXPos - 1, cellUpYPos + 1))
+				{
+					y = 1;
+				}
+			}
 		}
 		else
+		{
 			x = -1;
+		}
 		
 		m_pAnim->SetClip("bazzi_left");
 	}
 	else if (m_eMoveDir == Dir::Right)
 	{
-		if (!board->IsMovable(m_cellXPos + 1, m_cellYPos))
+		int limit = m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX;
+		// 위로
+		if (!board->IsMovable(m_cellXPos + 1, cellDownYPos)) // 발끝을 기준으로 x-1에 블록이 있을 경우
 		{
-			if (m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX >= m_xpos)
+			if (limit > m_xpos)
 				x = 1;
+			else
+			{
+				if (cellDownYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetY > m_ypos
+					&& board->IsMovable(m_cellXPos + 1, cellDownYPos - 1))
+				{
+					y = -1;
+				}
+			}
+		}
+		// 아래로
+		else if (!board->IsMovable(m_cellXPos + 1, cellUpYPos))
+		{
+			if (limit > m_xpos)
+				x = 1;
+			else
+			{
+				if (cellUpYPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetY < m_ypos
+					&& board->IsMovable(m_cellXPos + 1, cellUpYPos + 1))
+				{
+					y = 1;
+				}
+			}
 		}
 		else
+		{
 			x = 1;
+		}
 
 		if (m_bKickable)
 		{
@@ -297,25 +345,77 @@ void CPlayer::MoveState()
 	}
 	else if (m_eMoveDir == Dir::Up)
 	{
-		if (!board->IsMovable(m_cellXPos, m_cellYPos - 1))
+		int limit = m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY;
+		// 왼쪽으로
+		if (!board->IsMovable(cellRightXPos, m_cellYPos - 1))
 		{
-			if (m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY <= m_ypos)
+			if (limit < m_ypos)
 				y = -1;
+			else
+			{
+				if (cellRightXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetX > m_xpos
+					&& board->IsMovable(cellRightXPos-1, m_cellYPos-1)) // 미끄러져서 도착한 칸이 갈 수 있는 곳인지
+				{
+					x = -1;
+				}
+			}
+		}
+		// 오른쪽으로
+		else if (!board->IsMovable(cellLeftXPos, m_cellYPos-1))
+		{
+			if (limit < m_ypos)
+				y = -1;
+			else
+			{
+				if (cellLeftXPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetX < m_xpos
+					&& board->IsMovable(cellLeftXPos+1, m_cellYPos-1))
+				{
+					x = 1;
+				}
+			}
 		}
 		else
+		{
 			y = -1;
+		}
 		m_pAnim->SetClip("bazzi_up");
 	}
 	else if (m_eMoveDir == Dir::Down)
 	{
-		if (!board->IsMovable(m_cellXPos, m_cellYPos + 1))
+		int limit = m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY;
+		// 왼쪽으로
+		if (!board->IsMovable(cellRightXPos, m_cellYPos + 1))
 		{
-			if (m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY>= m_ypos)
+			if (limit > m_ypos)
 				y = 1;
+			else
+			{
+				if (cellRightXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetX > m_xpos
+					&& board->IsMovable(cellRightXPos-1, m_cellYPos+1))
+				{
+					x = -1;
+				}
+			}
+		}
+		// 오른쪽으로
+		else if (!board->IsMovable(cellLeftXPos, m_cellYPos + 1))
+		{
+			if (limit > m_ypos)
+				y = 1;
+			else
+			{
+				if (cellLeftXPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetX < m_xpos
+					&& board->IsMovable(cellLeftXPos+1, m_cellYPos+1))
+				{
+					x = 1;
+				}
+			}
 		}
 		else
+		{
 			y = 1;
-			m_pAnim->SetClip("bazzi_down");
+		}
+		m_pAnim->SetClip("bazzi_down");
 	}
 
 	if (m_eMoveDir != Dir::None)
