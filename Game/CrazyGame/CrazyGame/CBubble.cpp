@@ -32,6 +32,14 @@ void CBubble::Update()
 
 	int x = 0, y = 0;
 
+	m_animator.Update();
+
+	m_elapsedTime += deltaTime;
+	if (m_elapsedTime >= m_dieTime)
+	{
+		m_isAlive = false;
+	}
+
 	if (m_bMoving)
 	{
 		D2D1_RECT_F rect = m_rect;
@@ -59,20 +67,23 @@ void CBubble::Update()
 			rect.bottom -= BOARD_BLOCK_SIZE / 2 + 1;
 			break;
 		}
+		int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
+		int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
 
 		m_prevCellPos.x = m_cellXPos;
 		m_prevCellPos.y = m_cellYPos;
-		
-		CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
+
+		m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+		m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+		//CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
 
 		pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
 		pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
 
 		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
 		{
-			int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-			int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-			
+			m_eMovingDir = Dir::None;
 			m_bMoving = false;
 			return;
 		}
@@ -83,13 +94,7 @@ void CBubble::Update()
 		m_rect.bottom += speed * deltaTime * y;
 	}
 
-	m_animator.Update();
 
-	m_elapsedTime += deltaTime;
-	if (m_elapsedTime >= m_dieTime)
-	{
-		m_isAlive = false;
-	}
 }
 
 void CBubble::Render(ID2D1RenderTarget* _pRenderTarget)
@@ -109,8 +114,6 @@ void CBubble::Move(Dir _eDir)
 
 void CBubble::Die()
 {
-	int numOfBubbles = 1;
-
 	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
 	int xpos, ypos;
 
@@ -123,19 +126,9 @@ void CBubble::Die()
 		rect.left -= BOARD_BLOCK_SIZE;
 		rect.right -= BOARD_BLOCK_SIZE;
 		CObj::RectToPos(rect, xpos, ypos);
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+
+		if (board->PutSplash(rect, "Explosion_left") == false)
 			break;
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
-		{
-			board->RemoveObj(xpos, ypos, "Block");
-			break;
-		}
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
-		{
-			board->RemoveObj(xpos, ypos, "Event");
-			break;
-		}
-		board->PutSplash(rect, "Explosion_left");
 	}
 
 	rect = m_rect;
@@ -145,19 +138,9 @@ void CBubble::Die()
 		rect.left += BOARD_BLOCK_SIZE;
 		rect.right += BOARD_BLOCK_SIZE;
 		CObj::RectToPos(rect, xpos, ypos);
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+		
+		if (board->PutSplash(rect, "Explosion_right") == false)
 			break;
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
-		{
-			board->RemoveObj(xpos, ypos, "Block");
-			break;
-		}
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
-		{
-			board->RemoveObj(xpos, ypos, "Event");
-			break;
-		}
-		board->PutSplash(rect, "Explosion_right");
 	}
 
 	rect = m_rect;
@@ -167,19 +150,9 @@ void CBubble::Die()
 		rect.top -= BOARD_BLOCK_SIZE;
 		rect.bottom -= BOARD_BLOCK_SIZE;
 		CObj::RectToPos(rect, xpos, ypos);
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+
+		if (board->PutSplash(rect, "Explosion_up") == false)
 			break;
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
-		{
-			board->RemoveObj(xpos, ypos, "Block");
-			break;
-		}
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
-		{
-			board->RemoveObj(xpos, ypos, "Event");
-			break;
-		}
-		board->PutSplash(rect, "Explosion_up");
 	}
 
 	rect = m_rect;
@@ -189,21 +162,11 @@ void CBubble::Die()
 		rect.top += BOARD_BLOCK_SIZE;
 		rect.bottom += BOARD_BLOCK_SIZE;
 		CObj::RectToPos(rect, xpos, ypos);
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_InDestructible))
+
+		if (board->PutSplash(rect, "Explosion_down") == false)
 			break;
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
-		{
-			board->RemoveObj(xpos, ypos, "Block");
-			break;
-		}
-		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
-		{
-			board->RemoveObj(xpos, ypos, "Event");
-			break;
-		}
-		board->PutSplash(rect, "Explosion_down");
 	}
 
-	m_pPlayer->ReduceCurBubble(numOfBubbles);
+	m_pPlayer->ReduceCurBubble(1);
 }
  

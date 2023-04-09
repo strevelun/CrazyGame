@@ -49,7 +49,7 @@ void CBlock::Die()
 
 	std::string strName;
 
-	switch ((eItem)generated)
+	switch (eItem::Gift_UFO)//((eItem)generated)
 	{
 	case eItem::Gift_Boom:
 		strName = "Gift_Boom";
@@ -83,7 +83,7 @@ void CBlock::Die()
 		break;
 	}
 
-	m_pItem->Init((eItem)generated, strName);
+	m_pItem->Init(eItem::Gift_UFO, strName);
 	
 	scene->m_board->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item);
 	scene->m_board->PutItem(m_rect, m_pItem);

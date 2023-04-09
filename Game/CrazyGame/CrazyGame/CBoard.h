@@ -6,6 +6,7 @@
 
 class CObj;
 class CItem;
+class CVehicle;
 
 class CBoard
 {
@@ -20,11 +21,10 @@ public:
     void SetMapData(tMapData _mapData) { m_mapData = _mapData; }
     void SetBoard();
 
-    bool IsMovable(u_int _xpos, u_int _ypos, bool _isGridPos);
-    bool IsMovable(u_int _xpos, u_int _ypos);
+    bool IsMovable(u_int _xpos, u_int _ypos, CVehicle* _vehicle = nullptr);
 	bool IsGameObjType(int x, int y, eInGameObjType _type);
 
-    void PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type);
+    bool PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
     void RemoveObj(int _xpos, int _ypos, std::string _strLayerKey);
 

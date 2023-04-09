@@ -141,6 +141,7 @@ void CInGameScene::Init()
 	}
 
 	layer = CreateLayer("Event", 4);
+	layer = CreateLayer("Vehicle", 5);
 }
 
 void CInGameScene::OnBackButtonClicked(const std::string _strName)

@@ -15,7 +15,7 @@ class CBubble :
 
     float m_elapsedTime;
     float m_dieTime = 3.0f;
-    u_int m_splashLength = 3;
+    u_int m_splashLength = 0;
 
     bool m_bMoving = false;
     Dir m_eMovingDir = Dir::None;
@@ -30,6 +30,7 @@ public:
     void Move(Dir _eDir);
 
     void SetPlayer(CPlayer* _pPlayer) { m_pPlayer = _pPlayer; }
+    void SetSplashLength(u_int _splashLength) { m_splashLength = _splashLength; }
 
     void Die() override;
 

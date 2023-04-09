@@ -31,7 +31,8 @@ void CSplash::Update()
 	
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item))
 	{
-		pBoard->RemoveObj(m_rect);
+		pBoard->RemoveObj(m_cellXPos, m_cellYPos, "Event");
+		pBoard->PutItem(m_rect, nullptr);
 	}
 
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))

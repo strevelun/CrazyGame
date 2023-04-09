@@ -156,6 +156,7 @@
     <ClCompile Include="CUI.cpp" />
     <ClCompile Include="CUIButton.cpp" />
     <ClCompile Include="CUIPanel.cpp" />
+    <ClCompile Include="CVehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="CUIButton.h" />
     <ClInclude Include="CUIPanel.h" />
     <ClInclude Include="Setting.h" />
+    <ClInclude Include="CVehicle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
