@@ -11,6 +11,8 @@ CObj::CObj(const D2D1_RECT_F& _rect)
 {
 	m_rect = _rect;
 	CObj::RectToPos(_rect, m_cellXPos, m_cellYPos);
+	m_prevCellXPos = m_cellXPos;
+	m_prevCellYPos = m_cellYPos;
 }
 
 CObj::~CObj()

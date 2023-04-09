@@ -5,7 +5,7 @@
 #include "CTimer.h"
 #include "CSceneManager.h"
 #include "CInGameScene.h"
-
+#include "CPlayer.h"
 
 CBubble::CBubble(const D2D1_RECT_F& _rect) : CObj(_rect)
 {	
@@ -14,6 +14,7 @@ CBubble::CBubble(const D2D1_RECT_F& _rect) : CObj(_rect)
 
 	m_animator.AddClip("bubble", &m_animClip);
 	m_animator.SetClip("bubble");
+
 }
 
 CBubble::~CBubble()
@@ -31,8 +32,6 @@ void CBubble::Update()
 
 	int x = 0, y = 0;
 
-
-
 	if (m_bMoving)
 	{
 		D2D1_RECT_F rect = m_rect;
@@ -41,32 +40,40 @@ void CBubble::Update()
 		{
 		case Dir::Left:
 			x = -1;
-			rect.left -= BOARD_BLOCK_SIZE / 2;
+			rect.left += BOARD_BLOCK_SIZE / 2 - 1;
+			rect.right += BOARD_BLOCK_SIZE / 2 - 1;
 			break;
 		case Dir::Right:
 			x = 1;
-			rect.right += BOARD_BLOCK_SIZE / 2;
+			rect.left -= BOARD_BLOCK_SIZE / 2 + 1;
+			rect.right -= BOARD_BLOCK_SIZE / 2 + 1;
 			break;
 		case Dir::Up:
 			y = -1;
-			rect.top -= BOARD_BLOCK_SIZE / 2;
+			rect.top += BOARD_BLOCK_SIZE / 2 - 1;
+			rect.bottom += BOARD_BLOCK_SIZE / 2 - 1;
 			break;
 		case Dir::Down:
 			y = 1;
-			rect.bottom += BOARD_BLOCK_SIZE / 2;
+			rect.top -= BOARD_BLOCK_SIZE / 2 + 1;
+			rect.bottom -= BOARD_BLOCK_SIZE / 2 + 1;
 			break;
 		}
 
+		m_prevCellPos.x = m_cellXPos;
+		m_prevCellPos.y = m_cellYPos;
 		
 		CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
 
-		if (!pBoard->IsMovable(m_cellXPos, m_cellYPos))
+		pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
+		pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+
+		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
 		{
 			int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
 			int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+			
 			m_bMoving = false;
-			m_rect.left = (m_cellXPos - x) * BOARD_BLOCK_SIZE + stageFrameOffsetX;
-			m_rect.right = (m_cellXPos - x) * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
 			return;
 		}
 
@@ -74,7 +81,6 @@ void CBubble::Update()
 		m_rect.right += speed * deltaTime * x;
 		m_rect.top += speed * deltaTime * y;
 		m_rect.bottom += speed * deltaTime * y;
-
 	}
 
 	m_animator.Update();
@@ -103,6 +109,8 @@ void CBubble::Move(Dir _eDir)
 
 void CBubble::Die()
 {
+	int numOfBubbles = 1;
+
 	CBoard* board = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
 	int xpos, ypos;
 
@@ -119,7 +127,12 @@ void CBubble::Die()
 			break;
 		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(xpos, ypos);
+			board->RemoveObj(xpos, ypos, "Block");
+			break;
+		}
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
+		{
+			board->RemoveObj(xpos, ypos, "Event");
 			break;
 		}
 		board->PutSplash(rect, "Explosion_left");
@@ -136,7 +149,12 @@ void CBubble::Die()
 			break;
 		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(xpos, ypos);
+			board->RemoveObj(xpos, ypos, "Block");
+			break;
+		}
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
+		{
+			board->RemoveObj(xpos, ypos, "Event");
 			break;
 		}
 		board->PutSplash(rect, "Explosion_right");
@@ -153,7 +171,12 @@ void CBubble::Die()
 			break;
 		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(xpos, ypos);
+			board->RemoveObj(xpos, ypos, "Block");
+			break;
+		}
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
+		{
+			board->RemoveObj(xpos, ypos, "Event");
 			break;
 		}
 		board->PutSplash(rect, "Explosion_up");
@@ -170,10 +193,17 @@ void CBubble::Die()
 			break;
 		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Block_Destructible))
 		{
-			board->RemoveObj(xpos, ypos);
+			board->RemoveObj(xpos, ypos, "Block");
+			break;
+		}
+		if (board->IsGameObjType(xpos, ypos, eInGameObjType::Balloon))
+		{
+			board->RemoveObj(xpos, ypos, "Event");
 			break;
 		}
 		board->PutSplash(rect, "Explosion_down");
 	}
+
+	m_pPlayer->ReduceCurBubble(numOfBubbles);
 }
  

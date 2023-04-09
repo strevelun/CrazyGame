@@ -91,6 +91,11 @@ void CPlayer::Input()
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
 		m_bFire = true;
+#ifdef _DEBUG
+		char str[50] = "";
+		sprintf_s(str, "놓음\n");
+		OutputDebugStringA(str);
+#endif
 	}
 }
 
@@ -107,7 +112,7 @@ void CPlayer::Update()
 	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
 
 	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE ;
+	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
 
@@ -144,8 +149,10 @@ void CPlayer::Update()
 		case eItem::Gift_UFO:
 			break;
 		case eItem::Gift_Boom:
+
 			break;
 		case eItem::Gift_Bubble:
+			m_bubbleCarryLimit += 1;
 			break;
 		case eItem::Gift_Dart:
 			break;
@@ -161,18 +168,26 @@ void CPlayer::Update()
 		}
 	}
 
-if (m_bFire)
-{
-	CBubble* bubble = new CBubble({
-		(float)m_cellXPos * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-		(float)m_cellYPos * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
-		(float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-		(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
-		});
-	D2D1_POINT_2U point = bubble->GetPoint();
- 	((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
+
+	// 스페이스바를 한번 누르면 여러번 Bubble이 생성됨
+	if (m_bFire && m_curBubblePlaced < m_bubbleCarryLimit 
+		&& (((CInGameScene*)m_pScene)->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
+	{
+
+		CBubble* bubble = new CBubble({
+			(float)m_cellXPos * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
+			(float)m_cellYPos * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
+			(float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
+			(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
+			});
+		bubble->SetPlayer(this);
+		D2D1_POINT_2U point = bubble->GetPoint();
+ 		((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
+		m_curBubblePlaced++;
+	}
+
+	// 바로 위 if문 안들어가고 그냥 지나치는 경우 : m_bFire는 true이나 다른 것이 false인 경우
 	m_bFire = false;
-}
 }
 
 void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
@@ -232,22 +247,10 @@ void CPlayer::MoveState()
 {
 	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
 	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
-	int left = m_rect.left - stageFrameOffsetX;
-	int right = m_rect.right - stageFrameOffsetX;
-	int top = m_rect.top + -stageFrameOffsetY;
-	int bottom = m_rect.bottom - stageFrameOffsetY;
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
-
-	int centerX = (right + left) / 2;
-	int centerY = (bottom + top + (bottom - top - BOARD_BLOCK_SIZE)) / 2;
-
-
 	int x = 0, y = 0;
-	int xpos, ypos;
-
-
 
 	int cellUpYPos = (m_ypos  + 5- stageFrameOffsetY - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
 	int cellDownYPos = (m_ypos - 5- stageFrameOffsetY + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
@@ -288,6 +291,19 @@ void CPlayer::MoveState()
 		else
 		{
 			x = -1;
+		}
+
+		if (m_bKickable)
+		{
+			if (board->IsGameObjType(m_cellXPos - 1, m_cellYPos, eInGameObjType::Balloon))
+			{
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CObj* pObj = pLayer->FindObj(m_cellXPos - 1, m_cellYPos);
+				if (pObj)
+				{
+					((CBubble*)pObj)->Move(m_eMoveDir);
+				}
+			}
 		}
 		
 		m_pAnim->SetClip("bazzi_left");
@@ -330,10 +346,10 @@ void CPlayer::MoveState()
 
 		if (m_bKickable)
 		{
-			if (board->IsGameObjType(m_xpos, m_ypos, eInGameObjType::Balloon))
+			if (board->IsGameObjType(m_cellXPos + 1, m_cellYPos, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
-				CObj* pObj = pLayer->FindObj(m_xpos, m_ypos);
+				CObj* pObj = pLayer->FindObj(m_cellXPos + 1, m_cellYPos);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(m_eMoveDir);
@@ -378,6 +394,19 @@ void CPlayer::MoveState()
 		{
 			y = -1;
 		}
+
+		if (m_bKickable)
+		{
+			if (board->IsGameObjType(m_cellXPos, m_cellYPos -1, eInGameObjType::Balloon))
+			{
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos-1);
+				if (pObj)
+				{
+					((CBubble*)pObj)->Move(m_eMoveDir);
+				}
+			}
+		}
 		m_pAnim->SetClip("bazzi_up");
 	}
 	else if (m_eMoveDir == Dir::Down)
@@ -415,6 +444,20 @@ void CPlayer::MoveState()
 		{
 			y = 1;
 		}
+
+		if (m_bKickable)
+		{
+			if (board->IsGameObjType(m_cellXPos, m_cellYPos + 1, eInGameObjType::Balloon))
+			{
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos+1);
+				if (pObj)
+				{
+					((CBubble*)pObj)->Move(m_eMoveDir);
+				}
+			}
+		}
+
 		m_pAnim->SetClip("bazzi_down");
 	}
 

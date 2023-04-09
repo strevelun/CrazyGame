@@ -26,7 +26,7 @@ public:
 
     void PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
-	void RemoveObj(int _xpos, int _ypos);
+    void RemoveObj(int _xpos, int _ypos, std::string _strLayerKey);
 
     tMapData GetMapData() const { return m_mapData; }
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { m_board[_y][_x] = _type; }

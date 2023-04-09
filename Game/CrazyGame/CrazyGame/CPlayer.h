@@ -22,11 +22,14 @@ class CPlayer :
     float m_speed = 210.0f;
     Dir m_eMoveDir = Dir::Down;
     Dir m_eLastMoveDir = Dir::Down;
-    bool m_bFire = false;
     Player_State m_state = Player_State::Ready;
     Player_State m_prevState = Player_State::Ready;
     CAnimationClip* m_animDir[4];
+
+    bool m_bFire = false;
     bool m_bKickable = true;
+    u_int m_bubbleCarryLimit = 1;
+    u_int m_curBubblePlaced = 0;
 
 private:
 
@@ -43,5 +46,6 @@ public:
     void MoveState();
 
     std::string GetStrDir(Dir _dir);
+    void ReduceCurBubble(u_int _numOfBubbles) { m_curBubblePlaced -= _numOfBubbles; }
 };
 

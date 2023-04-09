@@ -17,6 +17,7 @@ CBoard::CBoard()
 CBoard::~CBoard()
 {
 	// m_board.clear();
+	m_moveObjBoard.clear();
 }
 
 void CBoard::SetBoard()
@@ -53,7 +54,8 @@ bool CBoard::IsMovable(u_int _xpos, u_int _ypos)
 	if (m_mapData.gridX <= _xpos) return false;
 	if (m_mapData.gridY <= _ypos) return false;
 
-	if (m_board[_ypos][_xpos] == eInGameObjType::Block_Destructible || m_board[_ypos][_xpos] == eInGameObjType::Block_InDestructible)
+	if (m_board[_ypos][_xpos] == eInGameObjType::Block_Destructible || m_board[_ypos][_xpos] == eInGameObjType::Block_InDestructible
+		|| m_board[_ypos][_xpos] == eInGameObjType::Balloon)
 		return false;
 
 	return true;
@@ -64,7 +66,6 @@ bool CBoard::IsGameObjType(int x, int y, eInGameObjType _type)
 
 	if (m_mapData.gridX <= x) return false;
 	if (m_mapData.gridY <= y) return false;
-
 
 	if (_type == eInGameObjType::Character || _type == eInGameObjType::Monster
 		|| _type == eInGameObjType::Boss)
@@ -87,10 +88,12 @@ void CBoard::PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type)
 		if (layer)
 		{
 			m_board[_ypos][_xpos] = _type;
-			if(_obj != nullptr)
+			if (_obj != nullptr)
 				layer->AddObj(_obj);
 		}
 	}
+	else
+		delete _obj;
 }
 
 void CBoard::RemoveObj(D2D1_RECT_F _rect)
@@ -111,14 +114,14 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 	m_board[y][x] = eInGameObjType::None;
 }
 
-void CBoard::RemoveObj(int _xpos, int _ypos)
+void CBoard::RemoveObj(int _xpos, int _ypos, std::string _strLayerKey)
 {
 	if (m_mapData.gridX <= _xpos) return;
 	if (m_mapData.gridY <= _ypos) return;
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	CLayer* layer = scene->FindLayer("Block");
+	CLayer* layer = scene->FindLayer(_strLayerKey);
 	CObj* obj = layer->FindObj(_xpos, _ypos);
 	if (obj != nullptr && m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
 		obj->SetAlive(false);
