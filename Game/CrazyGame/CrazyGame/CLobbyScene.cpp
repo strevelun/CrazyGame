@@ -41,13 +41,15 @@ tMapData& CLobbyScene::FindMapData(const std::string& _strName)
 
 void CLobbyScene::Init()
 {
+	//SetWindowPos(CApp::GetInst()->GetHwnd(), NULL, 0, 0, 1920.0f, 1080.0f, SWP_NOMOVE);
+
 	CBitmap* bitmap = CResourceManager::GetInst()->Load(L"login.png");
 
 	// UI Layer 만들기
 	CLayer* layer = CreateLayer("MapChoiceButton", INT_MAX);
 
 	// 백그라운드
-	CUIPanel* background = new CUIPanel({ 0, 0, 1920.f, 1080.f });
+	CUIPanel* background = new CUIPanel({ 0, 0, 800.f, 600.f });
 	background->SetBitmap(bitmap);
 	layer->AddObj(background);
 
@@ -55,29 +57,33 @@ void CLobbyScene::Init()
 	bitmap = CResourceManager::GetInst()->Load(L"map_select_village.png");
 	u_int width = bitmap->GetBitmap()->GetPixelSize().width;
 	u_int height = bitmap->GetBitmap()->GetPixelSize().height;
-	CUIButton* btn = new CUIButton({ 510.f, 800.f, 510.f + width, 800.f + height }, "village.map");
+	CUIButton* btn = new CUIButton({ 80.f, 450.f, 80.f + width, 450.f + height }, "village.map");
 	btn->SetBitmap(bitmap);
 	layer->AddObj(btn);
 	tMapData mapData = CResourceManager::GetInst()->LoadMapData(L"village.map");
 	m_mapData.insert(std::make_pair("village.map", mapData));
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
+	float prevEnd = 80 + width;
+
 	// 해적맵 버튼
 	bitmap = CResourceManager::GetInst()->Load(L"map_select_pirate.png");
 	width = bitmap->GetBitmap()->GetPixelSize().width;
 	height = bitmap->GetBitmap()->GetPixelSize().height;
-	btn = new CUIButton({ 810.f, 800.f, 810.f + width, 800.f + height }, "pirate.map");
+	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, "pirate.map");
 	btn->SetBitmap(bitmap);
 	layer->AddObj(btn);
 	mapData = CResourceManager::GetInst()->LoadMapData(L"pirate.map");
 	m_mapData.insert(std::make_pair("pirate.map", mapData));
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
+	prevEnd = prevEnd + width;
+
 	// 테스트맵 버튼
 	bitmap = CResourceManager::GetInst()->Load(L"map_select_test.png");
 	width = bitmap->GetBitmap()->GetPixelSize().width;
 	height = bitmap->GetBitmap()->GetPixelSize().height;
-	btn = new CUIButton({ 1110.f, 800.f, 1110.f + width, 800.f + height }, "test.map");
+	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, "test.map");
 	btn->SetBitmap(bitmap);
 	layer->AddObj(btn);
 	mapData = CResourceManager::GetInst()->LoadMapData(L"test.map");

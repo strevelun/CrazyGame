@@ -46,6 +46,7 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 
 	m_pRenderTarget = CCore::GetInst()->CreateRenderTarget(m_hWnd);
 
+
 	ID2D1SolidColorBrush* brush = nullptr;
 	m_pRenderTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Black),
@@ -61,6 +62,11 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
 	CResourceManager::GetInst()->LoadAnimFiles(L"resource/anim/");
 	//CTimer::GetInst()->SetFrameLimit(10);
+
+	m_pRenderTarget->CreateCompatibleRenderTarget(
+		D2D1::SizeF(_width, _height),
+		&m_pBitmapRenderTarget
+	);
 
 	ShowWindow(m_hWnd, nCmdShow);
 	UpdateWindow(m_hWnd);
@@ -112,11 +118,27 @@ void CApp::Update()
 
 void CApp::Render()
 {
+	m_pBitmapRenderTarget->BeginDraw();
+	//m_pBitmapRenderTarget->Clear();
+	CSceneManager::GetInst()->Render(m_pBitmapRenderTarget);
+	CInputManager::GetInst()->GetMouse()->Render(m_pBitmapRenderTarget);
+	m_pBitmapRenderTarget->EndDraw();
+
 	m_pRenderTarget->BeginDraw();
-	m_pRenderTarget->Clear();
-	CSceneManager::GetInst()->Render(m_pRenderTarget);
-	CInputManager::GetInst()->GetMouse()->Render(m_pRenderTarget);
+	//m_pRenderTarget->Clear();
+
+	ID2D1Bitmap* pBitmap = nullptr;
+	m_pBitmapRenderTarget->GetBitmap(&pBitmap);
+	D2D1_SIZE_U size = pBitmap->GetPixelSize();
+
+	if (pBitmap)
+	{
+		//m_pRenderTarget->DrawBitmap(pBitmap, D2D1::RectF(0.0f, 0.0f, 1920.0f, 1080.0f),
+		m_pRenderTarget->DrawBitmap(pBitmap, D2D1::RectF(0.0f, 0.0f, 1024.0f, 768.0f),
+		1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, D2D1::RectF(0.0f,0.0f, 800.0f, 600.0f));
+	}
 	m_pRenderTarget->EndDraw();
+	pBitmap->Release();
 }
 
 LRESULT CALLBACK CApp::Proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

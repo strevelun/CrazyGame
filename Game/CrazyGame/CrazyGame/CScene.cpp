@@ -43,7 +43,7 @@ void CScene::Update()
 	}
 }
 
-void CScene::Render(ID2D1RenderTarget* _pRenderTarget)
+void CScene::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	std::list<CLayer*>::iterator iter = m_layerList.begin();
 	std::list<CLayer*>::iterator iterEnd = m_layerList.end();

@@ -18,6 +18,7 @@ private:
 	HINSTANCE m_hInst = nullptr;
 	HWND m_hWnd = nullptr;
 	ID2D1HwndRenderTarget* m_pRenderTarget = nullptr;
+	ID2D1BitmapRenderTarget* m_pBitmapRenderTarget = nullptr;
 
 private:
 	CApp() { }

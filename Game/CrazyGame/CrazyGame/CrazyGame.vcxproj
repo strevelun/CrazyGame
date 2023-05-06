@@ -131,6 +131,7 @@
     <ClCompile Include="..\..\D2DCore\CCore.cpp" />
     <ClCompile Include="CAnimationClip.cpp" />
     <ClCompile Include="CAnimator.cpp" />
+    <ClCompile Include="CAstar.cpp" />
     <ClCompile Include="CBitmap.cpp" />
     <ClCompile Include="CBlock.cpp" />
     <ClCompile Include="CBoard.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="CInputManager.cpp" />
     <ClCompile Include="CItem.cpp" />
     <ClCompile Include="CLayer.cpp" />
+    <ClCompile Include="CBoss.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CMouse.cpp" />
     <ClCompile Include="CMoveObj.cpp" />
@@ -161,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h" />
     <ClInclude Include="..\..\D2DCore\CCore.h" />
+    <ClInclude Include="CAStar.h" />
     <ClInclude Include="CAnimationClip.h" />
     <ClInclude Include="CAnimator.h" />
     <ClInclude Include="CBitmap.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="CInputManager.h" />
     <ClInclude Include="CItem.h" />
     <ClInclude Include="CLayer.h" />
+    <ClInclude Include="CBoss.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CMouse.h" />
     <ClInclude Include="CMoveObj.h" />

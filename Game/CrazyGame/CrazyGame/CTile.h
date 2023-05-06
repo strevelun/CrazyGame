@@ -9,6 +9,6 @@ public:
     CTile(const D2D1_RECT_F& _rect);
     ~CTile();
 
-    void Render(ID2D1RenderTarget* _pRenderTarget);
+    void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 };
 

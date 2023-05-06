@@ -29,6 +29,7 @@ protected:
 	CBitmap* m_pBitmap;
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
+	eInGameObjType					m_eType;
 
 	float m_xpos, m_ypos;
 	int m_cellXPos, m_cellYPos;
@@ -50,6 +51,7 @@ public:
 
 	D2D1_RECT_F GetRect() const { return m_rect; }
 	D2D1_POINT_2U GetPoint() const { return D2D1::Point2U(m_cellXPos, m_cellYPos); }
+	eInGameObjType GetType() const { return m_eType; }
 
 	template <typename T>
 	static T* CreateObj(CLayer* _pLayer = nullptr);
@@ -57,7 +59,7 @@ public:
 
 	virtual void Input();
 	virtual void Update();
-	virtual void Render(ID2D1RenderTarget* _pRenderTarget);
+	virtual void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 
 	void SetSprite(tSprite* _sprite) { m_sprite = _sprite; }
 	void SetAlive(bool _isAlive) { m_isAlive = _isAlive; }

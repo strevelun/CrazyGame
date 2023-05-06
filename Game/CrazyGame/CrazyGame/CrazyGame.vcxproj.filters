@@ -78,7 +78,7 @@
     <ClCompile Include="CBubble.cpp">
       <Filter>소스 파일\Obj</Filter>
     </ClCompile>
-    <ClCompile Include="CMonster.cpp">
+    <ClCompile Include="CBoss.cpp">
       <Filter>소스 파일\Obj</Filter>
     </ClCompile>
     <ClCompile Include="CMouse.cpp">
@@ -109,6 +109,12 @@
       <Filter>소스 파일\Obj</Filter>
     </ClCompile>
     <ClCompile Include="CVehicle.cpp">
+      <Filter>소스 파일\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CAstar.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster.cpp">
       <Filter>소스 파일\Obj</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +173,7 @@
     <ClInclude Include="CBubble.h">
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
-    <ClInclude Include="CMonster.h">
+    <ClInclude Include="CBoss.h">
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
     <ClInclude Include="CMouse.h">
@@ -201,6 +207,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CVehicle.h">
+      <Filter>소스 파일\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CAStar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonster.h">
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
   </ItemGroup>

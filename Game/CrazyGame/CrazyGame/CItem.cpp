@@ -4,9 +4,9 @@
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 
-CItem::CItem(const D2D1_RECT_F _rect) : CStaticObj(_rect)
+CItem::CItem(const D2D1_RECT_F _rect, eInGameObjType _type) : CStaticObj(_rect)
 {
-
+	m_eType = _type;
 }
 
 CItem::~CItem()
@@ -25,7 +25,7 @@ void CItem::Init(eItem _eItem, std::string _strName)
 	SetItemEnum((eItem)_eItem);
 }
 
-void CItem::Render(ID2D1RenderTarget* _pRenderTarget)
+void CItem::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	CAnimationClip* clip = m_pAnim->GetClip(m_itemName);
 	if (!clip) return;

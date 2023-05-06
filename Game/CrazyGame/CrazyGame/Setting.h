@@ -3,7 +3,7 @@
 #include <vector>
 #include <d2d1.h>
 
-#define BOARD_BLOCK_SIZE        70
+#define BOARD_BLOCK_SIZE        40
 
 enum class eMenuEvent
 {

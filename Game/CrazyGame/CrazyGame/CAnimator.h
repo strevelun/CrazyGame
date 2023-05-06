@@ -20,6 +20,7 @@ class CAnimator
 {
 	std::map<std::string, CAnimationClip*> m_mapClip;
 	CAnimationClip* m_curClip;
+	std::string m_strCurClipName;
 
 public:
 	CAnimator();
@@ -30,5 +31,6 @@ public:
 	CAnimationClip* GetCurClip() const { return m_curClip; }
 
 	void Update();
+	void Render(ID2D1BitmapRenderTarget* _pRenderTarget, D2D1_RECT_F _rect);
 };
 

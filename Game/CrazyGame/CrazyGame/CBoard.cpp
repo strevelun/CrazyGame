@@ -36,10 +36,14 @@ void CBoard::SetBoard()
 		m_itemBoard[i].resize(m_mapData.gridX);
 }
 
-bool CBoard::IsMovable(u_int _xpos, u_int _ypos, CVehicle* _vehicle)
+bool CBoard::IsMovable(int _xpos, int _ypos, CVehicle* _vehicle)
 {
-	if (m_mapData.gridX <= _xpos) return false;
-	if (m_mapData.gridY <= _ypos) return false;
+	if (_xpos < 0 || _ypos < 0) 
+		return false;
+	if (m_mapData.gridX <= _xpos) 
+		return false;
+	if (m_mapData.gridY <= _ypos) 
+		return false;
 
 	if (_vehicle && _vehicle->GetName().compare("UFO") == 0
 		&& m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
@@ -62,7 +66,10 @@ bool CBoard::IsGameObjType(int x, int y, eInGameObjType _type)
 
 	if (_type == eInGameObjType::Character || _type == eInGameObjType::Monster
 		|| _type == eInGameObjType::Boss)
-		return m_moveObjBoard[y][x] == _type;
+	{
+		if (m_moveObjBoard[y][x] == nullptr) return false;
+		return m_moveObjBoard[y][x]->GetType() == _type;
+	}
 	else
 		return m_board[y][x] == _type;
 }
@@ -120,8 +127,8 @@ void CBoard::RemoveObj(int _xpos, int _ypos, std::string _strLayerKey)
 	CLayer* layer = scene->FindLayer(_strLayerKey);
 	CObj* obj = layer->FindObj(_xpos, _ypos);
 	
-	if (_strLayerKey.compare("Vehicle") == 0)
-		((CVehicle*)obj)->SetAvailable(false);
+	//if (_strLayerKey.compare("Vehicle") == 0)
+	//	((CVehicle*)obj)->SetAvailable(false);
 	if (obj != nullptr && m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
 		obj->SetAlive(false);
 
@@ -154,13 +161,16 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 
 	 CLayer*  layer = scene->FindLayer("Event");
 
+	 int stageFrameOffsetX = 20;
+	 int stageFrameOffsetY = 40;
+
 	if (layer)
 	{
 		CSplash* splash = new CSplash({
-			(float)x * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-			(float)y * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
-			(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-			(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
+			(float)x * BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)y * BOARD_BLOCK_SIZE + stageFrameOffsetY,
+			(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
 			}, _animClipName);
 
 		layer->AddObj(splash);
@@ -181,6 +191,17 @@ CItem* CBoard::GetItem(D2D1_RECT_F _rect)
 		return nullptr;
 	item->Die();
 	m_itemBoard[y][x] = nullptr;
+
+	return item;
+}
+
+CItem* CBoard::GetItem(u_int _cellXPos, u_int _cellYPos)
+{
+	CItem* item = m_itemBoard[_cellYPos][_cellXPos];
+	if (!item)
+		return nullptr;
+	item->Die();
+	m_itemBoard[_cellYPos][_cellXPos] = nullptr;
 
 	return item;
 }

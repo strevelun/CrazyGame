@@ -22,7 +22,7 @@ CVehicle::CVehicle(const D2D1_RECT_F& _rect, std::string _strVehicleName) : CObj
 		m_animator.SetClip("UFO_Front");
 
 		m_strName = "UFO";
-		m_rideHeight = 60.0f;
+		m_rideHeight = 40.0f;
 		m_speed = 350.0f;
 	}
 }
@@ -55,13 +55,7 @@ void CVehicle::Update(D2D1_RECT_F& _rect)
 	m_animator.Update();
 }
 
-void CVehicle::Render(ID2D1RenderTarget* _pRenderTarget)
+void CVehicle::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	// Animator에 Render함수를 둔다.
-
-	tAnimationFrame* frame = m_animator.GetCurClip()->GetCurFrame();
-
-	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		frame->rect);
+	m_animator.Render(_pRenderTarget, m_rect);
 }

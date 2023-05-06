@@ -21,7 +21,7 @@ public:
 
     void Input() override;
     void Update() override;
-    void Render(ID2D1RenderTarget* _pRenderTarget) override;
+    void Render(ID2D1BitmapRenderTarget* _pRenderTarget) override;
 
     eMouseState GetMouseState() const { return m_mouseState; }
     D2D1_POINT_2F GetMousePoint() const { return m_point; }

@@ -18,7 +18,7 @@ CBlock::~CBlock()
 {
 }
 
-void CBlock::Render(ID2D1RenderTarget* _pRenderTarget)
+void CBlock::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	_pRenderTarget->DrawBitmap(
 		CResourceManager::GetInst()->GetIdxBitmap(m_sprite->idx)->GetBitmap(),
@@ -43,13 +43,13 @@ void CBlock::Die()
 	CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
 	if (pLayer != nullptr)
 	{
-		m_pItem = new CItem(m_rect);
+		m_pItem = new CItem(m_rect, eInGameObjType::Item);
 		pLayer->AddObj(m_pItem);
 	}
 
 	std::string strName;
 
-	switch (eItem::Gift_UFO)//((eItem)generated)
+	switch (eItem::Gift_UFO)
 	{
 	case eItem::Gift_Boom:
 		strName = "Gift_Boom";

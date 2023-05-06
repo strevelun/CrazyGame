@@ -10,8 +10,9 @@
 #include "CItem.h"
 #include "CSceneManager.h"
 #include "CVehicle.h"
+#include "CBoss.h"
 
-CPlayer::CPlayer(const D2D1_RECT_F& _rect) : CMoveObj(_rect)
+CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
 	m_pAnim = new CAnimator;
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_left");
@@ -38,13 +39,11 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect) : CMoveObj(_rect)
 	m_pAnim->AddClip("bazzi_ready", animClip);
 	m_pAnim->SetClip("bazzi_ready");
 
-	for (int i = 0; i < (int)Dir::None; i++)
-	{
-		m_animDir[i] = m_pAnim->GetClip(GetStrDir((Dir)i));
-	}	
-
 	m_xpos = _rect.left + (BOARD_BLOCK_SIZE / 2);
 	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);
+
+	m_speed = 210.0f;
+	m_eType = _type;
 }
 
 CPlayer::~CPlayer()
@@ -56,89 +55,211 @@ CPlayer::~CPlayer()
 
 void CPlayer::Input()
 {
-	if (m_state == Player_State::Ready || m_state == Player_State::Die || m_bIsJumping == true)
-		return;
+	switch (m_state)
+	{
+	case State::Idle:
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			m_nextState = State::MoveLeft;
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_nextState = State::MoveRight;
+		}
+		else if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			m_nextState = State::MoveUp;
+		}
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			m_nextState = State::MoveDown;
+		}
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			m_bFire = true;
+		}
+		break;
 
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-	{
-		m_eMoveDir = Dir::Left;
-		m_eLastMoveDir = m_eMoveDir;
-		m_state = Player_State::Move;
-	}
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-	{
-		m_eMoveDir = Dir::Right;
-		m_eLastMoveDir = m_eMoveDir;
-		m_state = Player_State::Move;
-	}
-	else if (GetAsyncKeyState(VK_UP) & 0x8000)
-	{
-		m_eMoveDir = Dir::Up;
-		m_eLastMoveDir = m_eMoveDir;
-		m_state = Player_State::Move;
-	}
-	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-	{
-		m_eMoveDir = Dir::Down;
-		m_eLastMoveDir = m_eMoveDir;
-		m_state = Player_State::Move;
-	}
-	else
-	{
-		m_eMoveDir = Dir::None;
-		m_state = Player_State::Idle;
-	}
+	case State::MoveLeft:
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			m_nextState = State::MoveLeft;
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_nextState = State::MoveRight;
+		}
+		else if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			m_nextState = State::MoveUp;
+		}
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			m_nextState = State::MoveDown;
+		}
+		else
+			m_nextState = State::Idle;
 
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-	{
-		m_bFire = true;
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			m_bFire = true;
+		}
+
+		break;
+	case State::MoveRight:
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			m_nextState = State::MoveLeft;
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_nextState = State::MoveRight;
+		}
+		else if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			m_nextState = State::MoveUp;
+		}
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			m_nextState = State::MoveDown;
+		}
+		else
+			m_nextState = State::Idle;
+
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			m_bFire = true;
+		}
+		break;
+	case State::MoveUp:
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			m_nextState = State::MoveLeft;
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_nextState = State::MoveRight;
+		}
+		else if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			m_nextState = State::MoveUp;
+		}
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			m_nextState = State::MoveDown;
+		}
+		else
+			m_nextState = State::Idle;
+
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			m_bFire = true;
+		}
+		break;
+
+	case State::MoveDown:
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			m_nextState = State::MoveLeft;
+		}
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			m_nextState = State::MoveRight;
+		}
+		else if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			m_nextState = State::MoveUp;
+		}
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			m_nextState = State::MoveDown;
+		}
+		else
+			m_nextState = State::Idle;
+
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		{
+			m_bFire = true;
+		}
+		break;
 	}
 }
 
 void CPlayer::Update()
 {
-	if (!m_vehicle)
+	if (!m_vehicle && m_state != State::Idle)
 		CObj::Update();
-		//m_pAnim->GetCurClip()->Update();
 
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	if (m_bInvincible)
+	{
+		m_invincibleTime += deltaTime;
+		if (m_invincibleTime >= 2.0f)
+		{
+			m_invincibleTime = 0.0f;
+			m_bInvincible = false;
+		}
+	}
 
 	D2D1_RECT_F rect = m_rect;
 	rect.top += 20;
 	//CObj::RectToPos(rect, m_cellXPos, m_cellYPos);
 
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
 
 	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+
+
 
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
 
 	int jumpHeight = BOARD_BLOCK_SIZE;
 
+	CAnimationClip* clip = nullptr;
 
+	// 현재 != 이전 상태 : PlayClip
 
-	// 현재 != 이전 상태 : PlayClip 
+	ChangeState(m_nextState);
 
 	switch (m_state)
 	{
-	case Player_State::Ready:
-		m_pAnim->SetClip("bazzi_ready");
+	case State::Ready:
+		clip = m_pAnim->GetCurClip();
+		if (!clip) return;
 
+		if (clip->IsCurClipEnd())
+		{
+			m_nextState = State::Idle;
+			m_pAnim->SetClip("bazzi_down");
+			return;
+		}
 		break;
-	case Player_State::Idle:
+	case State::Idle:
 		break;
-	case Player_State::Move:
-		MoveOnMoveObjBoard(eInGameObjType::Character);
+	case State::MoveLeft:
+	case State::MoveRight:
+	case State::MoveUp:
+	case State::MoveDown:
+		MoveOnMoveObjBoard(this);
 		MoveState();
 		break;
-	case Player_State::Die:
-		//m_pAnim->PlayClip("bazzi_die");
-		break;
+	case State::Die:
+		clip = m_pAnim->GetCurClip();
+		if (!clip) return;
+
+		if (clip->IsCurClipEnd())
+		{
+			m_isAlive = false;
+			return;
+		}
+	break;
 	}
 
-	CItem* item = board->GetItem(m_rect);
+	CItem* item = board->GetItem(m_cellXPos, m_cellYPos);
 
 	// 탑승 아이템
 	CItem* rideItem = nullptr;
@@ -148,7 +269,6 @@ void CPlayer::Update()
 		switch (item->GetItemEnum())
 		{
 		case eItem::Gift_Skate:
-			m_prevSpeed = m_speed;
 			m_speed += 70;
 			break;
 		case eItem::Gift_Turtle:
@@ -167,16 +287,18 @@ void CPlayer::Update()
 			if (layer)
 			{
 				m_rideRect = m_rect;
-				m_vehicle = new CVehicle(m_rect, "UFO");
+				m_vehicle = new CVehicle(m_rideRect, "UFO");
 				layer->AddObj(m_vehicle);
-				m_rideRect.top -= m_vehicle->GetRideHeight();
-				m_rideRect.bottom -= m_vehicle->GetRideHeight();
+				m_rect.top -= m_vehicle->GetRideHeight();
+				m_rect.bottom -= m_vehicle->GetRideHeight();
+				m_prevSpeed = m_speed;
+				m_speed = m_vehicle->GetSpeed();
+				m_bIsRiding = true;
 			}
 
-			m_bIsRiding = true;
 			//m_bIsJumping = true;
 		}
-			break;
+		break;
 		case eItem::Gift_Boom:
 			m_splashLength = 8;
 			break;
@@ -198,20 +320,22 @@ void CPlayer::Update()
 		}
 	}
 
-	if(m_vehicle)
-		m_vehicle->Update(m_rect);
+	if (m_vehicle)
+		m_vehicle->Update(m_rideRect);
 
 	// 스페이스바를 한번 누르면 여러번 Bubble이 생성됨
-	if (m_bFire && m_curBubblePlaced < m_bubbleCarryLimit 
+	if (m_bFire
+		&& m_curBubblePlaced < m_bubbleCarryLimit
 		&& (((CInGameScene*)m_pScene)->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
 	{
 
 		CBubble* bubble = new CBubble({
-			(float)m_cellXPos * BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-			(float)m_cellYPos * BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40),
-			(float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 * ((float)BOARD_BLOCK_SIZE / 40),
-			(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 * ((float)BOARD_BLOCK_SIZE / 40)
-			});
+			(float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY,
+			(float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+			},
+			eInGameObjType::Balloon);
 		bubble->SetPlayer(this);
 		bubble->SetSplashLength(m_splashLength);
 		D2D1_POINT_2U point = bubble->GetPoint();
@@ -221,75 +345,43 @@ void CPlayer::Update()
 			delete bubble;
 	}
 
-	// 바로 위 if문 안들어가고 그냥 지나치는 경우 : m_bFire는 true이나 다른 것이 false인 경우
 	m_bFire = false;
+
+	if (board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
+	{
+		CBoss* boss = (CBoss*)board->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
+		if (boss->GetState() == State::TrappedInBubble)
+			boss->Die();
+		else if(m_state != State::Die)
+			Die();
+	}
 }
 
-void CPlayer::Render(ID2D1RenderTarget* _pRenderTarget)
+// 현재 상태를 출력해 ~~
+void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	CAnimationClip* clip = nullptr;
-	tAnimationFrame* frame = nullptr;
-
-	switch (m_state)
-	{
-	case Player_State::Ready:
-		clip = m_pAnim->GetClip("bazzi_ready");
-		if (!clip) return;
-		frame = clip->GetCurFrame();
-
-		if (clip->IsCurClipEnd())
-		{
-			m_state = Player_State::Idle;
-			return;
-		}
-		break;
-	case Player_State::Idle:
-		clip = m_animDir[(int)m_eLastMoveDir];
-		if (!clip) return;
-		frame = clip->GetFirstFrame();
-		break;
-	case Player_State::Move:
-		clip = m_animDir[(int)m_eLastMoveDir];
-		if (!clip) return;
-		frame = clip->GetCurFrame();
-		break;
-	case Player_State::Die:
-		clip = m_pAnim->GetClip("bazzi_die");
-		if (!clip) return;
-		frame = clip->GetCurFrame();
-
-		if (clip->IsCurClipEnd())
-		{
-			m_isAlive = false;
-			return;
-		}
-		break;
-	}
+	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(0.9f, 0.8f, D2D1::Point2F(m_rect.left - 80, m_rect.bottom )));
+	m_pAnim->Render(_pRenderTarget, m_rect);
+	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
 	if (m_vehicle)
 		m_vehicle->Render(_pRenderTarget);
-
-	if(m_bIsRiding)
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rideRect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
-	else
-		_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-			m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			frame->rect);
 }
 
-void CPlayer::Die()
+void CPlayer::Die() 
 {
-	m_state = Player_State::Die;
-	//MessageBox(NULL, L"사망", L"사망", MB_OK);
+	if (m_bInvincible)
+		return;
 
+	m_nextState = State::Die;
+	//MessageBox(NULL, L"사망", L"사망", MB_OK);
+	m_pAnim->SetClip("bazzi_die");
 }
 
 void CPlayer::MoveState()
 {
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
 	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
@@ -300,7 +392,9 @@ void CPlayer::MoveState()
 	int cellLeftXPos = (m_xpos + 5- stageFrameOffsetX - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
 	int cellRightXPos = (m_xpos - 5 - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE; 
 
-	if (m_eMoveDir == Dir::Left)
+	
+	// 미끄러짐 처리 코드 - 추후 수정
+	if (m_state == State::MoveLeft)
 	{
 		int limit = m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX;
 		// 위로
@@ -309,13 +403,9 @@ void CPlayer::MoveState()
 			if (limit < m_xpos)
 				x = -1;
 			else 
-			{
 				if (cellDownYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetY > m_ypos
 					&& board->IsMovable(m_cellXPos - 1, cellDownYPos - 1, m_vehicle))
-				{
 					y = -1;
-				}
-			}
 		}
 		// 아래로
 		else if (!board->IsMovable(m_cellXPos - 1, cellUpYPos, m_vehicle))
@@ -323,13 +413,9 @@ void CPlayer::MoveState()
 			if (limit < m_xpos)
 				x = -1;
 			else
-			{
 				if (cellUpYPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetY < m_ypos
 					&& board->IsMovable(m_cellXPos - 1, cellUpYPos + 1, m_vehicle))
-				{
 					y = 1;
-				}
-			}
 		}
 		else
 		{
@@ -344,17 +430,13 @@ void CPlayer::MoveState()
 				CObj* pObj = pLayer->FindObj(m_cellXPos - 1, m_cellYPos);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(m_eMoveDir);
+					((CBubble*)pObj)->Move(Dir::Left);
 				}
 			}
 		}
 
-		if(m_vehicle)
-			m_vehicle->SetDir(Dir::Left);
-		
-		m_pAnim->SetClip("bazzi_left");
 	}
-	else if (m_eMoveDir == Dir::Right)
+	else if (m_state == State::MoveRight)
 	{
 		int limit = m_cellXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetX;
 		// 위로
@@ -363,13 +445,9 @@ void CPlayer::MoveState()
 			if (limit > m_xpos)
 				x = 1;
 			else
-			{
 				if (cellDownYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetY > m_ypos
 					&& board->IsMovable(m_cellXPos + 1, cellDownYPos - 1, m_vehicle))
-				{
 					y = -1;
-				}
-			}
 		}
 		// 아래로
 		else if (!board->IsMovable(m_cellXPos + 1, cellUpYPos, m_vehicle))
@@ -377,13 +455,9 @@ void CPlayer::MoveState()
 			if (limit > m_xpos)
 				x = 1;
 			else
-			{
 				if (cellUpYPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetY < m_ypos
 					&& board->IsMovable(m_cellXPos + 1, cellUpYPos + 1, m_vehicle))
-				{
 					y = 1;
-				}
-			}
 		}
 		else
 		{
@@ -398,16 +472,12 @@ void CPlayer::MoveState()
 				CObj* pObj = pLayer->FindObj(m_cellXPos + 1, m_cellYPos);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(m_eMoveDir);
+					((CBubble*)pObj)->Move(Dir::Right);
 				}
 			}
 		}
-		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Right);
-
-		m_pAnim->SetClip("bazzi_right");
 	}
-	else if (m_eMoveDir == Dir::Up)
+	else if (m_state == State::MoveUp)
 	{
 		int limit = m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY;
 		// 왼쪽으로
@@ -416,13 +486,9 @@ void CPlayer::MoveState()
 			if (limit < m_ypos)
 				y = -1;
 			else
-			{
 				if (cellRightXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetX > m_xpos
 					&& board->IsMovable(cellRightXPos-1, m_cellYPos-1, m_vehicle)) // 미끄러져서 도착한 칸이 갈 수 있는 곳인지
-				{
 					x = -1;
-				}
-			}
 		}
 		// 오른쪽으로
 		else if (!board->IsMovable(cellLeftXPos, m_cellYPos-1, m_vehicle))
@@ -430,18 +496,12 @@ void CPlayer::MoveState()
 			if (limit < m_ypos)
 				y = -1;
 			else
-			{
 				if (cellLeftXPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetX < m_xpos
 					&& board->IsMovable(cellLeftXPos+1, m_cellYPos-1, m_vehicle))
-				{
 					x = 1;
-				}
-			}
 		}
 		else
-		{
 			y = -1;
-		}
 
 		if (m_bKickable)
 		{
@@ -451,49 +511,35 @@ void CPlayer::MoveState()
 				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos-1);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(m_eMoveDir);
+					((CBubble*)pObj)->Move(Dir::Up);
 				}
 			}
 		}
-		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Up);
-		m_pAnim->SetClip("bazzi_up");
 	}
-	else if (m_eMoveDir == Dir::Down)
+	else if (m_state == State::MoveDown)
 	{
 		int limit = m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY;
-		// 왼쪽으로
+
 		if (!board->IsMovable(cellRightXPos, m_cellYPos + 1, m_vehicle))
 		{
 			if (limit > m_ypos)
 				y = 1;
 			else
-			{
 				if (cellRightXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetX > m_xpos
 					&& board->IsMovable(cellRightXPos-1, m_cellYPos+1, m_vehicle))
-				{
 					x = -1;
-				}
-			}
 		}
-		// 오른쪽으로
 		else if (!board->IsMovable(cellLeftXPos, m_cellYPos + 1, m_vehicle))
 		{
 			if (limit > m_ypos)
 				y = 1;
 			else
-			{
 				if (cellLeftXPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetX < m_xpos
 					&& board->IsMovable(cellLeftXPos+1, m_cellYPos+1, m_vehicle))
-				{
 					x = 1;
-				}
-			}
 		}
 		else
-		{
 			y = 1;
-		}
 
 		if (m_bKickable)
 		{
@@ -503,36 +549,62 @@ void CPlayer::MoveState()
 				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos+1);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(m_eMoveDir);
+					((CBubble*)pObj)->Move(Dir::Down);
 				}
 			}
 		}
-		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Down);
-
-		m_pAnim->SetClip("bazzi_down");
 	}
 
-	if (m_eMoveDir != Dir::None)
+	m_xpos += m_speed * deltaTime * x;
+	m_ypos += m_speed * deltaTime * y;
+
+	m_rect.left += m_speed * deltaTime * x;
+	m_rect.right += m_speed * deltaTime * x;
+	m_rect.top += m_speed * deltaTime * y;
+	m_rect.bottom += m_speed * deltaTime * y;
+
+	if (m_vehicle)
 	{
-		if (m_vehicle)
-		{
-			m_prevSpeed = m_speed;
-			m_speed = m_vehicle->GetSpeed();
-		}
-
-		m_xpos += m_speed * deltaTime * x;
-		m_ypos += m_speed * deltaTime * y;
-
-		m_rect.left += m_speed * deltaTime * x;
-		m_rect.right += m_speed * deltaTime * x;
-		m_rect.top += m_speed * deltaTime * y;
-		m_rect.bottom += m_speed * deltaTime * y;
-		
 		m_rideRect.left += m_speed * deltaTime * x;
 		m_rideRect.right += m_speed * deltaTime * x;
 		m_rideRect.top += m_speed * deltaTime * y;
 		m_rideRect.bottom += m_speed * deltaTime * y;
+	}
+}
+
+void CPlayer::ChangeState(State _state)
+{
+	if (_state == m_state)
+		return;
+
+	m_state = _state;
+	//m_nextState = State::None;
+
+	switch (_state)
+	{
+	case State::Idle:
+		m_pAnim->GetCurClip()->SetCurFrameIdx(0);
+		break;
+	case State::MoveLeft:
+		m_pAnim->SetClip("bazzi_left");
+		if (m_vehicle)
+			m_vehicle->SetDir(Dir::Left);
+		break;
+	case State::MoveRight:
+		m_pAnim->SetClip("bazzi_right");
+		if (m_vehicle)
+			m_vehicle->SetDir(Dir::Right);
+		break;
+	case State::MoveUp:
+		m_pAnim->SetClip("bazzi_up");
+		if (m_vehicle)
+			m_vehicle->SetDir(Dir::Up);
+		break;
+	case State::MoveDown:
+		m_pAnim->SetClip("bazzi_down");
+		if (m_vehicle)
+			m_vehicle->SetDir(Dir::Down);
+		break;
 	}
 }
 
@@ -556,4 +628,17 @@ std::string CPlayer::GetStrDir(Dir _dir)
 	}
 
 	return strDir;
+}
+
+// 부활하거나 내린 후에는 일정시간 동안 무적
+void CPlayer::GetOffVehicle()
+{
+	m_bInvincible = true;
+	m_bIsRiding = false;
+	m_speed = m_prevSpeed;
+
+	m_rect.top += m_vehicle->GetRideHeight();
+	m_rect.bottom += m_vehicle->GetRideHeight();
+	m_vehicle->SetAlive(false);
+	m_vehicle = nullptr;
 }

@@ -35,7 +35,7 @@ void CSceneManager::Update()
 
 }
 
-void CSceneManager::Render(ID2D1RenderTarget* _pRenderTarget)
+void CSceneManager::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	m_pScene->Render(_pRenderTarget);
 }

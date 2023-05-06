@@ -8,7 +8,7 @@ CUIPanel::~CUIPanel()
 {
 }
 
-void CUIPanel::Render(ID2D1RenderTarget* _pRenderTarget)
+void CUIPanel::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	CObj::Render(_pRenderTarget);
 }

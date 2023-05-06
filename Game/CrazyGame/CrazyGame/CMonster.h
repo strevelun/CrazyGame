@@ -4,8 +4,14 @@ class CMonster :
     public CMoveObj
 {
 public:
-    CMonster(const D2D1_RECT_F& _rect);
+    CMonster(const D2D1_RECT_F& _rect, eInGameObjType _type);
     ~CMonster();
-    void Render(ID2D1RenderTarget* _pRenderTarget);
+
+    void MoveState();
+    void ChangeState(State _state);
+    State RandomDir();
+
+    void Update();
+    void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 };
 

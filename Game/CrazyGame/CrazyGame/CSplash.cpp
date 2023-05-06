@@ -8,6 +8,8 @@
 #include "CBoard.h"
 #include "CItem.h"
 #include "CPlayer.h"
+#include "CVehicle.h"
+#include "CBoss.h"
 
 CSplash::CSplash(const D2D1_RECT_F& _rect, std::string _animClipName) : CObj(_rect)
 {
@@ -38,7 +40,7 @@ void CSplash::Update()
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
 	{
 		CLayer* layer = scene->FindLayer("Event");		
-		CObj* obj = layer->FindObj(m_rect);
+		CObj* obj = layer->FindObj(m_cellXPos, m_cellYPos);
 		if (obj)
 		{
 			obj->SetAlive(false);
@@ -50,8 +52,25 @@ void CSplash::Update()
 	{
 		CPlayer* player = dynamic_cast<CInGameScene*>(scene)->GetPlayer();
 		if (player)
-			player->Die();
+		{
+			if (player->GetVehicle() == nullptr)
+				player->Die();
+			else
+				player->GetOffVehicle();
+		}
 	}
+	/*
+	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
+	{
+		CLayer* pLayer = scene->FindLayer("Block");
+		//if (pLayer)
+		{
+			//CBoss* pBoss = reinterpret_cast<CBoss*>(pLayer->FindObj(m_cellXPos, m_cellYPos));
+			CBoss* pBoss = (CBoss*)pBoard->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
+			pBoss->Hit();
+		}
+	}
+	*/
 
 	m_animator.Update();
 
@@ -59,7 +78,7 @@ void CSplash::Update()
 		m_isAlive = false;
 }
 
-void CSplash::Render(ID2D1RenderTarget* _pRenderTarget)
+void CSplash::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	tAnimationFrame* frame = m_animClip.GetCurFrame();
 

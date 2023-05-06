@@ -8,7 +8,7 @@
 #include "CLobbyScene.h"
 #include "CPlayer.h"
 #include "../../D2DCore/CApp.h"
-#include "CMonster.h"
+#include "CBoss.h"
 #include "CBubble.h"
 #include "CAnimator.h"
 #include "CAnimationClip.h"
@@ -31,12 +31,12 @@ void CInGameScene::Init()
 
 	CLayer* layer = CreateLayer("InGameUI", 0);
 
-	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 1420.f, 1080 });
-	//CUIPanel* stageFrame = new CUIPanel({ 0, 0, 800.f, 600.f });
+	//CUIPanel* stageFrame = new CUIPanel({ 0, 0, 1420.f, 1080 });
+	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 800.f, 600.f });
 	stageFrame->SetBitmap(bitmap);
 	layer->AddObj(stageFrame);
 
-	CUIButton* backButton = new CUIButton({ 1150, 1010, 1400, 1080 }, "BackButton");
+	CUIButton* backButton = new CUIButton({ 647, 561, 786, 592 }, "BackButton");
 	backButton->SetCallback(this, &CInGameScene::OnBackButtonClicked);
 	layer->AddObj(backButton);
 
@@ -44,8 +44,8 @@ void CInGameScene::Init()
 
 	layer = CreateLayer("Tile", 1);
 
-	int stageFrameOffsetX = 20 * ((float)BOARD_BLOCK_SIZE / 40);
-	int stageFrameOffsetY = 40 * ((float)BOARD_BLOCK_SIZE / 40);
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
 
 	tMapData mapData = m_board->GetMapData();
 	u_int size = mapData.vecBlockData.size();
@@ -78,9 +78,9 @@ void CInGameScene::Init()
 
 		CBlock* block = new CBlock(D2D1::RectF(
 			mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE - (sprite->size.height * ((float)BOARD_BLOCK_SIZE / 40)) + 137 - (sprite->size.width < 30 ? 7 : 0),
+			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE - (sprite->size.height - BOARD_BLOCK_SIZE) - (sprite->size.width < 30 ? 3 : 0) + stageFrameOffsetY,
 			right,
-			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE - (sprite->size.width < 30 ? 7 : 0) + stageFrameOffsetY
+			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE - (sprite->size.width < 30 ? 2 : 0) + stageFrameOffsetY
 		));
 
 		block->SetBitmapIdx(mapData.vecBlockData[i].idx);
@@ -97,6 +97,9 @@ void CInGameScene::Init()
 
 	float x, y;
 	size = mapData.vecEventData.size();
+
+	int boardBlockSizeHalf = (BOARD_BLOCK_SIZE / 2);
+
 	for (int i = 0; i < size; i++)
 	{
 		if (mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
@@ -104,33 +107,36 @@ void CInGameScene::Init()
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 0);
 			y = i / mapData.gridX;
 			x = i % mapData.gridX;
-			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Character);
+			
 			m_pPlayer = new CPlayer({
-				sprite->rect.left + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
-				sprite->rect.top + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY - 20,
-				BOARD_BLOCK_SIZE  + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
-				sprite->rect.bottom + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY });
+				(x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
+				(y * BOARD_BLOCK_SIZE) + stageFrameOffsetY - (sprite->size.height - BOARD_BLOCK_SIZE),
+				boardBlockSizeHalf + (x * BOARD_BLOCK_SIZE) + stageFrameOffsetX + (sprite->size.width / 2),
+				BOARD_BLOCK_SIZE + (y * BOARD_BLOCK_SIZE) + stageFrameOffsetY }
+			, eInGameObjType::Character);
+			m_board->SetObjTypeInMoveObjBoard(x, y, m_pPlayer);
  
 			m_pPlayer->SetSprite(sprite);
 			m_pPlayer->SetScene(this);
 			layer->AddObj(m_pPlayer);
 		}
-		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster)
+		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster) // º¸½º
 		{
 			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 1);
 			y = i / mapData.gridX;
 			x = i % mapData.gridX;
-			m_board->SetObjTypeInMoveObjBoard(x, y, eInGameObjType::Boss);
-			CMonster* monster = new CMonster({
+			CBoss* boss = new CBoss({
 				(x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
-				(y * BOARD_BLOCK_SIZE) + stageFrameOffsetY - sprite->size.height * 1.0f + BOARD_BLOCK_SIZE,
-				(x * BOARD_BLOCK_SIZE) + sprite->size.width + stageFrameOffsetX ,
-				(y * BOARD_BLOCK_SIZE) + sprite->size.height + stageFrameOffsetY - sprite->size.height * 1.0f + BOARD_BLOCK_SIZE });
-			CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
-			monster->SetBitmap(bitmap);
-			monster->SetSprite(sprite);
-			monster->SetScene(this);
-			layer->AddObj(monster);
+				(y * BOARD_BLOCK_SIZE) + stageFrameOffsetY - 170 + BOARD_BLOCK_SIZE,
+				(x * BOARD_BLOCK_SIZE) + 120 + stageFrameOffsetX ,
+				(y * BOARD_BLOCK_SIZE)  + stageFrameOffsetY + BOARD_BLOCK_SIZE }
+			, eInGameObjType::Boss);
+			//CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
+			//monster->SetBitmap(bitmap);
+			m_board->SetObjTypeInMoveObjBoard(x, y, boss);
+			boss->SetSprite(sprite);
+			boss->SetScene(this);
+			layer->AddObj(boss);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)
 		{

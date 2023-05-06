@@ -19,7 +19,7 @@ public:
 	~CLayer();
 	void Input();
 	void Update();
-	void Render(ID2D1RenderTarget* _pRenderTarget);
+	void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 
 	static bool ObjYPosSort(CObj* _obj1, CObj* _obj2);
 

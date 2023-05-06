@@ -14,8 +14,8 @@ class CInGameScene :
     friend class CBubble;
     friend class CLayer;
 
-    CPlayer* m_pPlayer;
-    CBoard* m_board;
+    CPlayer*    m_pPlayer;
+    CBoard*     m_board;
 
 public:
     CInGameScene();

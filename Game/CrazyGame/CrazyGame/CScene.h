@@ -21,7 +21,7 @@ public:
 	virtual void Init();
 	virtual void Input();
 	virtual void Update();
-	virtual void Render(ID2D1RenderTarget* _pRenderTarget);
+	virtual void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 
 	CLayer* CreateLayer(const std::string& _strTag, u_int _zOrder);
 	CLayer* FindLayer(const std::string& _strTag);
