@@ -42,6 +42,8 @@ void CInGameScene::Init()
 
 	m_board->SetBoard();
 
+	layer = CreateLayer("MonsterUI", 6);
+
 	layer = CreateLayer("Tile", 1);
 
 	int stageFrameOffsetX = 20;
@@ -131,11 +133,16 @@ void CInGameScene::Init()
 				(x * BOARD_BLOCK_SIZE) + 120 + stageFrameOffsetX ,
 				(y * BOARD_BLOCK_SIZE)  + stageFrameOffsetY + BOARD_BLOCK_SIZE }
 			, eInGameObjType::Boss);
-			//CBitmap* bitmap = CResourceManager::GetInst()->GetIdxBitmap(sprite->idx);
-			//monster->SetBitmap(bitmap);
+
+			boss->SetScene(this);
+
+			if (boss->Init() == false)
+			{
+				delete boss;
+				continue;
+			}
 			m_board->SetObjTypeInMoveObjBoard(x, y, boss);
 			boss->SetSprite(sprite);
-			boss->SetScene(this);
 			layer->AddObj(boss);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)

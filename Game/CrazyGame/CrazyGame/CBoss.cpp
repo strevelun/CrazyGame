@@ -8,14 +8,13 @@
 #include "CResourceManager.h"
 #include "CTimer.h"
 #include "CMonster.h"
+#include "CUIHPBar.h"
+#include "CUIPanel.h"
 
 #include <random>
 
 CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-
-	//m_aStar.Init(board);
-
 	m_pAnim = new CAnimator;
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Front");
 	animClip->SetFrametimeLimit(0.2f);
@@ -44,6 +43,7 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 
 	m_pAnim->SetClip("Boss_Front");
 
+	
 
 	m_xpos = _rect.left;
 	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);	
@@ -54,11 +54,7 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
-	if (SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, this) == false)
-	{
-		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
-		m_isAlive = false;
-	}
+
 
 	m_state = State::MoveDown;
 	// 플레이어 ready가 끝나면 move하도록
@@ -69,6 +65,29 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 
 CBoss::~CBoss()
 {
+	m_uiHPBar->Die();
+}
+
+bool CBoss::Init()
+{
+	if (SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, this) == false)
+	{
+		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
+		m_isAlive = false;
+		return false;
+	}
+
+	D2D1_RECT_F rect = m_rect;
+	rect.bottom = m_rect.top - 5;
+	rect.top = rect.bottom - 11;
+
+	m_uiHPBar = new CUIHPBar(rect, m_hp);
+	m_uiHPBar->SetBitmap(CResourceManager::GetInst()->Load(L"Boss_hp_blue.png"));
+	m_uiHPBar->SetHP(m_hp);
+	CLayer* layer = m_pScene->FindLayer("MonsterUI");
+	layer->AddObj(m_uiHPBar);
+
+	return true;
 }
 
 void CBoss::Update()
@@ -106,6 +125,7 @@ void CBoss::Update()
 
 		break;
 	case State::Hit:
+
 		clip = m_pAnim->GetCurClip();
 		if (!clip) return;
 
@@ -137,6 +157,10 @@ void CBoss::Update()
 		}
 	break;
 	}
+	D2D1_RECT_F rect = m_rect;
+	rect.bottom = m_rect.top - 5;
+	rect.top = rect.bottom - 11;
+	m_uiHPBar->SetRect(rect);
 }
 
 void CBoss::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
@@ -177,6 +201,8 @@ void CBoss::Hit(u_int _attackPower)
 	pLayer->AddObj(pMonster);
 	m_nextState = State::Hit;
 	m_hp -= _attackPower;
+
+	m_uiHPBar->SetHP(m_hp);
 }
 
 

@@ -7,11 +7,13 @@ class CBoss :
     public CMoveObj
 {
     //CAStar m_aStar;
-    u_int m_hp = 50;
+    u_int m_hp = 25;
+    class CUIHPBar* m_uiHPBar;
 
 public:
     CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type);
     ~CBoss();
+    bool Init();
 
     void Update();
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);

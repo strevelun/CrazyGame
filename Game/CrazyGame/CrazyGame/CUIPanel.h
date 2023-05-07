@@ -9,6 +9,8 @@ public:
     CUIPanel(const D2D1_RECT_F& _rect);
     ~CUIPanel();
 
-    void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
+    void SetRect(const D2D1_RECT_F& _rect) { m_rect = _rect; }
+
+    void Render(ID2D1BitmapRenderTarget* _pRenderTarget) override;
 };
 

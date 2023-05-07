@@ -157,6 +157,7 @@
     <ClCompile Include="CTimer.cpp" />
     <ClCompile Include="CUI.cpp" />
     <ClCompile Include="CUIButton.cpp" />
+    <ClCompile Include="CUIHPBar.cpp" />
     <ClCompile Include="CUIPanel.cpp" />
     <ClCompile Include="CVehicle.cpp" />
   </ItemGroup>
@@ -190,6 +191,7 @@
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CUI.h" />
     <ClInclude Include="CUIButton.h" />
+    <ClInclude Include="CUIHPBar.h" />
     <ClInclude Include="CUIPanel.h" />
     <ClInclude Include="Setting.h" />
     <ClInclude Include="CVehicle.h" />

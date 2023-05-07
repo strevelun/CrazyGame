@@ -55,6 +55,9 @@ CPlayer::~CPlayer()
 
 void CPlayer::Input()
 {
+	if (m_nextState == State::Die)
+		return;
+
 	switch (m_state)
 	{
 	case State::Idle:
@@ -225,6 +228,16 @@ void CPlayer::Update()
 
 	ChangeState(m_nextState);
 
+
+	if (board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
+	{
+		CBoss* boss = (CBoss*)board->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
+		if (boss->GetState() == State::TrappedInBubble)
+			boss->Die();
+		else if (m_state != State::Die)
+			Die();
+	}
+
 	switch (m_state)
 	{
 	case State::Ready:
@@ -347,14 +360,6 @@ void CPlayer::Update()
 
 	m_bFire = false;
 
-	if (board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
-	{
-		CBoss* boss = (CBoss*)board->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
-		if (boss->GetState() == State::TrappedInBubble)
-			boss->Die();
-		else if(m_state != State::Die)
-			Die();
-	}
 }
 
 // 현재 상태를 출력해 ~~

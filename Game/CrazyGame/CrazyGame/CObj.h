@@ -44,7 +44,7 @@ protected:
 public:
 	CObj();
 	CObj(const D2D1_RECT_F& _rect);
-	~CObj();
+	virtual ~CObj();
 
 	void SetBitmap(CBitmap* _bitmap) { m_pBitmap = _bitmap; }
 	void SetAnimation(CAnimator* _anim) { m_pAnim = _anim; }
