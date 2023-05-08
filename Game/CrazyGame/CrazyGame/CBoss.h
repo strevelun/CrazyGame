@@ -7,8 +7,11 @@ class CBoss :
     public CMoveObj
 {
     //CAStar m_aStar;
-    u_int m_hp = 25;
+    u_int m_hp = 50;
     class CUIHPBar* m_uiHPBar;
+
+    float m_attackDelay = 5.0f;
+    float m_attackDelayRemained = 0.0f;
 
 public:
     CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type);
@@ -24,6 +27,8 @@ public:
     void ChangeState(State _state) override;
     State GetState() const { return m_state; }
     void Die() override;
+
+    void Attack();
 
     State RandomDir();
 };

@@ -140,42 +140,45 @@ bool CBoard::PutSplash(D2D1_RECT_F _rect, std::string _animClipName)
 	int x, y;
 	CObj::RectToPos(_rect, x, y);
 
-	if (m_mapData.gridX <= x) return false;
-	if (m_mapData.gridY <= y) return false;
+	return PutSplash(x, y, _animClipName);
+}
 
+bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::string _animClipName)
+{
+	if (m_mapData.gridX <= _cellXPos) return false;
+	if (m_mapData.gridY <= _cellYPos) return false;
 
-	if (IsGameObjType(x, y, eInGameObjType::Block_InDestructible))
+	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Block_InDestructible))
 		return false;
-	if (IsGameObjType(x, y, eInGameObjType::Block_Destructible))
+	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Block_Destructible))
 	{
-		RemoveObj(x, y, "Block");
+		RemoveObj(_cellXPos, _cellYPos, "Block");
 		return false;
 	}
-	if (IsGameObjType(x, y, eInGameObjType::Balloon))
+	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Balloon))
 	{
-		RemoveObj(x, y, "Event");
+		RemoveObj(_cellXPos, _cellYPos, "Event");
 		return false;
 	}
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	 CLayer*  layer = scene->FindLayer("Event");
+	CLayer* layer = scene->FindLayer("Event");
 
-	 int stageFrameOffsetX = 20;
-	 int stageFrameOffsetY = 40;
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
 
 	if (layer)
 	{
 		CSplash* splash = new CSplash({
-			(float)x * BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)y * BOARD_BLOCK_SIZE + stageFrameOffsetY,
-			(float)x * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)y * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+			(float)_cellXPos* BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)_cellYPos* BOARD_BLOCK_SIZE + stageFrameOffsetY,
+			(float)_cellXPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)_cellYPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
 			}, _animClipName);
 
 		layer->AddObj(splash);
 	}
-
 
 	return true;
 }

@@ -36,6 +36,7 @@ public:
     }
     void SetObjTypeInMoveObjBoard(int _x, int _y, CMoveObj* _pObj) { m_moveObjBoard[_y][_x] = _pObj; }
     bool PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
+    bool PutSplash(u_int _cellXPos, u_int _cellYPos, std::string _animClipName);
 
     CItem* GetItem(D2D1_RECT_F _rect);
     CItem* GetItem(u_int _cellXPos, u_int _cellYPos);

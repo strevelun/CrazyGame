@@ -349,7 +349,7 @@ void CPlayer::Update()
 			(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
 			},
 			eInGameObjType::Balloon);
-		bubble->SetPlayer(this);
+		bubble->SetOwner(this);
 		bubble->SetSplashLength(m_splashLength);
 		D2D1_POINT_2U point = bubble->GetPoint();
 		if (((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
@@ -609,6 +609,9 @@ void CPlayer::ChangeState(State _state)
 		m_pAnim->SetClip("bazzi_down");
 		if (m_vehicle)
 			m_vehicle->SetDir(Dir::Down);
+		break;
+	case State::Die:
+
 		break;
 	}
 }

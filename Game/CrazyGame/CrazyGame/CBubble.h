@@ -3,7 +3,7 @@
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 
-class CPlayer;
+class CMoveObj;
 
 class CBubble :
     public CObj
@@ -11,7 +11,8 @@ class CBubble :
     CAnimator           m_animator;
     CAnimationClip      m_animClip;
 
-    CPlayer* m_pPlayer = nullptr;;
+    //CPlayer* m_pPlayer = nullptr;
+    CMoveObj* m_pOwner = nullptr;
 
     float m_elapsedTime;
     float m_dieTime = 3.0f;
@@ -30,7 +31,7 @@ public:
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
     void Move(Dir _eDir);
 
-    void SetPlayer(CPlayer* _pPlayer) { m_pPlayer = _pPlayer; }
+    void SetOwner(CMoveObj* _pOwner) { m_pOwner = _pOwner; }
     void SetSplashLength(u_int _splashLength) { m_splashLength = _splashLength; }
 
     void Die() override;

@@ -10,6 +10,8 @@
 #include "CMonster.h"
 #include "CUIHPBar.h"
 #include "CUIPanel.h"
+#include "CSplash.h"
+#include "CBubble.h"
 
 #include <random>
 
@@ -111,7 +113,7 @@ void CBoss::Update()
 	switch (m_state)
 	{
 	case State::Ready:
-		m_nextState = State::MoveUp;
+		m_nextState = State::MoveDown;
 
 		break;
 	case State::MoveLeft:
@@ -157,6 +159,9 @@ void CBoss::Update()
 		}
 	break;
 	}
+
+	Attack();
+
 	D2D1_RECT_F rect = m_rect;
 	rect.bottom = m_rect.top - 5;
 	rect.top = rect.bottom - 11;
@@ -337,6 +342,97 @@ void CBoss::ChangeState(State _state)
 void CBoss::Die()
 {
 	m_nextState = State::Die;
+}
+
+void CBoss::Attack()
+{
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+	m_attackDelayRemained += deltaTime;
+	
+	if (m_attackDelayRemained < m_attackDelay)
+		return;
+
+	std::random_device random;
+	std::mt19937 engine(random());
+	std::uniform_int_distribution<int> distribution(2, 3);
+	m_attackDelay = distribution(engine);
+	m_attackDelayRemained = 0.0f;
+
+	std::uniform_int_distribution<int> distribution3(0, 1);
+	int choice = distribution3(engine);
+
+	CBoard* board = ((CInGameScene*)m_pScene)->GetBoard();
+
+	if (choice == 0)
+	{
+		int startX, startY;
+		Dir dir = Dir::Down;
+		if (State::MoveLeft == m_state)
+		{
+			dir = Dir::Left;
+			startX = m_cellXPos - 2;
+			startY = m_cellYPos - 1;
+		}
+		else if (State::MoveRight == m_state)
+		{
+			dir = Dir::Right;
+			startX = m_cellXPos + 4;
+			startY = m_cellYPos - 1;
+		}
+		else if (State::MoveUp == m_state)
+		{
+			dir = Dir::Up;
+			startX = m_cellXPos + 1;
+			startY = m_cellYPos - 4;
+		}
+		else
+		{
+			dir = Dir::Down;
+			startX = m_cellXPos + 1;
+			startY = m_cellYPos + 2;
+		}
+
+		int stageFrameOffsetX = 20;
+		int stageFrameOffsetY = 40;
+
+		CBubble* bubble = new CBubble({
+			(float)startX* BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)startY* BOARD_BLOCK_SIZE + stageFrameOffsetY,
+			(float)startX* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)startY* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+			},
+			eInGameObjType::Balloon);
+		bubble->SetOwner(this);
+		bubble->SetSplashLength(1);
+		D2D1_POINT_2U point = bubble->GetPoint();
+		board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
+
+
+
+		bubble->Move(dir);
+	}
+	else if (choice == 1)
+	{
+		int centerX = m_cellXPos + 1;
+		int centerY = m_cellYPos - 1;
+		int diameter;
+		do {
+			std::uniform_int_distribution<int> distribution2(5, 9);
+			diameter = distribution2(engine);
+		} while (diameter % 2 == 0);
+		int radius = diameter / 2;
+
+		for (int i = centerY - radius; i <= centerY + radius; i++)
+		{
+			for (int j = centerX - radius; j <= centerX + radius; j++)
+			{
+				if (centerY - radius + 1 <= i && i <= centerY + radius - 1
+					&& centerX - radius + 1 <= j && j <= centerX + radius - 1)
+					continue;
+				board->PutSplash(j, i, "Explosion_center");
+			}
+		}
+	}
 }
 
 State CBoss::RandomDir()

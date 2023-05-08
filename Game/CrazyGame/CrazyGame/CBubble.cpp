@@ -214,9 +214,12 @@ void CBubble::Die()
 			break;
 	}
 
-	m_pPlayer->ReduceCurBubble(1);
+	eInGameObjType eType = m_pOwner->GetType();
 
-	if (hitBoss)
+	if(eType == eInGameObjType::Character)
+		((CPlayer*)m_pOwner)->ReduceCurBubble(1);
+
+	if (hitBoss && eType == eInGameObjType::Character)
 	{
 		CBoss* pBoss = (CBoss*)board->GetObjTypeInMoveObjBoard(hitBossCellXPos, hitBossCellYPos);
 		if(pBoss->GetState() != State::Hit)
