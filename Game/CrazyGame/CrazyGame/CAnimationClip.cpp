@@ -18,8 +18,6 @@ CAnimationClip::CAnimationClip(const CAnimationClip& _animClip)
 
 void CAnimationClip::Update()
 {
-	CAnimationClip* temp = this;
-
 	m_frameTime += CTimer::GetInst()->GetDeltaTime();
 	if (m_frameTime >= m_frameTimeLimit)
 	{

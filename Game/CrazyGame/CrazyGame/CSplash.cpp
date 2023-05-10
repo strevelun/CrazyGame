@@ -11,12 +11,12 @@
 #include "CVehicle.h"
 #include "CBoss.h"
 
-CSplash::CSplash(const D2D1_RECT_F& _rect, std::string _animClipName) : CObj(_rect)
+CSplash::CSplash(const D2D1_RECT_F& _rect, std::string _animClipName) : CStaticObj(_rect)
 {
 	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip(_animClipName));
 	m_animClip.SetFrametimeLimit(0.1f);
-	m_animator.AddClip(_animClipName, &m_animClip);
-	m_animator.SetClip(_animClipName);
+	m_anim.AddClip(_animClipName, &m_animClip);
+	m_anim.SetClip(_animClipName);
 
 	m_rect = _rect;
 	CObj::RectToPos(m_rect, m_cellXPos, m_cellYPos);
@@ -72,17 +72,19 @@ void CSplash::Update()
 	}
 	*/
 
-	m_animator.Update();
+	m_anim.Update();
 
-	if (m_animClip.GetNumOfFrame() - 1 <= m_animClip.GetCurFrameIdx())
+	CAnimationClip* clip = m_anim.GetCurClip();
+	if (!clip) return;
+
+	if (clip->IsCurClipEnd())
+	{
 		m_isAlive = false;
+		return;
+	}
 }
 
 void CSplash::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	tAnimationFrame* frame = m_animClip.GetCurFrame();
-
-	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		frame->rect);
+	m_anim.Render(_pRenderTarget, m_rect);
 }

@@ -3,7 +3,7 @@
 #include "CBitmap.h"
 #include "CResourceManager.h"
 
-CMouse::CMouse() 
+CMouse::CMouse()
 {
 	POINT pt;
 	ShowCursor(false);

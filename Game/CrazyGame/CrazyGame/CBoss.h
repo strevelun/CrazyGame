@@ -6,7 +6,6 @@
 class CBoss :
     public CMoveObj
 {
-    //CAStar m_aStar;
     u_int m_hp = 100;
     class CUIHPBar* m_uiHPBar;
 

@@ -1,17 +1,13 @@
 #pragma once
-#include "CObj.h"
+#include "CMoveObj.h"
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 
 class CMoveObj;
 
 class CBubble :
-    public CObj
+    public CMoveObj
 {
-    CAnimator           m_animator;
-    CAnimationClip      m_animClip;
-
-    //CPlayer* m_pPlayer = nullptr;
     CMoveObj* m_pOwner = nullptr;
 
     float m_elapsedTime;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CObj.h"
+#include "CMoveObj.h"
 
 #include "CAnimator.h"
 #include "CAnimationClip.h"
@@ -8,13 +8,11 @@
 #include <string>
 
 class CVehicle
-	: public CObj
+	: public CMoveObj
 {
 
 	std::string m_strName;
 
-	CAnimator           m_animator;
-	//CAnimationClip      m_animClip;
 	CAnimationClip* m_ridingAnimDir[4];
 
 	Dir m_eMoveDir = Dir::Down;

@@ -10,9 +10,6 @@ CObj::CObj()
 CObj::CObj(const D2D1_RECT_F& _rect)
 {
 	m_rect = _rect;
-	CObj::RectToPos(_rect, m_cellXPos, m_cellYPos);
-	m_prevCellXPos = m_cellXPos;
-	m_prevCellYPos = m_cellYPos;
 }
 
 CObj::~CObj()
@@ -36,17 +33,11 @@ void CObj::Input()
 
 void CObj::Update()
 {
-	if (!m_pAnim) return;
-
-	m_pAnim->Update();
 }
 
 void CObj::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	if (m_pBitmap == nullptr)
-		return;
 
-	_pRenderTarget->DrawBitmap(m_pBitmap->GetBitmap(), m_rect);
 }
 
 void CObj::Die()

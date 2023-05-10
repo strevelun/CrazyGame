@@ -20,14 +20,14 @@ void CItem::Init(eItem _eItem, std::string _strName)
 	animClip->SetFrametimeLimit(0.2f);
 	anim->AddClip(_strName, animClip);
 	anim->SetClip(_strName);
-	SetAnimation(anim);
+	//SetAnimation(anim);
 	SetItemName(_strName);
 	SetItemEnum((eItem)_eItem);
 }
 
 void CItem::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	CAnimationClip* clip = m_pAnim->GetClip(m_itemName);
+	CAnimationClip* clip = m_anim.GetClip(m_itemName);
 	if (!clip) return;
 	tAnimationFrame* frame = clip->GetCurFrame();
 

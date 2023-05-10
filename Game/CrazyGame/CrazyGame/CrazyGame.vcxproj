@@ -136,6 +136,7 @@
     <ClCompile Include="CBlock.cpp" />
     <ClCompile Include="CBoard.cpp" />
     <ClCompile Include="CBubble.cpp" />
+    <ClCompile Include="CGameObj.cpp" />
     <ClCompile Include="CInGameScene.cpp" />
     <ClCompile Include="CInputManager.cpp" />
     <ClCompile Include="CItem.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="CBlock.h" />
     <ClInclude Include="CBoard.h" />
     <ClInclude Include="CBubble.h" />
+    <ClInclude Include="CGameObj.h" />
     <ClInclude Include="CInGameScene.h" />
     <ClInclude Include="CInputManager.h" />
     <ClInclude Include="CItem.h" />

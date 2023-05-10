@@ -1,5 +1,5 @@
 #pragma once
-#include "CObj.h"
+#include "CUI.h"
 
 enum class eMouseState
 {
@@ -9,7 +9,7 @@ enum class eMouseState
 };
 
 class CMouse :
-    public CObj
+    public CUI
 {
     D2D1_POINT_2F	m_point;
     bool m_isPressed = false;

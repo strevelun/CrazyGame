@@ -1,16 +1,13 @@
 #pragma once
-#include "CObj.h"
+#include "CStaticObj.h"
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 
 #include <string>
 
 class CSplash :
-    public CObj
+    public CStaticObj
 {
-    CAnimator           m_animator;
-    CAnimationClip      m_animClip;
-
 public:
     CSplash(const D2D1_RECT_F& _rect, std::string _animClipName);
     ~CSplash();

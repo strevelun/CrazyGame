@@ -12,20 +12,19 @@
 // 29 31
 CMonster::CMonster(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-	m_pAnim = new CAnimator;
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Front");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Monster01_Front", animClip);
+	m_anim.AddClip("Monster01_Front", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Back");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Monster01_Back", animClip);
+	m_anim.AddClip("Monster01_Back", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Left");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Monster01_Left", animClip);
+	m_anim.AddClip("Monster01_Left", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Right");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Monster01_Right", animClip);
-	m_pAnim->SetClip("Monster01_Front");
+	m_anim.AddClip("Monster01_Right", animClip);
+	m_anim.SetClip("Monster01_Front");
 
 
 	m_xpos = _rect.left + (BOARD_BLOCK_SIZE / 2);
@@ -121,16 +120,16 @@ void CMonster::ChangeState(State _state)
 	switch (_state)
 	{
 	case State::MoveLeft:
-		m_pAnim->SetClip("Monster01_Left");
+		m_anim.SetClip("Monster01_Left");
 		break;
 	case State::MoveRight:
-		m_pAnim->SetClip("Monster01_Right");
+		m_anim.SetClip("Monster01_Right");
 		break;
 	case State::MoveUp:
-		m_pAnim->SetClip("Monster01_Back");
+		m_anim.SetClip("Monster01_Back");
 		break;
 	case State::MoveDown:
-		m_pAnim->SetClip("Monster01_Front");
+		m_anim.SetClip("Monster01_Front");
 		break;
 	}
 }
@@ -162,7 +161,7 @@ void CMonster::Hit()
 
 void CMonster::Update()
 {
-	CObj::Update();
+	CGameObj::Update();
 
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
@@ -193,5 +192,5 @@ void CMonster::Update()
 
 void CMonster::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	m_pAnim->Render(_pRenderTarget, m_rect);
+	m_anim.Render(_pRenderTarget, m_rect);
 }

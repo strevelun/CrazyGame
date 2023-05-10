@@ -8,13 +8,13 @@
 #include "CPlayer.h"
 #include "CBoss.h"
 
-CBubble::CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type) : CObj(_rect)
+CBubble::CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {	
 	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip("bubble"));
 	m_animClip.SetFrametimeLimit(0.25f);
 
-	m_animator.AddClip("bubble", &m_animClip);
-	m_animator.SetClip("bubble");
+	m_anim.AddClip("bubble", &m_animClip);
+	m_anim.SetClip("bubble");
 
 	m_eType = _type;
 }
@@ -34,7 +34,7 @@ void CBubble::Update()
 
 	int x = 0, y = 0;
 
-	m_animator.Update();
+	m_anim.Update();
 
 	m_elapsedTime += deltaTime;
 	if (m_elapsedTime >= m_dieTime)
@@ -115,12 +115,8 @@ void CBubble::Update()
 }
 
 void CBubble::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
-{;
-	tAnimationFrame* frame = m_animClip.GetCurFrame();
-
-	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(frame->bitmapIdx)->GetBitmap(),
-		m_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		frame->rect);
+{
+	m_anim.Render(_pRenderTarget, m_rect);
 }
 
 void CBubble::Move(Dir _eDir)

@@ -10,5 +10,5 @@ CUIPanel::~CUIPanel()
 
 void CUIPanel::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	CObj::Render(_pRenderTarget);
+	CUI::Render(_pRenderTarget);
 }

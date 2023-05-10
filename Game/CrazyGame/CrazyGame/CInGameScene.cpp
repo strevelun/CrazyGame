@@ -118,7 +118,7 @@ void CInGameScene::Init()
 			, eInGameObjType::Character);
 			m_board->SetObjTypeInMoveObjBoard(x, y, m_pPlayer);
  
-			m_pPlayer->SetSprite(sprite);
+			//m_pPlayer->SetSprite(sprite);
 			m_pPlayer->SetScene(this);
 			layer->AddObj(m_pPlayer);
 		}
@@ -142,7 +142,7 @@ void CInGameScene::Init()
 				continue;
 			}
 			m_board->SetObjTypeInMoveObjBoard(x, y, boss);
-			boss->SetSprite(sprite);
+			//boss->SetSprite(sprite);
 			layer->AddObj(boss);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)

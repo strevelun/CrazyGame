@@ -14,30 +14,29 @@
 
 CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-	m_pAnim = new CAnimator;
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_left");
 	animClip->SetFrametimeLimit(0.1f);
-	m_pAnim->AddClip("bazzi_left", animClip);
+	m_anim.AddClip("bazzi_left", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_right");
 	animClip->SetFrametimeLimit(0.1f);
-	m_pAnim->AddClip("bazzi_right", animClip);
+	m_anim.AddClip("bazzi_right", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_up");
 	animClip->SetFrametimeLimit(0.1f);
-	m_pAnim->AddClip("bazzi_up", animClip);
+	m_anim.AddClip("bazzi_up", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_down");
 	animClip->SetFrametimeLimit(0.1f);
-	m_pAnim->AddClip("bazzi_down", animClip);
+	m_anim.AddClip("bazzi_down", animClip);
 
 	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_die"));
 	animClip->SetLoop(false);
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("bazzi_die", animClip);
+	m_anim.AddClip("bazzi_die", animClip);
 
 	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_ready"));
 	animClip->SetLoop(false);
 	animClip->SetFrametimeLimit(0.1f);
-	m_pAnim->AddClip("bazzi_ready", animClip);
-	m_pAnim->SetClip("bazzi_ready");
+	m_anim.AddClip("bazzi_ready", animClip);
+	m_anim.SetClip("bazzi_ready");
 
 	m_xpos = _rect.left + (BOARD_BLOCK_SIZE / 2);
 	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);
@@ -49,7 +48,7 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rec
 CPlayer::~CPlayer()
 {
 	// bazzi_die¸¸ µû·Î ÇØÁ¦
-	delete m_pAnim->GetClip("bazzi_die");
+	delete m_anim.GetClip("bazzi_die");
 }
 
 
@@ -191,7 +190,7 @@ void CPlayer::Input()
 void CPlayer::Update()
 {
 	if (!m_vehicle && m_state != State::Idle)
-		CObj::Update();
+		CGameObj::Update();
 
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
@@ -214,7 +213,6 @@ void CPlayer::Update()
 
 	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
-
 
 
 
@@ -241,13 +239,13 @@ void CPlayer::Update()
 	switch (m_state)
 	{
 	case State::Ready:
-		clip = m_pAnim->GetCurClip();
+		clip = m_anim.GetCurClip();
 		if (!clip) return;
 
 		if (clip->IsCurClipEnd())
 		{
 			m_nextState = State::Idle;
-			m_pAnim->SetClip("bazzi_down");
+			m_anim.SetClip("bazzi_down");
 			return;
 		}
 		break;
@@ -261,7 +259,7 @@ void CPlayer::Update()
 		MoveState();
 		break;
 	case State::Die:
-		clip = m_pAnim->GetCurClip();
+		clip = m_anim.GetCurClip();
 		if (!clip) return;
 
 		if (clip->IsCurClipEnd())
@@ -366,7 +364,7 @@ void CPlayer::Update()
 void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(0.9f, 0.8f, D2D1::Point2F(m_rect.left - 80, m_rect.bottom )));
-	m_pAnim->Render(_pRenderTarget, m_rect);
+	m_anim.Render(_pRenderTarget, m_rect);
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
 	if (m_vehicle)
@@ -380,7 +378,7 @@ void CPlayer::Die()
 
 	m_nextState = State::Die;
 	//MessageBox(NULL, L"»ç¸Á", L"»ç¸Á", MB_OK);
-	m_pAnim->SetClip("bazzi_die");
+	m_anim.SetClip("bazzi_die");
 }
 
 void CPlayer::MoveState()
@@ -588,25 +586,25 @@ void CPlayer::ChangeState(State _state)
 	switch (_state)
 	{
 	case State::Idle:
-		m_pAnim->GetCurClip()->SetCurFrameIdx(0);
+		m_anim.GetCurClip()->SetCurFrameIdx(0);
 		break;
 	case State::MoveLeft:
-		m_pAnim->SetClip("bazzi_left");
+		m_anim.SetClip("bazzi_left");
 		if (m_vehicle)
 			m_vehicle->SetDir(Dir::Left);
 		break;
 	case State::MoveRight:
-		m_pAnim->SetClip("bazzi_right");
+		m_anim.SetClip("bazzi_right");
 		if (m_vehicle)
 			m_vehicle->SetDir(Dir::Right);
 		break;
 	case State::MoveUp:
-		m_pAnim->SetClip("bazzi_up");
+		m_anim.SetClip("bazzi_up");
 		if (m_vehicle)
 			m_vehicle->SetDir(Dir::Up);
 		break;
 	case State::MoveDown:
-		m_pAnim->SetClip("bazzi_down");
+		m_anim.SetClip("bazzi_down");
 		if (m_vehicle)
 			m_vehicle->SetDir(Dir::Down);
 		break;

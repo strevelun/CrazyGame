@@ -1,5 +1,5 @@
 #pragma once
-#include "CObj.h"
+#include "CGameObj.h"
 
 enum class State
 {
@@ -17,7 +17,7 @@ enum class State
 };
 
 class CMoveObj :
-    public CObj
+    public CGameObj
 {
 protected:
     CScene* m_pScene = nullptr;
@@ -26,8 +26,6 @@ protected:
     //Dir m_eLastMoveDir = Dir::Down;
     State m_state = State::Ready;
     State m_nextState = State::Ready;
-
-
 
 public:
     CMoveObj(const D2D1_RECT_F& _rect);

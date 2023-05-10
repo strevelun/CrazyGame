@@ -120,6 +120,9 @@
     <ClCompile Include="CUIHPBar.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CGameObj.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h">
@@ -219,6 +222,9 @@
       <Filter>소스 파일\Obj</Filter>
     </ClInclude>
     <ClInclude Include="CUIHPBar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CGameObj.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

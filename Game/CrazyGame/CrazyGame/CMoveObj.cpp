@@ -4,8 +4,11 @@
 #include "CSceneManager.h"
 #include "CAnimator.h"
 
-CMoveObj::CMoveObj(const D2D1_RECT_F& _rect) : CObj(_rect)
+CMoveObj::CMoveObj(const D2D1_RECT_F& _rect) : CGameObj(_rect)
 {
+	CObj::RectToPos(_rect, m_cellXPos, m_cellYPos);
+	m_prevCellXPos = m_cellXPos;
+	m_prevCellYPos = m_cellYPos;
 }
 
 CMoveObj::~CMoveObj()

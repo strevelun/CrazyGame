@@ -17,33 +17,32 @@
 
 CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-	m_pAnim = new CAnimator;
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Front");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Boss_Front", animClip);
+	m_anim.AddClip("Boss_Front", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Back");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Boss_Back", animClip);
+	m_anim.AddClip("Boss_Back", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Left");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Boss_Left", animClip);
+	m_anim.AddClip("Boss_Left", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Right");
 	animClip->SetFrametimeLimit(0.2f);
-	m_pAnim->AddClip("Boss_Right", animClip);
+	m_anim.AddClip("Boss_Right", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Hit");
 	animClip->SetFrametimeLimit(0.2f);
 	animClip->SetLoop(false);
-	m_pAnim->AddClip("Boss_Hit", animClip);
+	m_anim.AddClip("Boss_Hit", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Die1");
 	animClip->SetFrametimeLimit(3.0f);
 	animClip->SetLoop(false);
-	m_pAnim->AddClip("Boss_Die1", animClip);
+	m_anim.AddClip("Boss_Die1", animClip);
 	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Die2");
 	animClip->SetFrametimeLimit(0.2f);
 	animClip->SetLoop(false);
-	m_pAnim->AddClip("Boss_Die2", animClip);
+	m_anim.AddClip("Boss_Die2", animClip);
 
-	m_pAnim->SetClip("Boss_Front");
+	m_anim.SetClip("Boss_Front");
 
 	
 
@@ -95,7 +94,7 @@ bool CBoss::Init()
 
 void CBoss::Update()
 {
-	CObj::Update();
+	CGameObj::Update();
 
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
@@ -129,7 +128,7 @@ void CBoss::Update()
 		break;
 	case State::Hit:
 
-		clip = m_pAnim->GetCurClip();
+		clip = m_anim.GetCurClip();
 		if (!clip) return;
 
 		if (clip->IsCurClipEnd())
@@ -139,7 +138,7 @@ void CBoss::Update()
 		}
 		break;
 	case State::TrappedInBubble:
-		clip = m_pAnim->GetCurClip();
+		clip = m_anim.GetCurClip();
 		if (!clip) return;
 
 		if (clip->IsCurClipEnd())
@@ -150,7 +149,7 @@ void CBoss::Update()
 		break;
 	case State::Die:
 		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
-		clip = m_pAnim->GetCurClip();
+		clip = m_anim.GetCurClip();
 		if (!clip) return;
 
 		if (clip->IsCurClipEnd())
@@ -172,7 +171,7 @@ void CBoss::Update()
 void CBoss::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(1.0f, 0.9f, D2D1::Point2F(m_rect.left, m_rect.bottom)));
-	m_pAnim->Render(_pRenderTarget, m_rect);
+	m_anim.Render(_pRenderTarget, m_rect);
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
@@ -317,25 +316,25 @@ void CBoss::ChangeState(State _state)
 	switch (_state)
 	{
 	case State::MoveLeft:
-		m_pAnim->SetClip("Boss_Left");
+		m_anim.SetClip("Boss_Left");
 		break;
 	case State::MoveRight:
-		m_pAnim->SetClip("Boss_Right");
+		m_anim.SetClip("Boss_Right");
 		break;
 	case State::MoveUp:
-		m_pAnim->SetClip("Boss_Back");
+		m_anim.SetClip("Boss_Back");
 		break;
 	case State::MoveDown:
-		m_pAnim->SetClip("Boss_Front");
+		m_anim.SetClip("Boss_Front");
 		break;
 	case State::Hit:
-		m_pAnim->SetClip("Boss_Hit");
+		m_anim.SetClip("Boss_Hit");
 		break;
 	case State::TrappedInBubble:
-		m_pAnim->SetClip("Boss_Die1");
+		m_anim.SetClip("Boss_Die1");
 		break;
 	case State::Die:
-		m_pAnim->SetClip("Boss_Die2");
+		m_anim.SetClip("Boss_Die2");
 		break;
 	}
 }
