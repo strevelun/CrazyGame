@@ -16,16 +16,16 @@
 
 CInGameScene::CInGameScene()
 {
-	m_board = new CBoard();
 }
 
 CInGameScene::~CInGameScene()
 {
-	delete m_board;
 }
 
 void CInGameScene::Init()
 {
+	m_board = new CBoard();
+	m_board->SetMapData(CSceneManager::GetInst()->FindMapData(m_strName));
 
 	CBitmap* bitmap = CResourceManager::GetInst()->Load(L"StageFrame.png");
 
@@ -155,6 +155,21 @@ void CInGameScene::Init()
 
 	layer = CreateLayer("Event", 4);
 	layer = CreateLayer("Vehicle", 5);
+}
+
+void CInGameScene::Cleanup()
+{
+	std::list<CLayer*>::iterator iter = m_layerList.begin();
+	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->DeleteAllObj();
+		delete* iter;
+	}
+	m_layerList.clear();
+
+	delete m_board;
 }
 
 void CInGameScene::OnBackButtonClicked(const std::string _strName)

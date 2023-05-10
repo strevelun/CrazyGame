@@ -3,7 +3,10 @@
 #include <d2d1.h>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <string>
+
+#include "Setting.h"
 
 class CScene;
 
@@ -13,6 +16,7 @@ private:
 	CScene* m_pScene;
 	CScene* m_pNextScene;
 	std::map<std::string, CScene*> m_mapScene;
+	std::unordered_map<std::string, tMapData> m_mapData; // 한번에 다 로딩해서 가지고 있지 말기
 
 private:
 	static CSceneManager* m_inst;
@@ -52,5 +56,7 @@ public:
 	bool CheckNextScene(void);
 
 	bool ChangeScene(const std::string& _strKey);
+
+	tMapData& FindMapData(const std::string& _strName);
 };
 

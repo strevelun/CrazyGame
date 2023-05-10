@@ -14,14 +14,11 @@ CUIHPBar::~CUIHPBar()
 	delete m_background;
 }
 
-void CUIHPBar::SetRect(D2D1_RECT_F _rect)
+void CUIHPBar::SetRect(D2D1_RECT_F _rect) // 이름변경 - 초기 한번만 사용하는듯 gpm
 {
 	m_rect = _rect;
-	m_background->SetRect(_rect);
-}
-
-void CUIHPBar::Update()
-{
+	m_background->SetRect(_rect);	
+	
 	m_rect.right = m_rect.left + m_hp * (m_rect.right - m_rect.left) / m_maxHp;
 
 	if ((float)m_hp / m_maxHp < 0.33f)

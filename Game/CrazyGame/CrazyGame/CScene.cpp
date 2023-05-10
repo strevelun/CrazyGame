@@ -89,15 +89,7 @@ CLayer* CScene::FindLayer(const std::string& _strTag)
 	return nullptr;
 }
 
-void CScene::Clean()
+void CScene::Cleanup()
 {
-	std::list<CLayer*>::iterator iter = m_layerList.begin();
-	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
 
-	for (; iter != iterEnd; iter++)
-	{
-		(*iter)->DeleteAllObj();
-		delete* iter;
-	}
-	m_layerList.clear();
 }

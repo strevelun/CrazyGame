@@ -11,6 +11,7 @@ public:
     void ChangeState(State _state);
     State RandomDir();
 
+    void Hit();
     void Update();
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 };

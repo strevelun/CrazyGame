@@ -84,6 +84,7 @@ bool CBoss::Init()
 	rect.top = rect.bottom - 11;
 
 	m_uiHPBar = new CUIHPBar(rect, m_hp);
+	// hp bar는 내가 선택한걸로
 	m_uiHPBar->SetBitmap(CResourceManager::GetInst()->Load(L"Boss_hp_blue.png"));
 	m_uiHPBar->SetHP(m_hp);
 	CLayer* layer = m_pScene->FindLayer("MonsterUI");
@@ -349,8 +350,7 @@ void CBoss::Attack()
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 	m_attackDelayRemained += deltaTime;
 	
-	if (m_attackDelayRemained < m_attackDelay)
-		return;
+	if (m_attackDelayRemained < m_attackDelay)	return;
 
 	std::random_device random;
 	std::mt19937 engine(random());
@@ -363,6 +363,9 @@ void CBoss::Attack()
 
 	CBoard* board = ((CInGameScene*)m_pScene)->GetBoard();
 
+	//=========================================
+	//  attack 1 처리 
+	//=========================================
 	if (choice == 0)
 	{
 		int startX, startY;
@@ -407,10 +410,11 @@ void CBoss::Attack()
 		D2D1_POINT_2U point = bubble->GetPoint();
 		board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
 
-
-
 		bubble->Move(dir);
 	}
+	//=========================================
+	//  attack 2 처리 
+	//=========================================
 	else if (choice == 1)
 	{
 		int centerX = m_cellXPos + 1;
@@ -441,16 +445,5 @@ State CBoss::RandomDir()
 	std::mt19937 engine(random());
 	std::uniform_int_distribution<int> distribution(0, (int)Dir::None - 1);
 
-	State state;
-	Dir dir = (Dir)distribution(engine);
-
-	if (dir == Dir::Left)
-		state = State::MoveLeft;
-	else if (dir ==Dir::Right)
-		state = State::MoveRight;
-	else if (dir == Dir::Up)
-		state = State::MoveUp;
-	else if (dir == Dir::Down)
-		state = State::MoveDown;
-	return state;
+	return (State)distribution(engine);
 }

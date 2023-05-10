@@ -156,6 +156,10 @@ State CMonster::RandomDir()
 	return state;
 }
 
+void CMonster::Hit()
+{
+}
+
 void CMonster::Update()
 {
 	CObj::Update();

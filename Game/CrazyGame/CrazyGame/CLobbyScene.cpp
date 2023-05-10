@@ -21,23 +21,14 @@ CLobbyScene::~CLobbyScene()
 
 void CLobbyScene::OnMapButtonClicked(const std::string _strName)
 {
-	tMapData data = FindMapData(_strName);
+	//tMapData data = FindMapData(_strName);
 
-	CInGameScene* scene = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetScene("InGameScene"));
-	CSceneManager::GetInst()->ChangeScene("InGameScene");
-	scene->SetMapData(data);
+	CInGameScene* scene = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetScene(_strName));
+	CSceneManager::GetInst()->ChangeScene(_strName);
+	//scene->SetMapData(data);
 }
 
-tMapData& CLobbyScene::FindMapData(const std::string& _strName)
-{
-	std::unordered_map<std::string, tMapData>::iterator iter = m_mapData.find(_strName);
-	if (iter == m_mapData.end())
-	{
-		MessageBox(NULL, L"m_mapData에 해당 키 값의 데이터가 없습니다.", L"오류", MB_OK);
-		CApp::GetInst()->ExitGame();
-	}
-	return iter->second;
-}
+
 
 void CLobbyScene::Init()
 {
@@ -60,8 +51,8 @@ void CLobbyScene::Init()
 	CUIButton* btn = new CUIButton({ 80.f, 450.f, 80.f + width, 450.f + height }, "village.map");
 	btn->SetBitmap(bitmap);
 	layer->AddObj(btn);
-	tMapData mapData = CResourceManager::GetInst()->LoadMapData(L"village.map");
-	m_mapData.insert(std::make_pair("village.map", mapData));
+
+
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
 	float prevEnd = 80 + width;
@@ -73,8 +64,6 @@ void CLobbyScene::Init()
 	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, "pirate.map");
 	btn->SetBitmap(bitmap);
 	layer->AddObj(btn);
-	mapData = CResourceManager::GetInst()->LoadMapData(L"pirate.map");
-	m_mapData.insert(std::make_pair("pirate.map", mapData));
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
 	prevEnd = prevEnd + width;
@@ -86,7 +75,5 @@ void CLobbyScene::Init()
 	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, "test.map");
 	btn->SetBitmap(bitmap);
 	layer->AddObj(btn);
-	mapData = CResourceManager::GetInst()->LoadMapData(L"test.map");
-	m_mapData.insert(std::make_pair("test.map", mapData));
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 }

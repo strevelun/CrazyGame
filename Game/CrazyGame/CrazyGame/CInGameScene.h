@@ -8,6 +8,7 @@ class CPlayer;
 class CInGameScene :
     public CScene
 {
+private:
     friend class CBlock;
     friend class CPlayer;
     friend class CMoveObj;
@@ -21,7 +22,8 @@ public:
     CInGameScene();
     ~CInGameScene();
 
-    void Init();
+    void Init() override;
+    void Cleanup() override;
 
     CPlayer* GetPlayer() const { return m_pPlayer; }
     void SetMapData(tMapData _mapData) { m_board->SetMapData(_mapData); }

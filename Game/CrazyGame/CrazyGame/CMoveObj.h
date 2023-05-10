@@ -3,12 +3,12 @@
 
 enum class State
 {
-    Ready,
-    Idle,
     MoveUp,
     MoveDown,
     MoveLeft,
     MoveRight,
+    Ready,
+    Idle,
     Attack,
     TrappedInBubble,
     Die,

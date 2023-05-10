@@ -7,7 +7,7 @@ class CBoss :
     public CMoveObj
 {
     //CAStar m_aStar;
-    u_int m_hp = 50;
+    u_int m_hp = 100;
     class CUIHPBar* m_uiHPBar;
 
     float m_attackDelay = 5.0f;
