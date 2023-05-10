@@ -1,23 +1,16 @@
 #include "CSceneManager.h"
 #include "CScene.h"
 #include "CResourceManager.h"
+#include "CInGameScene.h"
 #include "../../D2DCore/CApp.h"
 
 #include <unordered_map>
+#include <typeinfo>
 
 CSceneManager* CSceneManager::m_inst = nullptr;
 
 CSceneManager::CSceneManager()
 {
-	tMapData mapData = CResourceManager::GetInst()->LoadMapData(L"village.map");
-	m_mapData.insert(std::make_pair("village.map", mapData));
-
-	mapData = CResourceManager::GetInst()->LoadMapData(L"pirate.map");
-	m_mapData.insert(std::make_pair("pirate.map", mapData));
-
-	mapData = CResourceManager::GetInst()->LoadMapData(L"test.map");
-	m_mapData.insert(std::make_pair("test.map", mapData));
-
 }
 
 CSceneManager::~CSceneManager()
@@ -93,4 +86,14 @@ tMapData& CSceneManager::FindMapData(const std::string& _strName)
 		CApp::GetInst()->ExitGame();
 	}
 	return iter->second;
+}
+
+void CSceneManager::SetMapData(const std::string& _strName)
+{
+	int len = MultiByteToWideChar(CP_UTF8, 0, _strName.c_str(), -1, nullptr, 0);
+	wchar_t* wstr = new wchar_t[len];
+	MultiByteToWideChar(CP_UTF8, 0, _strName.c_str(), -1, wstr, len);
+	tMapData mapData = CResourceManager::GetInst()->LoadMapData(wstr);
+	delete[] wstr;
+	m_mapData.insert(std::make_pair(_strName, mapData));
 }

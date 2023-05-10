@@ -24,6 +24,7 @@ private:
 	CSceneManager();
 	~CSceneManager();
 
+
 public:
 	static CSceneManager* GetInst()
 	{
@@ -58,5 +59,6 @@ public:
 	bool ChangeScene(const std::string& _strKey);
 
 	tMapData& FindMapData(const std::string& _strName);
+	void SetMapData(const std::string& _strName);
 };
 
