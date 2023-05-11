@@ -57,7 +57,7 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 
 
 
-	m_state = State::MoveDown;
+	m_state = State::Ready;
 	// 플레이어 ready가 끝나면 move하도록
 
 	m_speed = 40.0f;
@@ -95,6 +95,8 @@ bool CBoss::Init()
 void CBoss::Update()
 {
 	CGameObj::Update();
+	
+
 
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
@@ -106,14 +108,14 @@ void CBoss::Update()
 
 
 	CAnimationClip* clip = nullptr;
-	//m_nowState->Update();
-
-	//m_state[m_state]();
 
 	switch (m_state)
 	{
 	case State::Ready:
-		m_nextState = State::MoveDown;
+		if (((CInGameScene*)m_pScene)->GetSceneState() == eSceneState::Play)
+		{
+			m_nextState = RandomDir();
+		}
 
 		break;
 	case State::MoveLeft:
@@ -155,6 +157,7 @@ void CBoss::Update()
 		if (clip->IsCurClipEnd())
 		{
 			m_isAlive = false;
+			((CInGameScene*)m_pScene)->SubBossCount();
 			return;
 		}
 	break;
@@ -199,8 +202,7 @@ void CBoss::Hit(u_int _attackPower)
 
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
 
-	CScene* scene = CSceneManager::GetInst()->GetCurScene();
-	CLayer* pLayer = scene->FindLayer("Block");
+	CLayer* pLayer = m_pScene->FindLayer("Block");
 
 	CMonster* pMonster = new CMonster(rect, eInGameObjType::Monster);
 	pLayer->AddObj(pMonster);
@@ -208,6 +210,8 @@ void CBoss::Hit(u_int _attackPower)
 	m_hp -= _attackPower;
 
 	m_uiHPBar->SetHP(m_hp);
+	
+	((CInGameScene*)m_pScene)->AddMonsterCount();
 }
 
 
@@ -351,6 +355,8 @@ void CBoss::Attack()
 	
 	if (m_attackDelayRemained < m_attackDelay)	return;
 
+	if (m_state == State::TrappedInBubble || m_state == State::Die) return;
+
 	std::random_device random;
 	std::mt19937 engine(random());
 	std::uniform_int_distribution<int> distribution(2, 3);
@@ -362,79 +368,13 @@ void CBoss::Attack()
 
 	CBoard* board = ((CInGameScene*)m_pScene)->GetBoard();
 
-	//=========================================
-	//  attack 1 처리 
-	//=========================================
 	if (choice == 0)
 	{
-		int startX, startY;
-		Dir dir = Dir::Down;
-		if (State::MoveLeft == m_state)
-		{
-			dir = Dir::Left;
-			startX = m_cellXPos - 2;
-			startY = m_cellYPos - 1;
-		}
-		else if (State::MoveRight == m_state)
-		{
-			dir = Dir::Right;
-			startX = m_cellXPos + 4;
-			startY = m_cellYPos - 1;
-		}
-		else if (State::MoveUp == m_state)
-		{
-			dir = Dir::Up;
-			startX = m_cellXPos + 1;
-			startY = m_cellYPos - 4;
-		}
-		else
-		{
-			dir = Dir::Down;
-			startX = m_cellXPos + 1;
-			startY = m_cellYPos + 2;
-		}
-
-		int stageFrameOffsetX = 20;
-		int stageFrameOffsetY = 40;
-
-		CBubble* bubble = new CBubble({
-			(float)startX* BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)startY* BOARD_BLOCK_SIZE + stageFrameOffsetY,
-			(float)startX* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)startY* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
-			},
-			eInGameObjType::Balloon);
-		bubble->SetOwner(this);
-		bubble->SetSplashLength(1);
-		D2D1_POINT_2U point = bubble->GetPoint();
-		board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
-
-		bubble->Move(dir);
+		Attack01(board);
 	}
-	//=========================================
-	//  attack 2 처리 
-	//=========================================
 	else if (choice == 1)
 	{
-		int centerX = m_cellXPos + 1;
-		int centerY = m_cellYPos - 1;
-		int diameter;
-		do {
-			std::uniform_int_distribution<int> distribution2(5, 9);
-			diameter = distribution2(engine);
-		} while (diameter % 2 == 0);
-		int radius = diameter / 2;
-
-		for (int i = centerY - radius; i <= centerY + radius; i++)
-		{
-			for (int j = centerX - radius; j <= centerX + radius; j++)
-			{
-				if (centerY - radius + 1 <= i && i <= centerY + radius - 1
-					&& centerX - radius + 1 <= j && j <= centerX + radius - 1)
-					continue;
-				board->PutSplash(j, i, "Explosion_center");
-			}
-		}
+		Attack02(board);
 	}
 }
 
@@ -445,4 +385,77 @@ State CBoss::RandomDir()
 	std::uniform_int_distribution<int> distribution(0, (int)Dir::None - 1);
 
 	return (State)distribution(engine);
+}
+
+void CBoss::Attack01(CBoard* _pBoard)
+{
+	int startX, startY;
+	Dir dir = Dir::Down;
+	if (State::MoveLeft == m_state)
+	{
+		dir = Dir::Left;
+		startX = m_cellXPos - 2;
+		startY = m_cellYPos - 1;
+	}
+	else if (State::MoveRight == m_state)
+	{
+		dir = Dir::Right;
+		startX = m_cellXPos + 4;
+		startY = m_cellYPos - 1;
+	}
+	else if (State::MoveUp == m_state)
+	{
+		dir = Dir::Up;
+		startX = m_cellXPos + 1;
+		startY = m_cellYPos - 4;
+	}
+	else
+	{
+		dir = Dir::Down;
+		startX = m_cellXPos + 1;
+		startY = m_cellYPos + 2;
+	}
+
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
+
+	CBubble* bubble = new CBubble({
+		(float)startX * BOARD_BLOCK_SIZE + stageFrameOffsetX,
+		(float)startY * BOARD_BLOCK_SIZE + stageFrameOffsetY,
+		(float)startX * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+		(float)startY * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+		},
+		eInGameObjType::Balloon);
+	bubble->SetOwner(this);
+	bubble->SetSplashLength(1);
+	D2D1_POINT_2U point = bubble->GetPoint();
+	_pBoard->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon);
+
+	bubble->Move(dir);
+}
+
+void CBoss::Attack02(CBoard* _pBoard)
+{
+	std::random_device random;
+	std::mt19937 engine(random());
+
+	int centerX = m_cellXPos + 1;
+	int centerY = m_cellYPos - 1;
+	int diameter;
+	do {
+		std::uniform_int_distribution<int> distribution2(5, 9);
+		diameter = distribution2(engine);
+	} while (diameter % 2 == 0);
+	int radius = diameter / 2;
+
+	for (int i = centerY - radius; i <= centerY + radius; i++)
+	{
+		for (int j = centerX - radius; j <= centerX + radius; j++)
+		{
+			if (centerY - radius + 1 <= i && i <= centerY + radius - 1
+				&& centerX - radius + 1 <= j && j <= centerX + radius - 1)
+				continue;
+			_pBoard->PutSplash(j, i, "Explosion_center");
+		}
+	}
 }

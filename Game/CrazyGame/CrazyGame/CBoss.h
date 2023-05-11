@@ -6,7 +6,7 @@
 class CBoss :
     public CMoveObj
 {
-    u_int m_hp = 100;
+    u_int m_hp = 25;
     class CUIHPBar* m_uiHPBar;
 
     float m_attackDelay = 5.0f;
@@ -30,5 +30,9 @@ public:
     void Attack();
 
     State RandomDir();
+
+private:
+    void Attack01(CBoard* _pBoard);
+    void Attack02(CBoard* _pBoard);
 };
 

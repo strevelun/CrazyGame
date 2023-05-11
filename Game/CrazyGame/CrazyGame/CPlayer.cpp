@@ -34,7 +34,7 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rec
 
 	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_ready"));
 	animClip->SetLoop(false);
-	animClip->SetFrametimeLimit(0.1f);
+	animClip->SetFrametimeLimit(3.0f / 18); // 씬 ready시간 3초 / 프레임수
 	m_anim.AddClip("bazzi_ready", animClip);
 	m_anim.SetClip("bazzi_ready");
 
@@ -192,6 +192,13 @@ void CPlayer::Update()
 	if (!m_vehicle && m_state != State::Idle)
 		CGameObj::Update();
 
+
+	if (((CInGameScene*)m_pScene)->GetSceneState() == eSceneState::End)
+	{
+		m_state = State::Idle;
+		return;
+	}
+	
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
 	if (m_bInvincible)
@@ -239,10 +246,7 @@ void CPlayer::Update()
 	switch (m_state)
 	{
 	case State::Ready:
-		clip = m_anim.GetCurClip();
-		if (!clip) return;
-
-		if (clip->IsCurClipEnd())
+		if (((CInGameScene*)m_pScene)->GetSceneState() == eSceneState::Play)
 		{
 			m_nextState = State::Idle;
 			m_anim.SetClip("bazzi_down");
@@ -265,6 +269,7 @@ void CPlayer::Update()
 		if (clip->IsCurClipEnd())
 		{
 			m_isAlive = false;
+			((CInGameScene*)m_pScene)->SubPlayerCount();
 			return;
 		}
 	break;

@@ -13,6 +13,9 @@
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 #include "CBlock.h"
+#include "CTimer.h"
+#include "CBitmap.h"
+
 
 CInGameScene::CInGameScene()
 {
@@ -144,6 +147,7 @@ void CInGameScene::Init()
 			m_board->SetObjTypeInMoveObjBoard(x, y, boss);
 			//boss->SetSprite(sprite);
 			layer->AddObj(boss);
+			m_bossCount++;
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)
 		{
@@ -155,6 +159,16 @@ void CInGameScene::Init()
 
 	layer = CreateLayer("Event", 4);
 	layer = CreateLayer("Vehicle", 5);
+
+	m_eSceneState = eSceneState::Ready; 
+	m_fPlayTime = 0.0f;
+
+	layer = FindLayer("MonsterUI");
+	CBitmap* readyBitmap = CResourceManager::GetInst()->Load(L"start.png");
+	m_statePanel = new CUIPanel({ 150, 250,150+477, 250+77}); // GetSize°ª ¾øÀ½
+	m_statePanel->SetBitmap(readyBitmap);
+	layer->AddObj(m_statePanel);
+
 }
 
 void CInGameScene::Cleanup()
@@ -172,9 +186,73 @@ void CInGameScene::Cleanup()
 	delete m_board;
 }
 
+void CInGameScene::Update()
+{
+	CScene::Update();
+
+	m_fPlayTime += CTimer::GetInst()->GetDeltaTime();
+
+
+
+
+	CheckState();
+}
+
+
 void CInGameScene::OnBackButtonClicked(const std::string _strName)
 {
-	CLobbyScene* scene = dynamic_cast<CLobbyScene*>(CSceneManager::GetInst()->GetScene("LobbyScene"));
+	//CLobbyScene* scene = dynamic_cast<CLobbyScene*>(CSceneManager::GetInst()->GetScene("LobbyScene"));
 	CSceneManager::GetInst()->ChangeScene("LobbyScene");
 	
+}
+
+void CInGameScene::CheckState()
+{
+	switch (m_eSceneState)
+	{
+	case eSceneState::Ready:
+		if (m_fPlayTime >= 3.0f)
+		{
+			m_eSceneState = eSceneState::Play;
+			m_statePanel->SetAlive(false);
+		}
+		break;
+	case eSceneState::Play:
+		if (m_fPlayTime >=300.0f)
+		{
+			m_eSceneState = eSceneState::End;
+			ShowStatePanel(L"draw.png");
+			m_fPlayTime = 0.0f;
+		}
+		else if (m_bossCount <= 0)
+		{
+			m_eSceneState = eSceneState::End;
+			ShowStatePanel(L"win.png");
+			m_fPlayTime = 0.0f;
+		}
+		else if (m_playerCount <= 0)
+		{
+			m_eSceneState = eSceneState::End;
+			ShowStatePanel(L"lose.png");
+			m_fPlayTime = 0.0f;
+		}
+		break;
+	case eSceneState::End:
+		if (m_fPlayTime >= 3.0f)
+		{
+			m_statePanel->SetAlive(false);
+			CSceneManager::GetInst()->ChangeScene("LobbyScene");
+		}
+		break;
+	}
+}
+
+
+void CInGameScene::ShowStatePanel(PCWSTR _strFileName)
+{
+	CLayer* layer = FindLayer("MonsterUI");
+	CBitmap* loseBitmap = CResourceManager::GetInst()->Load(_strFileName);
+	m_statePanel = new CUIPanel({ 150, 250,150 + 477, 250 + 77 });
+	m_statePanel->SetBitmap(loseBitmap);
+	layer->AddObj(m_statePanel);
 }
