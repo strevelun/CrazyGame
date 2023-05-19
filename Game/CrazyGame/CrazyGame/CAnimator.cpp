@@ -9,14 +9,14 @@ CAnimator::~CAnimator()
 {
 }
 
-void CAnimator::AddClip(std::string _strClipName, CAnimationClip* _clip)
+void CAnimator::AddClip(std::wstring _strClipName, CAnimationClip* _clip)
 {
 	m_mapClip.insert(std::make_pair(_strClipName, _clip));
 }
 
-void CAnimator::SetClip(std::string _strClipName)
+void CAnimator::SetClip(std::wstring _strClipName)
 {
-	std::map<std::string, CAnimationClip*>::iterator iter = m_mapClip.find(_strClipName);
+	std::map<std::wstring, CAnimationClip*>::iterator iter = m_mapClip.find(_strClipName);
 	if (iter == m_mapClip.end())
 		return;
 
@@ -24,11 +24,11 @@ void CAnimator::SetClip(std::string _strClipName)
 	m_curClip->SetCurFrameIdx(0);
 }
 
-CAnimationClip* CAnimator::GetClip(std::string _strClipName) const
+CAnimationClip* CAnimator::GetClip(std::wstring _strClipName) const
 {
 	if (_strClipName.compare(m_strCurClipName) == 0) return m_curClip;
 
-	std::map<std::string, CAnimationClip*>::const_iterator iter = m_mapClip.find(_strClipName);
+	std::map<std::wstring, CAnimationClip*>::const_iterator iter = m_mapClip.find(_strClipName);
 	if (iter == m_mapClip.end())
 		return nullptr;
 

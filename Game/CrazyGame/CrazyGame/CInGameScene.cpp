@@ -15,6 +15,9 @@
 #include "CBlock.h"
 #include "CTimer.h"
 #include "CBitmap.h"
+#include "Stage.h"
+#include "StageManager.h"
+#include "UIManager.h"
 
 
 CInGameScene::CInGameScene()
@@ -27,27 +30,33 @@ CInGameScene::~CInGameScene()
 
 void CInGameScene::Init()
 {
+
+	m_stage = new Stage();
+	StageManager::GetInst()->ChangeStage(m_stage);
+
 	m_board = new CBoard();
-	m_board->SetMapData(CSceneManager::GetInst()->FindMapData(m_strName));
+	m_board->SetMapData(CResourceManager::GetInst()->LoadMapData(m_strName.c_str()));
 
-	CBitmap* bitmap = CResourceManager::GetInst()->Load(L"StageFrame.png");
+	//CMapInfo::GetInstance()->GetSelectMap();
+	//m_board->SetMapData(L"village.map");
 
-	CLayer* layer = CreateLayer("InGameUI", 0);
+	CBitmap* bitmap = CResourceManager::GetInst()->GetBitmap(L"StageFrame.png");
 
-	//CUIPanel* stageFrame = new CUIPanel({ 0, 0, 1420.f, 1080 });
+	CLayer* layer = CreateLayer(L"InGameUI", 0);
+
 	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 800.f, 600.f });
 	stageFrame->SetBitmap(bitmap);
-	layer->AddObj(stageFrame);
+	layer->AddUIObj(stageFrame);
 
-	CUIButton* backButton = new CUIButton({ 647, 561, 786, 592 }, "BackButton");
+	CUIButton* backButton = new CUIButton({ 647, 561, 786, 592 }, L"BackButton");
 	backButton->SetCallback(this, &CInGameScene::OnBackButtonClicked);
-	layer->AddObj(backButton);
+	layer->AddUIObj(backButton);
 
 	m_board->SetBoard();
 
-	layer = CreateLayer("MonsterUI", 6);
+	layer = CreateLayer(L"MonsterUI", 6);
 
-	layer = CreateLayer("Tile", 1);
+	layer = CreateLayer(L"Tile", 1);
 
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
@@ -66,17 +75,17 @@ void CInGameScene::Init()
 			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
 		));
 		tile->SetBitmapIdx(mapData.vecBlockData[i].idx);
-		tile->SetSprite(CResourceManager::GetInst()->GetImage("Tile", mapData.vecBlockData[i].idx));
-		layer->AddObj(tile);
+		tile->SetSprite(CResourceManager::GetInst()->GetSprite(L"Tile", mapData.vecBlockData[i].idx));
+		layer->AddGameObj(tile);
 	}
 
-	layer = CreateLayer("Block",3);
+	layer = CreateLayer(L"Block",3);
 	for (int i = 0; i < size; i++)
 	{
 		if (mapData.vecBlockData[i].type != eType::Block)
 			continue;
 
-		tSprite* sprite = CResourceManager::GetInst()->GetImage("Block", mapData.vecBlockData[i].idx);
+		tSprite* sprite = CResourceManager::GetInst()->GetSprite(L"Block", mapData.vecBlockData[i].idx);
 		m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block_Destructible);
 
 		float right = mapData.vecBlockData[i].x * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX - (sprite->size.width < 30 ? BOARD_BLOCK_SIZE / 2 + 5 : 0);
@@ -92,12 +101,12 @@ void CInGameScene::Init()
 		block->SetSprite(sprite);
 		if (sprite->size.width < 30)
 		{
-			layer = CreateLayer("Flag", INT_MAX);
-			layer->AddObj(block);
-			layer = FindLayer("Block");
+			layer = CreateLayer(L"Flag", INT_MAX);
+			layer->AddGameObj(block);
+			layer = FindLayer(L"Block");
 		}
 		else 
-			layer->AddObj(block);
+			layer->AddGameObj(block);
 	}
 
 	float x, y;
@@ -109,7 +118,7 @@ void CInGameScene::Init()
 	{
 		if (mapData.vecEventData[i] == eMenuEvent::Spawn_Character)
 		{
-			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 0);
+			tSprite* sprite = CResourceManager::GetInst()->GetSprite(L"Character", 0);
 			y = i / mapData.gridX;
 			x = i % mapData.gridX;
 			
@@ -123,11 +132,11 @@ void CInGameScene::Init()
  
 			//m_pPlayer->SetSprite(sprite);
 			m_pPlayer->SetScene(this);
-			layer->AddObj(m_pPlayer);
+			layer->AddGameObj(m_pPlayer);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster) // 보스
 		{
-			tSprite* sprite = CResourceManager::GetInst()->GetImage("Character", 1);
+			tSprite* sprite = CResourceManager::GetInst()->GetSprite(L"Character", 1);
 			y = i / mapData.gridX;
 			x = i % mapData.gridX;
 			CBoss* boss = new CBoss({
@@ -146,8 +155,8 @@ void CInGameScene::Init()
 			}
 			m_board->SetObjTypeInMoveObjBoard(x, y, boss);
 			//boss->SetSprite(sprite);
-			layer->AddObj(boss);
-			m_bossCount++;
+			layer->AddGameObj(boss);
+			m_stage->AddMoveObjCnt(MoveObjType::Boss);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)
 		{
@@ -157,17 +166,11 @@ void CInGameScene::Init()
 		}
 	}
 
-	layer = CreateLayer("Event", 4);
-	layer = CreateLayer("Vehicle", 5);
+	layer = CreateLayer(L"Event", 4);
+	layer = CreateLayer(L"Vehicle", 5);
 
-	m_eSceneState = eSceneState::Ready; 
-	m_fPlayTime = 0.0f;
-
-	layer = FindLayer("MonsterUI");
-	CBitmap* readyBitmap = CResourceManager::GetInst()->Load(L"start.png");
-	m_statePanel = new CUIPanel({ 150, 250,150+477, 250+77}); // GetSize값 없음
-	m_statePanel->SetBitmap(readyBitmap);
-	layer->AddObj(m_statePanel);
+	layer = FindLayer(L"MonsterUI");
+	UIManager::GetInst()->ShowAndAddUIPanel(L"start.png");
 
 }
 
@@ -184,75 +187,22 @@ void CInGameScene::Cleanup()
 	m_layerList.clear();
 
 	delete m_board;
+	m_stage->Cleanup();
 }
 
 void CInGameScene::Update()
 {
 	CScene::Update();
 
-	m_fPlayTime += CTimer::GetInst()->GetDeltaTime();
-
-
-
-
-	CheckState();
+	m_stage ->Update();
 }
 
 
-void CInGameScene::OnBackButtonClicked(const std::string _strName)
+void CInGameScene::OnBackButtonClicked(const std::wstring _strName)
 {
-	//CLobbyScene* scene = dynamic_cast<CLobbyScene*>(CSceneManager::GetInst()->GetScene("LobbyScene"));
-	CSceneManager::GetInst()->ChangeScene("LobbyScene");
+	//CLobbyScene* scene = dynamic_cast<CLobbyScene*>(CSceneManager::GetInst()->GetScene(L"LobbyScene"));
+	CSceneManager::GetInst()->ChangeScene(L"LobbyScene");
 	
 }
 
-void CInGameScene::CheckState()
-{
-	switch (m_eSceneState)
-	{
-	case eSceneState::Ready:
-		if (m_fPlayTime >= 3.0f)
-		{
-			m_eSceneState = eSceneState::Play;
-			m_statePanel->SetAlive(false);
-		}
-		break;
-	case eSceneState::Play:
-		if (m_fPlayTime >=300.0f)
-		{
-			m_eSceneState = eSceneState::End;
-			ShowStatePanel(L"draw.png");
-			m_fPlayTime = 0.0f;
-		}
-		else if (m_bossCount <= 0)
-		{
-			m_eSceneState = eSceneState::End;
-			ShowStatePanel(L"win.png");
-			m_fPlayTime = 0.0f;
-		}
-		else if (m_playerCount <= 0)
-		{
-			m_eSceneState = eSceneState::End;
-			ShowStatePanel(L"lose.png");
-			m_fPlayTime = 0.0f;
-		}
-		break;
-	case eSceneState::End:
-		if (m_fPlayTime >= 3.0f)
-		{
-			m_statePanel->SetAlive(false);
-			CSceneManager::GetInst()->ChangeScene("LobbyScene");
-		}
-		break;
-	}
-}
 
-
-void CInGameScene::ShowStatePanel(PCWSTR _strFileName)
-{
-	CLayer* layer = FindLayer("MonsterUI");
-	CBitmap* loseBitmap = CResourceManager::GetInst()->Load(_strFileName);
-	m_statePanel = new CUIPanel({ 150, 250,150 + 477, 250 + 77 });
-	m_statePanel->SetBitmap(loseBitmap);
-	layer->AddObj(m_statePanel);
-}

@@ -6,7 +6,7 @@
 // SceneManager에서 CreateScene
 // 씬 전환할때 이전 씬에서 할당된 모든 자원 해제 
 
-CUIButton::CUIButton(const D2D1_RECT_F& _rect, std::string _strName) : CUI(_rect)
+CUIButton::CUIButton(const D2D1_RECT_F& _rect, std::wstring _strName) : CUI(_rect)
 {
 	m_strName = _strName;
 }
@@ -15,7 +15,7 @@ CUIButton::~CUIButton()
 {
 }
 
-void CUIButton::Input()
+void CUIButton::Update()
 {
 	CMouse* mouse = CInputManager::GetInst()->GetMouse();
 

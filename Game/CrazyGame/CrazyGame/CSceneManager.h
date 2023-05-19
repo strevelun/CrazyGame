@@ -10,13 +10,14 @@
 
 class CScene;
 
+
+// 씬 관리
 class CSceneManager
 {
 private:
 	CScene* m_pScene;
 	CScene* m_pNextScene;
-	std::map<std::string, CScene*> m_mapScene;
-	std::unordered_map<std::string, tMapData> m_mapData; // 한번에 다 로딩해서 가지고 있지 말기
+	std::map<std::wstring, CScene*> m_mapScene;
 
 private:
 	static CSceneManager* m_inst;
@@ -45,10 +46,10 @@ public:
 		return scene; 
 	}
 
-	void AddScene(std::string _strSceneName, CScene* _scene);
+	void AddScene(std::wstring _strSceneName, CScene* _scene);
 
 	CScene* GetCurScene() const { return m_pScene; }
-	CScene* GetScene(const std::string& _strKey);
+	CScene* GetScene(const std::wstring& _strKey);
 
 	void Input();
 	void Update();
@@ -56,9 +57,6 @@ public:
 
 	bool CheckNextScene(void);
 
-	bool ChangeScene(const std::string& _strKey);
-
-	tMapData& FindMapData(const std::string& _strName);
-	void SetMapData(const std::string& _strName);
+	bool ChangeScene(const std::wstring& _strKey);
 };
 

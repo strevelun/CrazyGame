@@ -123,6 +123,15 @@
     <ClCompile Include="CGameObj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="StageManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h">
@@ -225,6 +234,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CGameObj.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="StageManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

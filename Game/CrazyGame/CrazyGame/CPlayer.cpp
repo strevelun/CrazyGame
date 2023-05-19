@@ -11,44 +11,49 @@
 #include "CSceneManager.h"
 #include "CVehicle.h"
 #include "CBoss.h"
+#include "Stage.h"
+#include "StageManager.h"
 
 CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_left");
+	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(L"bazzi_left");
 	animClip->SetFrametimeLimit(0.1f);
-	m_anim.AddClip("bazzi_left", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_right");
+	m_anim.AddClip(L"bazzi_left", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"bazzi_right");
 	animClip->SetFrametimeLimit(0.1f);
-	m_anim.AddClip("bazzi_right", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_up");
+	m_anim.AddClip(L"bazzi_right", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"bazzi_up");
 	animClip->SetFrametimeLimit(0.1f);
-	m_anim.AddClip("bazzi_up", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("bazzi_down");
+	m_anim.AddClip(L"bazzi_up", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"bazzi_down");
 	animClip->SetFrametimeLimit(0.1f);
-	m_anim.AddClip("bazzi_down", animClip);
+	m_anim.AddClip(L"bazzi_down", animClip);
 
-	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_die"));
+	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip(L"bazzi_die"));
 	animClip->SetLoop(false);
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("bazzi_die", animClip);
+	m_anim.AddClip(L"bazzi_die", animClip);
 
-	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip("bazzi_ready"));
+	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip(L"bazzi_ready"));
 	animClip->SetLoop(false);
 	animClip->SetFrametimeLimit(3.0f / 18); // 씬 ready시간 3초 / 프레임수
-	m_anim.AddClip("bazzi_ready", animClip);
-	m_anim.SetClip("bazzi_ready");
+	m_anim.AddClip(L"bazzi_ready", animClip);
+	m_anim.SetClip(L"bazzi_ready");
 
 	m_xpos = _rect.left + (BOARD_BLOCK_SIZE / 2);
 	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);
 
 	m_speed = 210.0f;
 	m_eType = _type;
+
+	m_smInst = StageManager::GetInst();
+	m_smInst->GetStage()->AddMoveObjCnt(MoveObjType::Player);
 }
 
 CPlayer::~CPlayer()
 {
 	// bazzi_die만 따로 해제
-	delete m_anim.GetClip("bazzi_die");
+	delete m_anim.GetClip(L"bazzi_die");
 }
 
 
@@ -79,6 +84,7 @@ void CPlayer::Input()
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 		{
 			m_bFire = true;
+			
 		}
 		break;
 
@@ -182,7 +188,11 @@ void CPlayer::Input()
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 		{
 			m_bFire = true;
+
 		}
+
+		// 더블 스페이스바
+		
 		break;
 	}
 }
@@ -193,7 +203,7 @@ void CPlayer::Update()
 		CGameObj::Update();
 
 
-	if (((CInGameScene*)m_pScene)->GetSceneState() == eSceneState::End)
+	if (m_smInst->GetStage()->GetStageState() == eStageState::End)
 	{
 		m_state = State::Idle;
 		return;
@@ -246,10 +256,10 @@ void CPlayer::Update()
 	switch (m_state)
 	{
 	case State::Ready:
-		if (((CInGameScene*)m_pScene)->GetSceneState() == eSceneState::Play)
+		if (m_smInst->GetStage()->GetStageState() == eStageState::Play)
 		{
 			m_nextState = State::Idle;
-			m_anim.SetClip("bazzi_down");
+			m_anim.SetClip(L"bazzi_down");
 			return;
 		}
 		break;
@@ -269,7 +279,7 @@ void CPlayer::Update()
 		if (clip->IsCurClipEnd())
 		{
 			m_isAlive = false;
-			((CInGameScene*)m_pScene)->SubPlayerCount();
+			m_smInst->GetStage()->SubMoveObjCnt(MoveObjType::Player);
 			return;
 		}
 	break;
@@ -298,13 +308,13 @@ void CPlayer::Update()
 
 			CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-			CLayer* layer = scene->FindLayer("Vehicle");
+			CLayer* layer = scene->FindLayer(L"Vehicle");
 
 			if (layer)
 			{
 				m_rideRect = m_rect;
-				m_vehicle = new CVehicle(m_rideRect, "UFO");
-				layer->AddObj(m_vehicle);
+				m_vehicle = new CVehicle(m_rideRect, L"UFO");
+				layer->AddGameObj(m_vehicle);
 				m_rect.top -= m_vehicle->GetRideHeight();
 				m_rect.bottom -= m_vehicle->GetRideHeight();
 				m_prevSpeed = m_speed;
@@ -359,6 +369,13 @@ void CPlayer::Update()
 			m_curBubblePlaced++;
 		else
 			delete bubble;
+		/*
+		if (((CInGameScene*)m_pScene)->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
+		{
+			CObj* obj = (m_pScene)->FindLayer(L"Event")->FindObj(m_cellXPos, m_cellYPos);
+  			((CBubble*)obj)->BounceMove(eDir::Left);
+		}
+		*/
 	}
 
 	m_bFire = false;
@@ -383,7 +400,7 @@ void CPlayer::Die()
 
 	m_nextState = State::Die;
 	//MessageBox(NULL, L"사망", L"사망", MB_OK);
-	m_anim.SetClip("bazzi_die");
+	m_anim.SetClip(L"bazzi_die");
 }
 
 void CPlayer::MoveState()
@@ -434,11 +451,11 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos - 1, m_cellYPos, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
 				CObj* pObj = pLayer->FindObj(m_cellXPos - 1, m_cellYPos);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(Dir::Left);
+					((CBubble*)pObj)->Move(eDir::Left);
 				}
 			}
 		}
@@ -476,11 +493,11 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos + 1, m_cellYPos, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
 				CObj* pObj = pLayer->FindObj(m_cellXPos + 1, m_cellYPos);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(Dir::Right);
+					((CBubble*)pObj)->Move(eDir::Right);
 				}
 			}
 		}
@@ -515,11 +532,11 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos -1, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
 				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos-1);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(Dir::Up);
+					((CBubble*)pObj)->Move(eDir::Up);
 				}
 			}
 		}
@@ -553,11 +570,11 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos + 1, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer("Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
 				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos+1);
 				if (pObj)
 				{
-					((CBubble*)pObj)->Move(Dir::Down);
+					((CBubble*)pObj)->Move(eDir::Down);
 				}
 			}
 		}
@@ -594,24 +611,24 @@ void CPlayer::ChangeState(State _state)
 		m_anim.GetCurClip()->SetCurFrameIdx(0);
 		break;
 	case State::MoveLeft:
-		m_anim.SetClip("bazzi_left");
+		m_anim.SetClip(L"bazzi_left");
 		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Left);
+			m_vehicle->SetDir(eDir::Left);
 		break;
 	case State::MoveRight:
-		m_anim.SetClip("bazzi_right");
+		m_anim.SetClip(L"bazzi_right");
 		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Right);
+			m_vehicle->SetDir(eDir::Right);
 		break;
 	case State::MoveUp:
-		m_anim.SetClip("bazzi_up");
+		m_anim.SetClip(L"bazzi_up");
 		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Up);
+			m_vehicle->SetDir(eDir::Up);
 		break;
 	case State::MoveDown:
-		m_anim.SetClip("bazzi_down");
+		m_anim.SetClip(L"bazzi_down");
 		if (m_vehicle)
-			m_vehicle->SetDir(Dir::Down);
+			m_vehicle->SetDir(eDir::Down);
 		break;
 	case State::Die:
 
@@ -619,22 +636,22 @@ void CPlayer::ChangeState(State _state)
 	}
 }
 
-std::string CPlayer::GetStrDir(Dir _dir)
+std::wstring CPlayer::GetStrDir(eDir _dir)
 {
-	std::string strDir = "";
+	std::wstring strDir = L"";
 	switch (_dir)
 	{
-	case Dir::Up:
-		strDir = "bazzi_up";
+	case eDir::Up:
+		strDir = L"bazzi_up";
 		break;
-	case Dir::Down:
-		strDir = "bazzi_down";
+	case eDir::Down:
+		strDir = L"bazzi_down";
 		break;
-	case Dir::Left:
-		strDir = "bazzi_left";
+	case eDir::Left:
+		strDir = L"bazzi_left";
 		break;
-	case Dir::Right:
-		strDir = "bazzi_right";
+	case eDir::Right:
+		strDir = L"bazzi_right";
 		break;
 	}
 

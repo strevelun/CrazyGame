@@ -10,11 +10,11 @@
 
 CBubble::CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {	
-	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip("bubble"));
+	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip(L"bubble"));
 	m_animClip.SetFrametimeLimit(0.25f);
 
-	m_anim.AddClip("bubble", &m_animClip);
-	m_anim.SetClip("bubble");
+	m_anim.AddClip(L"bubble", &m_animClip);
+	m_anim.SetClip(L"bubble");
 
 	m_eType = _type;
 }
@@ -50,38 +50,26 @@ void CBubble::Update()
 
 		switch (m_eMovingDir)
 		{
-		case Dir::Left:
+		case eDir::Left:
 			x = -1;
-			//rect.left += BOARD_BLOCK_SIZE / 2 ;
-			//rect.right += BOARD_BLOCK_SIZE / 2;
 			break;
-		case Dir::Right:
+		case eDir::Right:
 			x = 1;
-			//rect.left -= BOARD_BLOCK_SIZE / 2 + 1;
-			//rect.right -= BOARD_BLOCK_SIZE / 2 + 1;
 			break;
-		case Dir::Up:
+		case eDir::Up:
 			y = -1;
-			//rect.top += BOARD_BLOCK_SIZE / 2 - 1;
-			//rect.bottom += BOARD_BLOCK_SIZE / 2 - 1;
 			break;
-		case Dir::Down:
+		case eDir::Down:
 			y = 1;
-			//rect.top -= BOARD_BLOCK_SIZE / 2 + 1;
-			//rect.bottom -= BOARD_BLOCK_SIZE / 2 + 1;
 			break;
 		}
-		//m_rect.left += speed * deltaTime * x;
-		//m_rect.right += speed * deltaTime * x;
-		//m_rect.top += speed * deltaTime * y;
-		//m_rect.bottom += speed * deltaTime * y;
 
 		int stageFrameOffsetX = 20;
 		int stageFrameOffsetY = 40;
 
 		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
 		{
-			m_eMovingDir = Dir::None;
+			m_eMovingDir = eDir::None;
 			m_bMoving = false;
 			m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
 			m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
@@ -105,6 +93,43 @@ void CBubble::Update()
 		pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
 		m_rect = rect;
 	} 
+	else if (m_bBounceMoving)
+	{
+		speed = 10;
+		double radian = m_angle * PI / 180.0;
+		double dx = speed * cos(radian);
+		double dy = 20 * sin(radian) - m_gravity * CTimer::GetInst()->GetDeltaTime();
+
+		D2D1_RECT_F rect = m_rect;
+
+
+		switch (m_eMovingDir)
+		{
+		case eDir::Left:
+			x = -1;
+			break;
+		case eDir::Right:
+			x = 1;
+			break;
+		case eDir::Up:
+			y = -1;
+			break;
+		case eDir::Down:
+			y = 1;
+			break;
+		}
+
+		if (y >= 45 || y <= 0) {
+			m_angle = -m_angle;
+		}
+
+		rect.left += dx * x;
+		rect.right += dx * x;
+		rect.top += dy;
+		rect.bottom += dy;
+
+		m_rect = rect;
+	}
 
 	// 물풍선이 보스와 부딪히면
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
@@ -119,9 +144,15 @@ void CBubble::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 	m_anim.Render(_pRenderTarget, m_rect);
 }
 
-void CBubble::Move(Dir _eDir)
+void CBubble::Move(eDir _eDir)
 {
 	m_bMoving = true;
+	m_eMovingDir = _eDir;
+}
+
+void CBubble::BounceMove(eDir _eDir)
+{
+	m_bBounceMoving = true;
 	m_eMovingDir = _eDir;
 }
 
@@ -136,7 +167,7 @@ void CBubble::Die()
 	bool hitBoss = false;
 	int hitBossCellXPos = m_cellXPos, hitBossCellYPos = m_cellYPos;
 
-	board->PutSplash(m_rect, "Explosion_center");
+	board->PutSplash(m_rect, L"Explosion_center");
 
 	D2D1_RECT_F rect = m_rect;
 
@@ -152,7 +183,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, "Explosion_left") == false)
+		if (board->PutSplash(rect, L"Explosion_left") == false)
 			break;
 	}
 
@@ -170,7 +201,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, "Explosion_right") == false)
+		if (board->PutSplash(rect, L"Explosion_right") == false)
 			break;
 	}
 
@@ -188,7 +219,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, "Explosion_up") == false)
+		if (board->PutSplash(rect, L"Explosion_up") == false)
 			break;
 	}
 
@@ -206,7 +237,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, "Explosion_down") == false)
+		if (board->PutSplash(rect, L"Explosion_down") == false)
 			break;
 	}
 

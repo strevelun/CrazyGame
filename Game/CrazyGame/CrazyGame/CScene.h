@@ -11,7 +11,7 @@ class CScene
 protected:		
 	std::list<CLayer*> m_layerList;
 
-	std::string m_strName;
+	std::wstring m_strName;
 
 private:
 	static bool LayerSort(const CLayer* a, const CLayer* b);
@@ -27,9 +27,9 @@ public:
 	virtual void Update();
 	virtual void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 
-	CLayer* CreateLayer(const std::string& _strTag, u_int _zOrder);
-	CLayer* FindLayer(const std::string& _strTag);
+	CLayer* CreateLayer(const std::wstring& _strTag, u_int _zOrder);
+	CLayer* FindLayer(const std::wstring& _strTag);
 
-	void SetName(const std::string& _strName) { m_strName = _strName; }
+	void SetName(const std::wstring& _strName) { m_strName = _strName; }
 };
 

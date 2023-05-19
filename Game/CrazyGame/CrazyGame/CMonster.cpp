@@ -12,19 +12,19 @@
 // 29 31
 CMonster::CMonster(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Front");
+	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(L"Monster01_Front");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Monster01_Front", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Back");
+	m_anim.AddClip(L"Monster01_Front", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Monster01_Back");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Monster01_Back", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Left");
+	m_anim.AddClip(L"Monster01_Back", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Monster01_Left");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Monster01_Left", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Monster01_Right");
+	m_anim.AddClip(L"Monster01_Left", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Monster01_Right");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Monster01_Right", animClip);
-	m_anim.SetClip("Monster01_Front");
+	m_anim.AddClip(L"Monster01_Right", animClip);
+	m_anim.SetClip(L"Monster01_Front");
 
 
 	m_xpos = _rect.left + (BOARD_BLOCK_SIZE / 2);
@@ -120,16 +120,16 @@ void CMonster::ChangeState(State _state)
 	switch (_state)
 	{
 	case State::MoveLeft:
-		m_anim.SetClip("Monster01_Left");
+		m_anim.SetClip(L"Monster01_Left");
 		break;
 	case State::MoveRight:
-		m_anim.SetClip("Monster01_Right");
+		m_anim.SetClip(L"Monster01_Right");
 		break;
 	case State::MoveUp:
-		m_anim.SetClip("Monster01_Back");
+		m_anim.SetClip(L"Monster01_Back");
 		break;
 	case State::MoveDown:
-		m_anim.SetClip("Monster01_Front");
+		m_anim.SetClip(L"Monster01_Front");
 		break;
 	}
 }
@@ -138,19 +138,19 @@ State CMonster::RandomDir()
 {
 	std::random_device random;
 	std::mt19937 engine(random());
-	std::uniform_int_distribution<int> distribution(0, (int)Dir::None - 1);
+	std::uniform_int_distribution<int> distribution(0, (int)eDir::None - 1);
 
 	State state;
-	Dir dir = (Dir)distribution(engine);
+	eDir dir = (eDir)distribution(engine);
 
 
-	if (dir == Dir::Left)
+	if (dir == eDir::Left)
 		state = State::MoveLeft;
-	else if (dir == Dir::Right)
+	else if (dir == eDir::Right)
 		state = State::MoveRight;
-	else if (dir == Dir::Up)
+	else if (dir == eDir::Up)
 		state = State::MoveUp;
-	else if (dir == Dir::Down)
+	else if (dir == eDir::Down)
 		state = State::MoveDown;
 	return state;
 }

@@ -18,16 +18,16 @@ struct FRAME
 
 class CAnimator
 {
-	std::map<std::string, CAnimationClip*> m_mapClip;
+	std::map<std::wstring, CAnimationClip*> m_mapClip;
 	CAnimationClip* m_curClip;
-	std::string m_strCurClipName;
+	std::wstring m_strCurClipName;
 
 public:
 	CAnimator();
 	~CAnimator();
-	void AddClip(std::string _strClipName, CAnimationClip* _clip);
-	void SetClip(std::string _strClipName);
-	CAnimationClip* GetClip(std::string _strClipName) const;
+	void AddClip(std::wstring _strClipName, CAnimationClip* _clip);
+	void SetClip(std::wstring _strClipName);
+	CAnimationClip* GetClip(std::wstring _strClipName) const;
 	CAnimationClip* GetCurClip() const { return m_curClip; }
 
 	void Update();

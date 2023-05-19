@@ -10,7 +10,7 @@ CMouse::CMouse()
 	GetCursorPos(&pt);
 	ScreenToClient(CApp::GetInst()->GetHwnd(), &pt);
 
-	CBitmap* bitmap = CResourceManager::GetInst()->Load(L"mouse.png");
+	CBitmap* bitmap = CResourceManager::GetInst()->GetBitmap(L"mouse.png");
 	m_size = bitmap->GetBitmap()->GetPixelSize();
 	m_rect = D2D1::RectF(0, 0, m_size.width, m_size.height);
 	SetBitmap(bitmap);

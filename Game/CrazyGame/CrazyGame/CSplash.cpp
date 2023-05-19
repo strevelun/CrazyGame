@@ -11,7 +11,7 @@
 #include "CVehicle.h"
 #include "CBoss.h"
 
-CSplash::CSplash(const D2D1_RECT_F& _rect, std::string _animClipName) : CStaticObj(_rect)
+CSplash::CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName) : CStaticObj(_rect)
 {
 	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip(_animClipName));
 	m_animClip.SetFrametimeLimit(0.1f);
@@ -33,13 +33,13 @@ void CSplash::Update()
 	
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item))
 	{
-		pBoard->RemoveObj(m_cellXPos, m_cellYPos, "Event");
+		pBoard->RemoveObj(m_cellXPos, m_cellYPos, L"Event");
 		pBoard->PutItem(m_rect, nullptr);
 	}
 
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
 	{
-		CLayer* layer = scene->FindLayer("Event");		
+		CLayer* layer = scene->FindLayer(L"Event");		
 		CObj* obj = layer->FindObj(m_cellXPos, m_cellYPos);
 		if (obj)
 		{
@@ -62,7 +62,7 @@ void CSplash::Update()
 	/*
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
 	{
-		CLayer* pLayer = scene->FindLayer("Block");
+		CLayer* pLayer = scene->FindLayer(L"Block");
 		//if (pLayer)
 		{
 			//CBoss* pBoss = reinterpret_cast<CBoss*>(pLayer->FindObj(m_cellXPos, m_cellYPos));

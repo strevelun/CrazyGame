@@ -12,37 +12,39 @@
 #include "CUIPanel.h"
 #include "CSplash.h"
 #include "CBubble.h"
+#include "StageManager.h"
+#include "Stage.h"
 
 #include <random>
 
 CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
-	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Front");
+	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Front");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Boss_Front", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Back");
+	m_anim.AddClip(L"Boss_Front", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Back");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Boss_Back", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Left");
+	m_anim.AddClip(L"Boss_Back", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Left");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Boss_Left", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Right");
+	m_anim.AddClip(L"Boss_Left", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Right");
 	animClip->SetFrametimeLimit(0.2f);
-	m_anim.AddClip("Boss_Right", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Hit");
+	m_anim.AddClip(L"Boss_Right", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Hit");
 	animClip->SetFrametimeLimit(0.2f);
 	animClip->SetLoop(false);
-	m_anim.AddClip("Boss_Hit", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Die1");
+	m_anim.AddClip(L"Boss_Hit", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Die1");
 	animClip->SetFrametimeLimit(3.0f);
 	animClip->SetLoop(false);
-	m_anim.AddClip("Boss_Die1", animClip);
-	animClip = CResourceManager::GetInst()->GetAnimationClip("Boss_Die2");
+	m_anim.AddClip(L"Boss_Die1", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Die2");
 	animClip->SetFrametimeLimit(0.2f);
 	animClip->SetLoop(false);
-	m_anim.AddClip("Boss_Die2", animClip);
+	m_anim.AddClip(L"Boss_Die2", animClip);
 
-	m_anim.SetClip("Boss_Front");
+	m_anim.SetClip(L"Boss_Front");
 
 	
 
@@ -62,6 +64,8 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 
 	m_speed = 40.0f;
 	m_eType = _type;
+
+	m_smInst = StageManager::GetInst();
 }
 
 CBoss::~CBoss()
@@ -84,10 +88,10 @@ bool CBoss::Init()
 
 	m_uiHPBar = new CUIHPBar(rect, m_hp);
 	// hp bar는 내가 선택한걸로
-	m_uiHPBar->SetBitmap(CResourceManager::GetInst()->Load(L"Boss_hp_blue.png"));
+	m_uiHPBar->SetBitmap(CResourceManager::GetInst()->GetBitmap(L"Boss_hp_blue.png"));
 	m_uiHPBar->SetHP(m_hp);
-	CLayer* layer = m_pScene->FindLayer("MonsterUI");
-	layer->AddObj(m_uiHPBar);
+	CLayer* layer = m_pScene->FindLayer(L"MonsterUI");
+	layer->AddUIObj(m_uiHPBar);
 
 	return true;
 }
@@ -112,7 +116,7 @@ void CBoss::Update()
 	switch (m_state)
 	{
 	case State::Ready:
-		if (((CInGameScene*)m_pScene)->GetSceneState() == eSceneState::Play)
+		if (m_smInst->GetStage()->GetStageState() == eStageState::Play)
 		{
 			m_nextState = RandomDir();
 		}
@@ -157,7 +161,7 @@ void CBoss::Update()
 		if (clip->IsCurClipEnd())
 		{
 			m_isAlive = false;
-			((CInGameScene*)m_pScene)->SubBossCount();
+			m_smInst->GetStage()->SubMoveObjCnt(MoveObjType::Boss);
 			return;
 		}
 	break;
@@ -202,16 +206,16 @@ void CBoss::Hit(u_int _attackPower)
 
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
 
-	CLayer* pLayer = m_pScene->FindLayer("Block");
+	CLayer* pLayer = m_pScene->FindLayer(L"Block");
 
 	CMonster* pMonster = new CMonster(rect, eInGameObjType::Monster);
-	pLayer->AddObj(pMonster);
+	pLayer->AddGameObj(pMonster);
 	m_nextState = State::Hit;
 	m_hp -= _attackPower;
 
 	m_uiHPBar->SetHP(m_hp);
-	
-	((CInGameScene*)m_pScene)->AddMonsterCount();
+
+	m_smInst->GetStage()->AddMoveObjCnt(MoveObjType::Monster);
 }
 
 
@@ -320,25 +324,25 @@ void CBoss::ChangeState(State _state)
 	switch (_state)
 	{
 	case State::MoveLeft:
-		m_anim.SetClip("Boss_Left");
+		m_anim.SetClip(L"Boss_Left");
 		break;
 	case State::MoveRight:
-		m_anim.SetClip("Boss_Right");
+		m_anim.SetClip(L"Boss_Right");
 		break;
 	case State::MoveUp:
-		m_anim.SetClip("Boss_Back");
+		m_anim.SetClip(L"Boss_Back");
 		break;
 	case State::MoveDown:
-		m_anim.SetClip("Boss_Front");
+		m_anim.SetClip(L"Boss_Front");
 		break;
 	case State::Hit:
-		m_anim.SetClip("Boss_Hit");
+		m_anim.SetClip(L"Boss_Hit");
 		break;
 	case State::TrappedInBubble:
-		m_anim.SetClip("Boss_Die1");
+		m_anim.SetClip(L"Boss_Die1");
 		break;
 	case State::Die:
-		m_anim.SetClip("Boss_Die2");
+		m_anim.SetClip(L"Boss_Die2");
 		break;
 	}
 }
@@ -382,7 +386,7 @@ State CBoss::RandomDir()
 {
 	std::random_device random;
 	std::mt19937 engine(random());
-	std::uniform_int_distribution<int> distribution(0, (int)Dir::None - 1);
+	std::uniform_int_distribution<int> distribution(0, (int)eDir::None - 1);
 
 	return (State)distribution(engine);
 }
@@ -390,28 +394,28 @@ State CBoss::RandomDir()
 void CBoss::Attack01(CBoard* _pBoard)
 {
 	int startX, startY;
-	Dir dir = Dir::Down;
+	eDir dir = eDir::Down;
 	if (State::MoveLeft == m_state)
 	{
-		dir = Dir::Left;
+		dir = eDir::Left;
 		startX = m_cellXPos - 2;
 		startY = m_cellYPos - 1;
 	}
 	else if (State::MoveRight == m_state)
 	{
-		dir = Dir::Right;
+		dir = eDir::Right;
 		startX = m_cellXPos + 4;
 		startY = m_cellYPos - 1;
 	}
 	else if (State::MoveUp == m_state)
 	{
-		dir = Dir::Up;
+		dir = eDir::Up;
 		startX = m_cellXPos + 1;
 		startY = m_cellYPos - 4;
 	}
 	else
 	{
-		dir = Dir::Down;
+		dir = eDir::Down;
 		startX = m_cellXPos + 1;
 		startY = m_cellYPos + 2;
 	}
@@ -455,7 +459,7 @@ void CBoss::Attack02(CBoard* _pBoard)
 			if (centerY - radius + 1 <= i && i <= centerY + radius - 1
 				&& centerX - radius + 1 <= j && j <= centerX + radius - 1)
 				continue;
-			_pBoard->PutSplash(j, i, "Explosion_center");
+			_pBoard->PutSplash(j, i, L"Explosion_center");
 		}
 	}
 }

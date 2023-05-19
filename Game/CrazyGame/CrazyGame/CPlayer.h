@@ -7,7 +7,7 @@ class CAnimator;
 class CAnimationClip;
 class CVehicle;
 
-
+class StageManager;
 
 class CPlayer :
     public CMoveObj
@@ -29,6 +29,7 @@ class CPlayer :
     float m_invincibleTime = 0.0f;
 
     CVehicle* m_vehicle = nullptr;
+    StageManager* m_smInst;
 
 private:
 
@@ -49,7 +50,7 @@ public:
 
     void ChangeState(State _state) override;
 
-    std::string GetStrDir(Dir _dir);
+    std::wstring GetStrDir(eDir _dir);
     //void ReduceCurBubble(u_int _numOfBubbles) { m_curBubblePlaced -= _numOfBubbles; }
     void GetOffVehicle();
 

@@ -12,7 +12,7 @@ public:
     CUI(const D2D1_RECT_F& _rect);
     ~CUI();
 
-    void SetBitmap(CBitmap* _bitmap) { m_pBitmap = _bitmap; }
+    void SetBitmap(CBitmap* _bitmap);
 
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 };

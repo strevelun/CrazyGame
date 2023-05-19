@@ -16,9 +16,9 @@ private:
 	static CResourceManager* m_inst;
 
 	std::unordered_map<PCWSTR, CBitmap*> m_mapBitmap;
-	std::map<std::string, std::vector<_tSprite*>> m_mapImage; // TODO delete
+	std::map<std::wstring, std::vector<_tSprite*>> m_mapSprite; // TODO delete
 	std::vector<CBitmap*> m_vecBitmap;
-	std::map<std::string, CAnimationClip*> m_mapAnimClip;
+	std::map<std::wstring, CAnimationClip*> m_mapAnimClip;
 
 	int m_bitmapIdx = 0;
 
@@ -27,6 +27,7 @@ private:
 
 	ID2D1Bitmap* LoadImageFromFile(PCWSTR _wcFileName, ID2D1HwndRenderTarget* _pRenderTarget);
 	
+
 
 public:
 	static CResourceManager* GetInst()
@@ -40,15 +41,17 @@ public:
 		if (m_inst != nullptr) { delete m_inst;	m_inst = nullptr; }
 	}
 
-	void LoadFiles(std::wstring folderName);
+	void LoadSprites(std::wstring folderName);
 	void LoadAnimFiles(std::wstring folderName);
-	CBitmap* Load(PCWSTR _wcFileName);
 	tMapData LoadMapData(PCWSTR _wcFileName);
 
-	_tSprite* GetImage(std::string key, int idx) { return m_mapImage.at(key).at(idx); }
+	// m_mapBitmap에서 찾고 있으면 리턴, 없으면 LoadImageFromFile호출 후 insert 후 리턴
+	CBitmap* GetBitmap(PCWSTR _wcFileName);
+	_tSprite* GetSprite(std::wstring key, int idx);
 	CBitmap* GetIdxBitmap(int _idx) const { return m_vecBitmap.at(_idx); }
 
-	void SetIdxBitmap(CBitmap* _bitmap) { m_vecBitmap.push_back(_bitmap); }
-	CAnimationClip* GetAnimationClip(const std::string& _str) { return m_mapAnimClip.at(_str); }
+	CAnimationClip* GetAnimationClip(const std::wstring& _str);
+
+	void DeleteAllResource();
 };
 

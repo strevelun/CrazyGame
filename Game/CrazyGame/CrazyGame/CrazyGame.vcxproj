@@ -161,6 +161,9 @@
     <ClCompile Include="CUIHPBar.cpp" />
     <ClCompile Include="CUIPanel.cpp" />
     <ClCompile Include="CVehicle.cpp" />
+    <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="StageManager.cpp" />
+    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h" />
@@ -197,6 +200,9 @@
     <ClInclude Include="CUIPanel.h" />
     <ClInclude Include="Setting.h" />
     <ClInclude Include="CVehicle.h" />
+    <ClInclude Include="Stage.h" />
+    <ClInclude Include="StageManager.h" />
+    <ClInclude Include="UIManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,16 +7,16 @@
 class CUIButton :
     public CUI
 {
-    std::function<void(const std::string _strName)> m_BtnCallback;
+    std::function<void(const std::wstring _strName)> m_BtnCallback;
 
 public:
-    CUIButton(const D2D1_RECT_F& _rect, std::string _strName);
+    CUIButton(const D2D1_RECT_F& _rect, std::wstring _strName);
     ~CUIButton();
 
-    void Input() override;
+    void Update() override;
 
     template <typename T>
-    void SetCallback(T* pObj, void (T::* pFunc)(const std::string _strName))
+    void SetCallback(T* pObj, void (T::* pFunc)(const std::wstring _strName))
     {
         m_BtnCallback = bind(pFunc, pObj, std::placeholders::_1);
     }

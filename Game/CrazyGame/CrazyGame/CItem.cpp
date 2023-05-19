@@ -13,7 +13,7 @@ CItem::~CItem()
 {
 }
 
-void CItem::Init(eItem _eItem, std::string _strName)
+void CItem::Init(eItem _eItem, std::wstring _strName)
 {
 	CAnimator* anim = new CAnimator();
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_strName);

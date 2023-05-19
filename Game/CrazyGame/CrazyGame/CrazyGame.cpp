@@ -5,7 +5,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	if (FAILED(CApp::GetInst()->Init(hInstance, nCmdShow, 1920, 1080)))
+	if (FAILED(CApp::GetInst()->Init(hInstance, nCmdShow, 1024, 768)))
 		return 0;
 
 	int ret = CApp::GetInst()->Run();

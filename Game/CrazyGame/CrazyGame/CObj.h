@@ -16,7 +16,7 @@ protected:
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
 
-	std::string m_strName;
+	std::wstring m_strName;
 };
 */
 
@@ -26,14 +26,12 @@ class CObj
 protected:
 	friend class CLayer;
 
-	std::string m_strName;
+	std::wstring m_strName;
 
 	D2D1_RECT_F						m_rect;
 	D2D1_SIZE_U						m_size;
 	eInGameObjType					m_eType;
 
-	int m_cellXPos, m_cellYPos;
-	int m_prevCellXPos, m_prevCellYPos;
 
 	bool m_isAlive = true;
 
@@ -47,7 +45,6 @@ public:
 	D2D1_RECT_F GetRect() const { return m_rect; }
 	eInGameObjType GetType() const { return m_eType; }
 
-	D2D1_POINT_2U GetPoint() const { return D2D1::Point2U(m_cellXPos, m_cellYPos); }
 
 	template <typename T>
 	static T* CreateObj(CLayer* _pLayer = nullptr);
@@ -69,7 +66,7 @@ inline T* CObj::CreateObj(CLayer* _pLayer)
 {
 	T* obj = new T;
 
-	if (_pLayer) _pLayer->AddObj(obj);
+	if (_pLayer) _pLayer->AddGameObj(obj);
 
 	return obj;
 }

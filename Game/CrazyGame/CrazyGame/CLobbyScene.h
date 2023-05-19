@@ -16,8 +16,9 @@ public:
     CLobbyScene();
     ~CLobbyScene();
 
-    void OnMapButtonClicked(const std::string _strName);
+    void OnMapButtonClicked(const std::wstring _strName);
 
     void Init() override;
+    void Cleanup() override;
 };
 

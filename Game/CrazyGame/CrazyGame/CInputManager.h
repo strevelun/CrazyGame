@@ -1,16 +1,29 @@
 #pragma once
 
+#include <map>
+#include <functional>
+#include <string>
+
 class CMouse;
+class CPlayer;
 
 class CInputManager
 {
 private:
+	float m_startTime, m_delayedTime;
+
+	//std::map<std::wstring, std::function<void()>> m_mapAction;
 	CMouse* m_pMouse;
+	//CPlayer* m_pPlayer;
 
 	static CInputManager* m_inst;
 
 	CInputManager();
 	~CInputManager();
+
+private:
+	//void SpaceBar();
+	//void DoubleSpaceBar();
 
 public:
 	static CInputManager* GetInst()

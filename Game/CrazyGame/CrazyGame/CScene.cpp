@@ -54,7 +54,7 @@ void CScene::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 	}
 }
 
-CLayer* CScene::CreateLayer(const std::string& _strTag, u_int _zOrder)
+CLayer* CScene::CreateLayer(const std::wstring& _strTag, u_int _zOrder)
 {
 	CLayer* layer = FindLayer(_strTag);
 
@@ -75,7 +75,7 @@ CLayer* CScene::CreateLayer(const std::string& _strTag, u_int _zOrder)
 	return layer;
 }
 
-CLayer* CScene::FindLayer(const std::string& _strTag)
+CLayer* CScene::FindLayer(const std::wstring& _strTag)
 {
 	std::list<CLayer*>::iterator iter = m_layerList.begin();
 	std::list<CLayer*>::iterator iterEnd = m_layerList.end();

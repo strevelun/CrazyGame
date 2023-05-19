@@ -57,18 +57,15 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 
 	CSceneManager* pSceneManager = CSceneManager::GetInst();
 
-	pSceneManager->AddScene("village.map", CSceneManager::GetInst()->CreateScene<CInGameScene>());
-	pSceneManager->SetMapData("village.map");
-	pSceneManager->AddScene("pirate.map", CSceneManager::GetInst()->CreateScene<CInGameScene>());
-	pSceneManager->SetMapData("pirate.map");
-	pSceneManager->AddScene("test.map", CSceneManager::GetInst()->CreateScene<CInGameScene>());
-	pSceneManager->SetMapData("test.map");
+	pSceneManager->AddScene(L"village.map", CSceneManager::GetInst()->CreateScene<CInGameScene>());
+	pSceneManager->AddScene(L"pirate.map", CSceneManager::GetInst()->CreateScene<CInGameScene>());
+	pSceneManager->AddScene(L"test.map", CSceneManager::GetInst()->CreateScene<CInGameScene>());
 
-	pSceneManager->AddScene("LobbyScene", CSceneManager::GetInst()->CreateScene<CLobbyScene>());
-	pSceneManager->ChangeScene("LobbyScene");
+	pSceneManager->AddScene(L"LobbyScene", CSceneManager::GetInst()->CreateScene<CLobbyScene>());
+	pSceneManager->ChangeScene(L"LobbyScene");
 
-	CResourceManager::GetInst()->LoadFiles(L"resource/sprite/");
-	CResourceManager::GetInst()->LoadAnimFiles(L"resource/anim/");
+	CResourceManager::GetInst()->LoadSprites(L"resource/sprite/");
+	//CResourceManager::GetInst()->LoadAnimFiles(L"resource/anim/");
 	//CTimer::GetInst()->SetFrameLimit(10);
 
 	m_pRenderTarget->CreateCompatibleRenderTarget(

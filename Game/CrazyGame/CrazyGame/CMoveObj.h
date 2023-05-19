@@ -27,6 +27,7 @@ protected:
     State m_state = State::Ready;
     State m_nextState = State::Ready;
 
+
 public:
     CMoveObj(const D2D1_RECT_F& _rect);
     ~CMoveObj();
@@ -38,5 +39,6 @@ protected:
 
 public:
     void SetScene(CScene* _pScene) { m_pScene = _pScene; }
+
 };
 

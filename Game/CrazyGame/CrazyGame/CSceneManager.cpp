@@ -17,13 +17,13 @@ CSceneManager::~CSceneManager()
 {
 }
 
-void CSceneManager::AddScene(std::string _strSceneName, CScene* _scene)
+void CSceneManager::AddScene(std::wstring _strSceneName, CScene* _scene)
 {
 	_scene->SetName(_strSceneName);
 	m_mapScene.insert(std::make_pair(_strSceneName, _scene));
 }
 
-CScene* CSceneManager::GetScene(const std::string& _strKey)
+CScene* CSceneManager::GetScene(const std::wstring& _strKey)
 {
 	auto scene = m_mapScene.find(_strKey);
 	if (scene == m_mapScene.end()) return nullptr;
@@ -56,6 +56,7 @@ bool CSceneManager::CheckNextScene(void)
 		if (m_pScene)
 		{
 			m_pScene->Cleanup();
+			CResourceManager::GetInst()->DeleteAllResource();
 		}
 		m_pScene = m_pNextScene;
 		m_pScene->Init();
@@ -66,7 +67,7 @@ bool CSceneManager::CheckNextScene(void)
 	return true;
 }
 
-bool CSceneManager::ChangeScene(const std::string& _strKey)
+bool CSceneManager::ChangeScene(const std::wstring& _strKey)
 {
 	auto scene = m_mapScene.find(_strKey);
 	if (scene == m_mapScene.end()) return false;
@@ -76,10 +77,10 @@ bool CSceneManager::ChangeScene(const std::string& _strKey)
 
 	return true;
 }
-
-tMapData& CSceneManager::FindMapData(const std::string& _strName)
+/*
+tMapData& CSceneManager::FindMapData(const std::wstring& _strName)
 {
-	std::unordered_map<std::string, tMapData>::iterator iter = m_mapData.find(_strName);
+	std::unordered_map<std::wstring, tMapData>::iterator iter = m_mapData.find(_strName);
 	if (iter == m_mapData.end())
 	{
 		MessageBox(NULL, L"m_mapData에 해당 키 값의 데이터가 없습니다.", L"오류", MB_OK);
@@ -87,13 +88,4 @@ tMapData& CSceneManager::FindMapData(const std::string& _strName)
 	}
 	return iter->second;
 }
-
-void CSceneManager::SetMapData(const std::string& _strName)
-{
-	int len = MultiByteToWideChar(CP_UTF8, 0, _strName.c_str(), -1, nullptr, 0);
-	wchar_t* wstr = new wchar_t[len];
-	MultiByteToWideChar(CP_UTF8, 0, _strName.c_str(), -1, wstr, len);
-	tMapData mapData = CResourceManager::GetInst()->LoadMapData(wstr);
-	delete[] wstr;
-	m_mapData.insert(std::make_pair(_strName, mapData));
-}
+*/

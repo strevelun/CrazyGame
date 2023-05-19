@@ -9,7 +9,7 @@ class CSplash :
     public CStaticObj
 {
 public:
-    CSplash(const D2D1_RECT_F& _rect, std::string _animClipName);
+    CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName);
     ~CSplash();
 
     void Update();

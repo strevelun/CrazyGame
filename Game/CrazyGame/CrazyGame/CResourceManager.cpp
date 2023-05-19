@@ -62,7 +62,7 @@ ID2D1Bitmap* CResourceManager::LoadImageFromFile(PCWSTR _wcFileName, ID2D1HwndRe
 	return pBitmap;
 }
 
-void CResourceManager::LoadFiles(std::wstring folderName)
+void CResourceManager::LoadSprites(std::wstring folderName)
 {
 
 	ID2D1HwndRenderTarget* pRenderTarget = CApp::GetInst()->GetRenderTarget();
@@ -127,19 +127,19 @@ void CResourceManager::LoadFiles(std::wstring folderName)
 					switch (sprite->type)
 					{
 					case eType::Tile:
-						m_mapImage["Tile"].push_back(sprite);
+						m_mapSprite[L"Tile"].push_back(sprite);
 						break;
 					case eType::Block:
-						m_mapImage["Block"].push_back(sprite);
+						m_mapSprite[L"Block"].push_back(sprite);
 						break;
 					case eType::Character:
-						m_mapImage["Character"].push_back(sprite);
+						m_mapSprite[L"Character"].push_back(sprite);
 						break;
 					}
 					sprite->idx = m_bitmapIdx;
 				}
 
-				SetIdxBitmap(bitmap);
+				m_vecBitmap.push_back(bitmap);
 				delete[] arr;
 				m_bitmapIdx++;
 				fclose(pFile);
@@ -180,7 +180,7 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
 			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-				int size = WideCharToMultiByte(CP_UTF8, 0, fd.cFileName, -1, NULL, 0, NULL, NULL);
+				//int size = WideCharToMultiByte(CP_UTF8, 0, fd.cFileName, -1, NULL, 0, NULL, NULL);
 
 				std::wstring fileName(fd.cFileName);
 				std::wstring filePath = folderName + fileName;
@@ -216,7 +216,7 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 				CAnimationClip* animClip = new CAnimationClip;
 
 				std::wstring wstring_string(animName);
-				std::string string_string(wstring_string.begin(), wstring_string.end());
+				std::wstring string_string(wstring_string.begin(), wstring_string.end());
 
 				for (int i = 0; i < clipSize; i++)
 				{
@@ -225,12 +225,11 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 					animClip->AddFrame(frame);
 				}
 
-				SetIdxBitmap(bitmap);
+				m_vecBitmap.push_back(bitmap);
 				m_bitmapIdx++;
 
 				std::wstring wstrName(animName);
-				std::string strName(wstrName.begin(), wstrName.end());
-				m_mapAnimClip.insert(std::make_pair(strName, animClip));
+				m_mapAnimClip.insert(std::make_pair(wstrName, animClip));
 
 				delete[] arr;
 				fclose(pFile);
@@ -245,7 +244,7 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 	}
 }
 
-CBitmap* CResourceManager::Load(PCWSTR _wcFileName)
+CBitmap* CResourceManager::GetBitmap(PCWSTR _wcFileName)
 {
 	std::unordered_map<PCWSTR, CBitmap*>::iterator iter = m_mapBitmap.find(_wcFileName);
 	ID2D1Bitmap* image = nullptr;
@@ -264,6 +263,92 @@ CBitmap* CResourceManager::Load(PCWSTR _wcFileName)
 		bitmap = iter->second;
 	
 	return bitmap;
+}
+
+_tSprite* CResourceManager::GetSprite(std::wstring key, int idx)
+{
+
+
+	return m_mapSprite.at(key).at(idx);
+}
+
+CAnimationClip* CResourceManager::GetAnimationClip(const std::wstring& _str)
+{
+	std::map<std::wstring, CAnimationClip*>::iterator iter = m_mapAnimClip.find(_str);
+	CAnimationClip* pAnimClip = nullptr;
+	
+	if (iter == m_mapAnimClip.end())
+	{
+		ID2D1HwndRenderTarget* pRenderTarget = CApp::GetInst()->GetRenderTarget();
+		int clipSize = 0;
+
+		D2D1_BITMAP_PROPERTIES bpp;
+		bpp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		bpp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+		bpp.dpiX = (FLOAT)0;
+		bpp.dpiY = (FLOAT)0;
+
+		std::wstring filePath = L"resource/anim/" + _str + L".anim";;
+
+		FILE* pFile = nullptr;
+		errno_t errNum = _wfopen_s(&pFile, filePath.c_str(), L"rb");
+
+		if (pFile == nullptr || errNum != 0)
+			return nullptr;
+
+		TCHAR animName[100];
+		fread(&animName, 100, 1, pFile);
+		fread(&clipSize, sizeof(int), 1, pFile);
+		D2D1_SIZE_F bitmapSize;
+		fread(&bitmapSize, sizeof(D2D1_SIZE_F), 1, pFile);
+
+		CBitmap* bitmap = new CBitmap();
+
+		bitmap->SetSize(bitmapSize);
+		DWORD* pixel = new DWORD[sizeof(DWORD) * bitmapSize.width * bitmapSize.height];
+		fread(&pixel[0], sizeof(DWORD) * bitmapSize.width, bitmapSize.height, pFile);
+		ID2D1Bitmap* d2dBitmap;
+		pRenderTarget->CreateBitmap(D2D1::SizeU(bitmapSize.width, bitmapSize.height), pixel, bitmapSize.width * 4, &bpp, &d2dBitmap);
+
+		delete[] pixel;
+
+		bitmap->SetBitmap(d2dBitmap);
+
+		tSpriteData* arr = new tSpriteData[clipSize];
+
+		fread(arr, sizeof(tSpriteData), clipSize, pFile);
+
+		pAnimClip = new CAnimationClip;
+
+		std::wstring wstring_string(animName);
+		std::wstring string_string(wstring_string.begin(), wstring_string.end());
+
+		for (int i = 0; i < clipSize; i++)
+		{
+			tAnimationFrame* frame = new tAnimationFrame(arr[i]);
+			frame->bitmapIdx = m_bitmapIdx;
+			pAnimClip->AddFrame(frame);
+		}
+
+		m_vecBitmap.push_back(bitmap);
+		m_bitmapIdx++;
+
+		std::wstring wstrName(animName);
+		m_mapAnimClip.insert(std::make_pair(wstrName, pAnimClip));
+
+		delete[] arr;
+		fclose(pFile);
+	}
+	else
+		pAnimClip = iter->second;
+
+	return pAnimClip;
+}
+
+void CResourceManager::DeleteAllResource()
+{
+	m_mapBitmap.clear();
+	m_mapAnimClip.clear();
 }
 
 tMapData CResourceManager::LoadMapData(PCWSTR _wcFileName)

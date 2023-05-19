@@ -19,7 +19,7 @@ CLobbyScene::~CLobbyScene()
 	
 }
 
-void CLobbyScene::OnMapButtonClicked(const std::string _strName)
+void CLobbyScene::OnMapButtonClicked(const std::wstring _strName)
 {
 	//tMapData data = FindMapData(_strName);
 
@@ -32,25 +32,23 @@ void CLobbyScene::OnMapButtonClicked(const std::string _strName)
 
 void CLobbyScene::Init()
 {
-	//SetWindowPos(CApp::GetInst()->GetHwnd(), NULL, 0, 0, 1920.0f, 1080.0f, SWP_NOMOVE);
-
-	CBitmap* bitmap = CResourceManager::GetInst()->Load(L"login.png");
+	CBitmap* bitmap = CResourceManager::GetInst()->GetBitmap(L"login.png");
 
 	// UI Layer 만들기
-	CLayer* layer = CreateLayer("MapChoiceButton", INT_MAX);
+	CLayer* layer = CreateLayer(L"MapChoiceButton", INT_MAX);
 
 	// 백그라운드
 	CUIPanel* background = new CUIPanel({ 0, 0, 800.f, 600.f });
 	background->SetBitmap(bitmap);
-	layer->AddObj(background);
+	layer->AddUIObj(background);
 
 	// 빌리지맵 버튼
-	bitmap = CResourceManager::GetInst()->Load(L"map_select_village.png");
+	bitmap = CResourceManager::GetInst()->GetBitmap(L"map_select_village.png");
 	u_int width = bitmap->GetBitmap()->GetPixelSize().width;
 	u_int height = bitmap->GetBitmap()->GetPixelSize().height;
-	CUIButton* btn = new CUIButton({ 80.f, 450.f, 80.f + width, 450.f + height }, "village.map");
+	CUIButton* btn = new CUIButton({ 80.f, 450.f, 80.f + width, 450.f + height }, L"village.map");
 	btn->SetBitmap(bitmap);
-	layer->AddObj(btn);
+	layer->AddUIObj(btn);
 
 
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
@@ -58,22 +56,35 @@ void CLobbyScene::Init()
 	float prevEnd = 80 + width;
 
 	// 해적맵 버튼
-	bitmap = CResourceManager::GetInst()->Load(L"map_select_pirate.png");
+	bitmap = CResourceManager::GetInst()->GetBitmap(L"map_select_pirate.png");
 	width = bitmap->GetBitmap()->GetPixelSize().width;
 	height = bitmap->GetBitmap()->GetPixelSize().height;
-	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, "pirate.map");
+	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, L"pirate.map");
 	btn->SetBitmap(bitmap);
-	layer->AddObj(btn);
+	layer->AddUIObj(btn);
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
 	prevEnd = prevEnd + width;
 
 	// 테스트맵 버튼
-	bitmap = CResourceManager::GetInst()->Load(L"map_select_test.png");
+	bitmap = CResourceManager::GetInst()->GetBitmap(L"map_select_test.png");
 	width = bitmap->GetBitmap()->GetPixelSize().width;
 	height = bitmap->GetBitmap()->GetPixelSize().height;
-	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, "test.map");
+	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, L"test.map");
 	btn->SetBitmap(bitmap);
-	layer->AddObj(btn);
+	layer->AddUIObj(btn);
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
+}
+
+void CLobbyScene::Cleanup()
+{
+	std::list<CLayer*>::iterator iter = m_layerList.begin();
+	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
+
+	for (; iter != iterEnd; iter++)
+	{
+		(*iter)->DeleteAllObj();
+		delete* iter;
+	}
+	m_layerList.clear();
 }

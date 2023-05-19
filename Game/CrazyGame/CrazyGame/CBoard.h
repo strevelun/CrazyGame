@@ -9,6 +9,7 @@ class CObj;
 class CItem;
 class CVehicle;
 class CMoveObj;
+class CGameObj;
 
 class CBoard
 {
@@ -26,17 +27,17 @@ public:
     bool IsMovable(int _xpos, int _ypos, CVehicle* _vehicle = nullptr);
 	bool IsGameObjType(int x, int y, eInGameObjType _type);
 
-    bool PutObj(int _xpos, int _ypos, CObj* _obj, eInGameObjType _type);
+    bool PutObj(int _xpos, int _ypos, CGameObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
-    void RemoveObj(int _xpos, int _ypos, std::string _strLayerKey);
+    void RemoveObj(int _xpos, int _ypos, std::wstring _strLayerKey);
 
     tMapData GetMapData() const { return m_mapData; }
     void SetInGameObjType(int _x, int _y, eInGameObjType _type) { 
         m_board[_y][_x] = _type; 
     }
     void SetObjTypeInMoveObjBoard(int _x, int _y, CMoveObj* _pObj) { m_moveObjBoard[_y][_x] = _pObj; }
-    bool PutSplash(D2D1_RECT_F _rect, std::string _animClipName);
-    bool PutSplash(u_int _cellXPos, u_int _cellYPos, std::string _animClipName);
+    bool PutSplash(D2D1_RECT_F _rect, std::wstring _animClipName);
+    bool PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipName);
 
     CItem* GetItem(D2D1_RECT_F _rect);
     CItem* GetItem(u_int _cellXPos, u_int _cellYPos);

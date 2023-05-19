@@ -3,6 +3,8 @@
 
 #include "CAStar.h"
 
+class StageManager;
+
 class CBoss :
     public CMoveObj
 {
@@ -11,6 +13,8 @@ class CBoss :
 
     float m_attackDelay = 5.0f;
     float m_attackDelayRemained = 0.0f;
+
+    StageManager* m_smInst;
 
 public:
     CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type);
