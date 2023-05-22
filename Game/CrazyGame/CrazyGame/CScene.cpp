@@ -23,6 +23,7 @@ void CScene::Init()
 
 void CScene::Input()
 {
+	/*
 	std::list<CLayer*>::iterator iter = m_layerList.begin();
 	std::list<CLayer*>::iterator iterEnd = m_layerList.end();
 
@@ -30,6 +31,7 @@ void CScene::Input()
 	{
 		(*iter)->Input();
 	}
+	*/
 }
 
 void CScene::Update()
@@ -62,7 +64,6 @@ CLayer* CScene::CreateLayer(const std::wstring& _strTag, u_int _zOrder)
 	{
 		return layer;
 	}
-		
 
 	layer = new CLayer;
 	layer->SetTag(_strTag);

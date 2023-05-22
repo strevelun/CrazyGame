@@ -89,6 +89,7 @@ void CPlayer::Input()
 		break;
 
 	case State::MoveLeft:
+		m_eMoveDir = eDir::Left;
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		{
 			m_nextState = State::MoveLeft;
@@ -115,6 +116,7 @@ void CPlayer::Input()
 
 		break;
 	case State::MoveRight:
+		m_eMoveDir = eDir::Right;
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		{
 			m_nextState = State::MoveLeft;
@@ -140,6 +142,7 @@ void CPlayer::Input()
 		}
 		break;
 	case State::MoveUp:
+		m_eMoveDir = eDir::Up;
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		{
 			m_nextState = State::MoveLeft;
@@ -166,6 +169,7 @@ void CPlayer::Input()
 		break;
 
 	case State::MoveDown:
+		m_eMoveDir = eDir::Down;
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		{
 			m_nextState = State::MoveLeft;
@@ -188,17 +192,39 @@ void CPlayer::Input()
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 		{
 			m_bFire = true;
-
 		}
-
-		// 더블 스페이스바
 		
 		break;
+	}
+
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
+	{
+		m_attackDelay = 0; 
+		m_spaceCount++;
+		if (!m_spacePressed)
+		{
+			m_spacePressed = true;
+		}
+	}
+
+	if (m_spacePressed && m_doubleSpaceDeltaTime <= 0.5f)
+	{
+		if (m_spaceCount >= 2)
+		{
+ 			m_spaceCount = 0;
+			CObj* obj = ((CInGameScene*)m_pScene)->FindLayer(L"Event")->FindGameObj(m_cellXPos, m_cellYPos);
+			if(obj != nullptr)
+				((CBubble*)obj)->BounceMove(m_eMoveDir);
+
+		}
+		m_spacePressed = false;
 	}
 }
 
 void CPlayer::Update()
 {
+	Input();
+
 	if (!m_vehicle && m_state != State::Idle)
 		CGameObj::Update();
 
@@ -208,8 +234,14 @@ void CPlayer::Update()
 		m_state = State::Idle;
 		return;
 	}
-	
+
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	if (m_spacePressed)
+	{
+		m_doubleSpaceDeltaTime += deltaTime;
+	}
+		m_attackDelay += deltaTime;
 
 	if (m_bInvincible)
 	{
@@ -314,7 +346,7 @@ void CPlayer::Update()
 			{
 				m_rideRect = m_rect;
 				m_vehicle = new CVehicle(m_rideRect, L"UFO");
-				layer->AddGameObj(m_vehicle);
+				layer->AddObj(m_vehicle);
 				m_rect.top -= m_vehicle->GetRideHeight();
 				m_rect.bottom -= m_vehicle->GetRideHeight();
 				m_prevSpeed = m_speed;
@@ -369,20 +401,13 @@ void CPlayer::Update()
 			m_curBubblePlaced++;
 		else
 			delete bubble;
-		/*
-		if (((CInGameScene*)m_pScene)->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
-		{
-			CObj* obj = (m_pScene)->FindLayer(L"Event")->FindObj(m_cellXPos, m_cellYPos);
-  			((CBubble*)obj)->BounceMove(eDir::Left);
-		}
-		*/
 	}
+
 
 	m_bFire = false;
 
 }
 
-// 현재 상태를 출력해 ~~
 void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(0.9f, 0.8f, D2D1::Point2F(m_rect.left - 80, m_rect.bottom )));
@@ -452,7 +477,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos - 1, m_cellYPos, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
-				CObj* pObj = pLayer->FindObj(m_cellXPos - 1, m_cellYPos);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos - 1, m_cellYPos);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Left);
@@ -494,7 +519,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos + 1, m_cellYPos, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
-				CObj* pObj = pLayer->FindObj(m_cellXPos + 1, m_cellYPos);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos + 1, m_cellYPos);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Right);
@@ -533,7 +558,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos -1, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
-				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos-1);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos-1);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Up);
@@ -571,7 +596,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos + 1, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
-				CObj* pObj = pLayer->FindObj(m_cellXPos, m_cellYPos+1);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos+1);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Down);

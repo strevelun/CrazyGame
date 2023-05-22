@@ -91,7 +91,7 @@ bool CBoss::Init()
 	m_uiHPBar->SetBitmap(CResourceManager::GetInst()->GetBitmap(L"Boss_hp_blue.png"));
 	m_uiHPBar->SetHP(m_hp);
 	CLayer* layer = m_pScene->FindLayer(L"MonsterUI");
-	layer->AddUIObj(m_uiHPBar);
+	layer->AddObj(m_uiHPBar);
 
 	return true;
 }
@@ -105,8 +105,6 @@ void CBoss::Update()
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
 
-	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
 	ChangeState(m_nextState);
 
@@ -209,7 +207,7 @@ void CBoss::Hit(u_int _attackPower)
 	CLayer* pLayer = m_pScene->FindLayer(L"Block");
 
 	CMonster* pMonster = new CMonster(rect, eInGameObjType::Monster);
-	pLayer->AddGameObj(pMonster);
+	pLayer->AddObj(pMonster);
 	m_nextState = State::Hit;
 	m_hp -= _attackPower;
 
@@ -243,8 +241,19 @@ bool CBoss::SetBossInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _obj)
 			if (board->IsMovable(_cellXPos + j, _cellYPos - i) == false)
 				return false;
 			board->SetObjTypeInMoveObjBoard(_cellXPos + j, _cellYPos - i, _obj);
+#ifdef _DEBUG
+			char str[50] = "";
+			sprintf_s(str, "(%d, %d), ", _cellXPos + j, _cellYPos - i);
+			OutputDebugStringA(str);
+#endif
+
 		}
 	}
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "\n");
+	OutputDebugStringA(str);
+#endif
 	return true;
 }
 
@@ -312,6 +321,9 @@ void CBoss::MoveState()
 	m_rect.right += m_speed * deltaTime * x;
 	m_rect.top += m_speed * deltaTime * y;
 	m_rect.bottom += m_speed * deltaTime * y;
+
+	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 }
 
 void CBoss::ChangeState(State _state)

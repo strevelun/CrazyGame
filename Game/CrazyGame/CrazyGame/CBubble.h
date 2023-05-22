@@ -12,6 +12,8 @@ class CBubble :
 
     double m_angle = 45.0;
     double m_gravity = 0.5;
+    int m_throwLimit = 10;
+    int m_curThrow = 0;
 
     float m_elapsedTime;
     float m_dieTime = 3.0f;

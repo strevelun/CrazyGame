@@ -42,6 +42,9 @@ void CBubble::Update()
 		m_isAlive = false;
 	}
 
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
+
 	// ¹°Ç³¼±ÀÌ °È¾îÂ÷ÀÏ¶§
 	if (m_bMoving)
 	{
@@ -64,8 +67,6 @@ void CBubble::Update()
 			break;
 		}
 
-		int stageFrameOffsetX = 20;
-		int stageFrameOffsetY = 40;
 
 		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
 		{
@@ -119,14 +120,30 @@ void CBubble::Update()
 			break;
 		}
 
-		if (y >= 45 || y <= 0) {
-			m_angle = -m_angle;
+		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
+		{
+			m_eMovingDir = eDir::None;
+			m_bBounceMoving = false;
+			m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
+			m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
+			m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+			m_rect.bottom = m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY;
+			return;
 		}
 
 		rect.left += dx * x;
 		rect.right += dx * x;
-		rect.top += dy;
-		rect.bottom += dy;
+		rect.top += dy * y;
+		rect.bottom += dy * y;
+
+		m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+		m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+		if (m_cellXPos != m_prevCellXPos || m_cellYPos != m_prevCellYPos)
+		{
+			pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
+			pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+		}
 
 		m_rect = rect;
 	}

@@ -22,7 +22,7 @@ class CMoveObj :
 protected:
     CScene* m_pScene = nullptr;
     float m_speed = 0.0f;
-   // Dir m_eMoveDir = Dir::Down;
+    eDir m_eMoveDir = eDir::Down;
     //Dir m_eLastMoveDir = Dir::Down;
     State m_state = State::Ready;
     State m_nextState = State::Ready;

@@ -91,7 +91,7 @@ bool CBoard::PutObj(int _xpos, int _ypos, CGameObj* _obj, eInGameObjType _type)
 		{
 			m_board[_ypos][_xpos] = _type;
 			if (_obj != nullptr)
-				layer->AddGameObj(_obj);
+				layer->AddObj(_obj);
 		}
 		return true;
 	}
@@ -125,7 +125,7 @@ void CBoard::RemoveObj(int _xpos, int _ypos, std::wstring _strLayerKey)
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
 	CLayer* layer = scene->FindLayer(_strLayerKey);
-	CObj* obj = layer->FindObj(_xpos, _ypos);
+	CObj* obj = layer->FindGameObj(_xpos, _ypos);
 	
 	//if (_strLayerKey.compare(L"Vehicle") == 0)
 	//	((CVehicle*)obj)->SetAvailable(false);
@@ -177,7 +177,7 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 			(float)_cellYPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
 			}, _animClipName);
 
-		layer->AddGameObj(splash);
+		layer->AddObj(splash);
 	}
 
 	return true;

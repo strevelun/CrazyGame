@@ -22,5 +22,5 @@ void UIManager::ShowAndAddUIPanel(PCWSTR _strFileName)
 	CBitmap* loseBitmap = CResourceManager::GetInst()->GetBitmap(_strFileName);
 	m_statePanel = new CUIPanel({ 150, 250,150 + 477, 250 + 77 });
 	m_statePanel->SetBitmap(loseBitmap);
-	layer->AddUIObj(m_statePanel);
+	layer->AddObj(m_statePanel);
 }

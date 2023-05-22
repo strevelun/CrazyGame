@@ -40,7 +40,7 @@ void CSplash::Update()
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
 	{
 		CLayer* layer = scene->FindLayer(L"Event");		
-		CObj* obj = layer->FindObj(m_cellXPos, m_cellYPos);
+		CObj* obj = layer->FindGameObj(m_cellXPos, m_cellYPos);
 		if (obj)
 		{
 			obj->SetAlive(false);

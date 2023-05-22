@@ -44,7 +44,7 @@ void CBlock::Die()
 	if (pLayer != nullptr)
 	{
 		m_pItem = new CItem(m_rect, eInGameObjType::Item);
-		pLayer->AddGameObj(m_pItem);
+		pLayer->AddObj(m_pItem);
 	}
 
 	std::wstring strName;

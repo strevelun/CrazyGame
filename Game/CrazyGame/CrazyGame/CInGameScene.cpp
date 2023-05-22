@@ -46,11 +46,11 @@ void CInGameScene::Init()
 
 	CUIPanel* stageFrame = new CUIPanel({ 0, 0, 800.f, 600.f });
 	stageFrame->SetBitmap(bitmap);
-	layer->AddUIObj(stageFrame);
+	layer->AddObj(stageFrame);
 
 	CUIButton* backButton = new CUIButton({ 647, 561, 786, 592 }, L"BackButton");
 	backButton->SetCallback(this, &CInGameScene::OnBackButtonClicked);
-	layer->AddUIObj(backButton);
+	layer->AddObj(backButton);
 
 	m_board->SetBoard();
 
@@ -76,7 +76,7 @@ void CInGameScene::Init()
 		));
 		tile->SetBitmapIdx(mapData.vecBlockData[i].idx);
 		tile->SetSprite(CResourceManager::GetInst()->GetSprite(L"Tile", mapData.vecBlockData[i].idx));
-		layer->AddGameObj(tile);
+		layer->AddObj(tile);
 	}
 
 	layer = CreateLayer(L"Block",3);
@@ -102,17 +102,18 @@ void CInGameScene::Init()
 		if (sprite->size.width < 30)
 		{
 			layer = CreateLayer(L"Flag", INT_MAX);
-			layer->AddGameObj(block);
+			layer->AddObj(block);
 			layer = FindLayer(L"Block");
 		}
 		else 
-			layer->AddGameObj(block);
+			layer->AddObj(block);
 	}
 
 	float x, y;
 	size = mapData.vecEventData.size();
 
 	int boardBlockSizeHalf = (BOARD_BLOCK_SIZE / 2);
+	//bool isBossHere = false;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -132,7 +133,7 @@ void CInGameScene::Init()
  
 			//m_pPlayer->SetSprite(sprite);
 			m_pPlayer->SetScene(this);
-			layer->AddGameObj(m_pPlayer);
+			layer->AddObj(m_pPlayer);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster) // 보스
 		{
@@ -153,10 +154,10 @@ void CInGameScene::Init()
 				delete boss;
 				continue;
 			}
+			//isBossHere = true;
 			m_board->SetObjTypeInMoveObjBoard(x, y, boss);
 			//boss->SetSprite(sprite);
-			layer->AddGameObj(boss);
-			m_stage->AddMoveObjCnt(MoveObjType::Boss);
+			layer->AddObj(boss);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Blocked)
 		{
@@ -165,6 +166,9 @@ void CInGameScene::Init()
 			m_board->SetInGameObjType(mapData.vecBlockData[i].x, mapData.vecBlockData[i].y, eInGameObjType::Block_InDestructible);
 		}
 	}
+
+	m_stage->AddMoveObjCnt(MoveObjType::Boss); // 보스가 없으면 플레이어가 죽을때까지 게임 안끝남
+
 
 	layer = CreateLayer(L"Event", 4);
 	layer = CreateLayer(L"Vehicle", 5);

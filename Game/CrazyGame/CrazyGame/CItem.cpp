@@ -15,11 +15,10 @@ CItem::~CItem()
 
 void CItem::Init(eItem _eItem, std::wstring _strName)
 {
-	CAnimator* anim = new CAnimator();
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(_strName);
 	animClip->SetFrametimeLimit(0.2f);
-	anim->AddClip(_strName, animClip);
-	anim->SetClip(_strName);
+	m_anim.AddClip(_strName, animClip);
+	m_anim.SetClip(_strName);
 	//SetAnimation(anim);
 	SetItemName(_strName);
 	SetItemEnum((eItem)_eItem);

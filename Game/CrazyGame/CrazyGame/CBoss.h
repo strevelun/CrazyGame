@@ -8,7 +8,7 @@ class StageManager;
 class CBoss :
     public CMoveObj
 {
-    u_int m_hp = 25;
+    u_int m_hp = 125;
     class CUIHPBar* m_uiHPBar;
 
     float m_attackDelay = 5.0f;

@@ -40,7 +40,7 @@ void CLobbyScene::Init()
 	// 백그라운드
 	CUIPanel* background = new CUIPanel({ 0, 0, 800.f, 600.f });
 	background->SetBitmap(bitmap);
-	layer->AddUIObj(background);
+	layer->AddObj(background);
 
 	// 빌리지맵 버튼
 	bitmap = CResourceManager::GetInst()->GetBitmap(L"map_select_village.png");
@@ -48,7 +48,7 @@ void CLobbyScene::Init()
 	u_int height = bitmap->GetBitmap()->GetPixelSize().height;
 	CUIButton* btn = new CUIButton({ 80.f, 450.f, 80.f + width, 450.f + height }, L"village.map");
 	btn->SetBitmap(bitmap);
-	layer->AddUIObj(btn);
+	layer->AddObj(btn);
 
 
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
@@ -61,7 +61,7 @@ void CLobbyScene::Init()
 	height = bitmap->GetBitmap()->GetPixelSize().height;
 	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, L"pirate.map");
 	btn->SetBitmap(bitmap);
-	layer->AddUIObj(btn);
+	layer->AddObj(btn);
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 
 	prevEnd = prevEnd + width;
@@ -72,7 +72,7 @@ void CLobbyScene::Init()
 	height = bitmap->GetBitmap()->GetPixelSize().height;
 	btn = new CUIButton({ prevEnd + 30.f, 450.f, prevEnd + width, 450.f + height }, L"test.map");
 	btn->SetBitmap(bitmap);
-	layer->AddUIObj(btn);
+	layer->AddObj(btn);
 	btn->SetCallback<CLobbyScene>(this, &CLobbyScene::OnMapButtonClicked);
 }
 

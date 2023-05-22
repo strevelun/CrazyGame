@@ -12,8 +12,7 @@ class CUI;
 class CLayer // ºÐ¸®
 {
 private:
-	std::list<CGameObj*>	m_gameObjList;
-	std::list<CUI*>			m_uiObjList;
+	std::list<CObj*>	m_objList;
 	std::wstring			m_strTag;
 	u_int				m_zOrder;
 
@@ -28,14 +27,13 @@ public:
 
 	void SetZOrder(u_int _zOrder) { m_zOrder = _zOrder; }
 	void SetTag(std::wstring _strTag) { m_strTag = _strTag; }
-	void AddGameObj(CGameObj* _obj) { m_gameObjList.push_back(_obj); }
-	void AddUIObj(CUI* _obj) { m_uiObjList.push_back(_obj); }
+	void AddObj(CObj* _obj) { m_objList.push_back(_obj); }
 
 	u_int GetZOrder() const { return m_zOrder; }
 	std::wstring GetTag() const { return m_strTag; }
 	void DeleteAllObj();
 
 	CObj* FindObj(D2D1_RECT_F _rect);
-	CObj* FindObj(int _xpos, int _ypos);
+	CGameObj* FindGameObj(int _xpos, int _ypos);
 };
 

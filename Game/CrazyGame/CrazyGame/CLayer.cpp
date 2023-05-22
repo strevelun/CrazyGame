@@ -17,30 +17,15 @@ CLayer::~CLayer()
 
 void CLayer::Input()
 {
-	std::list<CGameObj*>::iterator iter = m_gameObjList.begin();
-	std::list<CGameObj*>::iterator iterEnd = m_gameObjList.end();
-
-	for (; iter != iterEnd; iter++)
-	{
-		(*iter)->Input();
-	}
-
-	std::list<CUI*>::iterator iter1 = m_uiObjList.begin();
-	std::list<CUI*>::iterator iterEnd1 = m_uiObjList.end();
-
-	for (; iter1 != iterEnd1; iter1++)
-	{
-		(*iter1)->Input();
-	}
 }
 
 void CLayer::Update()
 {
-	std::list<CGameObj*>::iterator iter = m_gameObjList.begin();
-	std::list<CGameObj*>::iterator iterEnd = m_gameObjList.end();
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
 	if (m_strTag.compare(L"Block") == 0)
-		m_gameObjList.sort(CLayer::ObjYPosSort);
+		m_objList.sort(CLayer::ObjYPosSort);
 
 	for (; iter != iterEnd; )
 	{
@@ -49,7 +34,7 @@ void CLayer::Update()
 			//((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj((*iter)->GetRect());
 			(*iter)->Die();
 			delete* iter;
-			iter = m_gameObjList.erase(iter);
+			iter = m_objList.erase(iter);
 		}
 		else
 		{
@@ -57,43 +42,17 @@ void CLayer::Update()
 			++iter;
 		}
 	}
-
-	std::list<CUI*>::iterator iter1 = m_uiObjList.begin();
-	std::list<CUI*>::iterator iterEnd1 = m_uiObjList.end();
-
-	for (; iter1 != iterEnd1; )
-	{
-		if (!(*iter1)->IsAlive())
-		{
-			(*iter1)->Die();
-			delete* iter1;
-			iter1 = m_uiObjList.erase(iter1);
-		}
-		else
-		{
-			(*iter1)->Update();
-			++iter1;
-		}
-	}
 }
 
 void CLayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	std::list<CGameObj*>::iterator iter = m_gameObjList.begin();
-	std::list<CGameObj*>::iterator iterEnd = m_gameObjList.end();
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
 
 	for (; iter != iterEnd; iter++)
 	{
 		(*iter)->Render(_pRenderTarget);	
-	}
-
-	std::list<CUI*>::iterator iter1 = m_uiObjList.begin();
-	std::list<CUI*>::iterator iterEnd1 = m_uiObjList.end();
-
-	for (; iter1 != iterEnd1; iter1++)
-	{
-		(*iter1)->Render(_pRenderTarget);
 	}
 }
 
@@ -104,31 +63,21 @@ bool CLayer::ObjYPosSort(CObj* _obj1, CObj* _obj2)
 
 void CLayer::DeleteAllObj()
 {
-	std::list<CGameObj*>::iterator iter = m_gameObjList.begin();
- 	std::list<CGameObj*>::iterator iterEnd = m_gameObjList.end();
+	std::list<CObj*>::iterator iter = m_objList.begin();
+ 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
 	for (; iter != iterEnd; iter++)
 	{
 		delete *iter;
 	}
 
-	m_gameObjList.clear();
-
-	std::list<CUI*>::iterator iter1 = m_uiObjList.begin();
-	std::list<CUI*>::iterator iterEnd1 = m_uiObjList.end();
-
-	for (; iter1 != iterEnd1; iter1++)
-	{
-		delete* iter1;
-	}
-
-	m_uiObjList.clear();
+	m_objList.clear();
 }
 
 CObj* CLayer::FindObj(D2D1_RECT_F _rect)
 {
-	std::list<CGameObj*>::iterator iter = m_gameObjList.begin();
-	std::list<CGameObj*>::iterator iterEnd = m_gameObjList.end();
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
 	for (; iter != iterEnd; iter++)
 	{
@@ -140,17 +89,16 @@ CObj* CLayer::FindObj(D2D1_RECT_F _rect)
 	return nullptr;
 }
 
-// UI 대상으로 호출 안함
-CObj* CLayer::FindObj(int _xpos, int _ypos)
+CGameObj* CLayer::FindGameObj(int _xpos, int _ypos)
 {
-	std::list<CGameObj*>::iterator iter = m_gameObjList.begin();
-	std::list<CGameObj*>::iterator iterEnd = m_gameObjList.end();
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
 	for (; iter != iterEnd; iter++)
 	{
-		D2D1_POINT_2U point = (*iter)->GetPoint();
+		D2D1_POINT_2U point = ((CGameObj*)*iter)->GetPoint();
 		if (point.x == _xpos && point.y == _ypos)
-			return *iter;
+			return (CGameObj*)*iter;
 	}
 
 	return nullptr;
