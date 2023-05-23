@@ -43,8 +43,9 @@ void CBlock::Die()
 	CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
 	if (pLayer != nullptr)
 	{
-		m_pItem = new CItem(m_rect, eInGameObjType::Item);
-		pLayer->AddObj(m_pItem);
+		//m_pItem = new CItem(m_rect, eInGameObjType::Item);
+		//pLayer->AddObj(m_pItem);
+		return;
 	}
 
 	std::wstring strName;

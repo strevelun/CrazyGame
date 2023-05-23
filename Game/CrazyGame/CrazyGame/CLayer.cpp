@@ -7,6 +7,16 @@
 
 #include <algorithm>
 
+void CLayer::InsertListIterator(std::list<CObj*>& _where, std::list<CObj*>::iterator& _from, std::list<CObj*>::iterator& _to)
+{
+	CObj* temp = *_from;
+	std::list<CObj*>::iterator iterTemp = _from;
+	iterTemp++;
+	_where.erase(_from);
+	_where.insert(_to, temp);
+	_from = iterTemp;
+}
+
 CLayer::CLayer()
 {
 }
@@ -24,14 +34,11 @@ void CLayer::Update()
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
-	if (m_strTag.compare(L"Block") == 0)
-		m_objList.sort(CLayer::ObjYPosSort);
 
 	for (; iter != iterEnd; )
 	{
 		if (!(*iter)->IsAlive())
 		{
-			//((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj((*iter)->GetRect());
 			(*iter)->Die();
 			delete* iter;
 			iter = m_objList.erase(iter);
@@ -39,9 +46,39 @@ void CLayer::Update()
 		else
 		{
 			(*iter)->Update();
-			++iter;
+
+			bool inserted = false;
+			eInGameObjType type = (*iter)->GetType();
+			if (type == eInGameObjType::Character
+				|| type == eInGameObjType::Monster
+				|| type == eInGameObjType::Boss)
+			{
+				std::list<CObj*>::iterator it = m_objList.begin();
+				std::list<CObj*>::iterator itEnd = m_objList.end();
+
+				for (; it != itEnd;)
+				{
+					if (((CGameObj*)*it)->GetPoint().y > ((CGameObj*)*iter)->GetPoint().y)
+					{
+						InsertListIterator(m_objList, iter, it);
+						inserted = true;
+						break;
+					}
+					it++;
+				}
+				if (it == itEnd)
+				{
+					InsertListIterator(m_objList, iter, it);
+					inserted = true;
+				}
+			}
+			if(!inserted)
+				++iter;
 		}
 	}
+
+	//if (m_strTag.compare(L"Block") == 0)
+	//	m_objList.sort(CLayer::ObjYPosSort);
 }
 
 void CLayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
@@ -49,6 +86,8 @@ void CLayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
+
+	
 
 	for (; iter != iterEnd; iter++)
 	{
@@ -58,7 +97,7 @@ void CLayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 bool CLayer::ObjYPosSort(CObj* _obj1, CObj* _obj2)
 {
-	return _obj1->GetRect().bottom < _obj2->GetRect().bottom;
+	return ((CGameObj*)_obj1)->GetPoint().y < ((CGameObj*)_obj2)->GetPoint().y;
 }
 
 void CLayer::DeleteAllObj()

@@ -16,6 +16,10 @@ private:
 	std::wstring			m_strTag;
 	u_int				m_zOrder;
 
+private:
+	// iter위치의 원소를 it위치로 삽입
+	void InsertListIterator(std::list<CObj*>& _where, std::list<CObj*>::iterator& _from, std::list<CObj*>::iterator& _to);
+
 public:
 	CLayer();
 	~CLayer();

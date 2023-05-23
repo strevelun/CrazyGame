@@ -177,6 +177,9 @@ void CBoss::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(1.0f, 0.9f, D2D1::Point2F(m_rect.left, m_rect.bottom)));
 	m_anim.Render(_pRenderTarget, m_rect);
+	_pRenderTarget->DrawRectangle(
+		D2D1::RectF(m_cellXPos * 40 + 20, m_cellYPos * 40 + 40,
+			m_cellXPos * 40 + 20 + 40, m_cellYPos * 40 + 40 + 40), CCore::GetInst()->GetBrush());
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 }
 
