@@ -22,5 +22,6 @@ public:
 
     void Update() override;
     D2D1_POINT_2U GetPoint() const { return D2D1::Point2U(m_cellXPos, m_cellYPos); }
+    D2D1_POINT_2U GetPrevPoint() const { return D2D1::Point2U(m_prevCellXPos, m_prevCellYPos); }
 };
 

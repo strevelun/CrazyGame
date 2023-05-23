@@ -212,7 +212,7 @@ void CPlayer::Input()
 		if (m_spaceCount >= 2)
 		{
  			m_spaceCount = 0;
-			CObj* obj = ((CInGameScene*)m_pScene)->FindLayer(L"Event")->FindGameObj(m_cellXPos, m_cellYPos);
+			CObj* obj = ((CInGameScene*)m_pScene)->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos);
 			if(obj != nullptr)
 				((CBubble*)obj)->BounceMove(m_eMoveDir);
 
@@ -437,7 +437,8 @@ void CPlayer::MoveState()
 
 	int x = 0, y = 0;
 
-	int cellUpYPos = (m_ypos  + 5- stageFrameOffsetY - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
+	// 플레이어의 cellPos
+	int cellUpYPos = (m_ypos  + 5- stageFrameOffsetY - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;  
 	int cellDownYPos = (m_ypos - 5- stageFrameOffsetY + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
 	int cellLeftXPos = (m_xpos + 5- stageFrameOffsetX - BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE;
 	int cellRightXPos = (m_xpos - 5 - stageFrameOffsetX + BOARD_BLOCK_SIZE / 2) / BOARD_BLOCK_SIZE; 
@@ -450,7 +451,7 @@ void CPlayer::MoveState()
 		// 위로
 		if (!board->IsMovable(m_cellXPos - 1, cellDownYPos, m_vehicle)) // 발끝을 기준으로 x-1에 블록이 있을 경우
 		{
-			if (limit < m_xpos)
+			if (limit < (int)m_xpos)
 				x = -1;
 			else 
 				if (cellDownYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetY > m_ypos
@@ -460,7 +461,7 @@ void CPlayer::MoveState()
 		// 아래로
 		else if (!board->IsMovable(m_cellXPos - 1, cellUpYPos, m_vehicle))
 		{
-			if (limit < m_xpos)
+			if (limit < (int)m_xpos)
 				x = -1;
 			else
 				if (cellUpYPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetY < m_ypos
@@ -476,7 +477,7 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos - 1, m_cellYPos, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
 				CObj* pObj = pLayer->FindGameObj(m_cellXPos - 1, m_cellYPos);
 				if (pObj)
 				{
@@ -492,7 +493,7 @@ void CPlayer::MoveState()
 		// 위로
 		if (!board->IsMovable(m_cellXPos + 1, cellDownYPos, m_vehicle)) // 발끝을 기준으로 x-1에 블록이 있을 경우
 		{
-			if (limit > m_xpos)
+			if (limit > (int)m_xpos)
 				x = 1;
 			else
 				if (cellDownYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetY > m_ypos
@@ -502,7 +503,7 @@ void CPlayer::MoveState()
 		// 아래로
 		else if (!board->IsMovable(m_cellXPos + 1, cellUpYPos, m_vehicle))
 		{
-			if (limit > m_xpos)
+			if (limit > (int)m_xpos)
 				x = 1;
 			else
 				if (cellUpYPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetY < m_ypos
@@ -518,7 +519,7 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos + 1, m_cellYPos, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
 				CObj* pObj = pLayer->FindGameObj(m_cellXPos + 1, m_cellYPos);
 				if (pObj)
 				{
@@ -530,34 +531,38 @@ void CPlayer::MoveState()
 	else if (m_state == State::MoveUp)
 	{
 		int limit = m_cellYPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY;
-		// 왼쪽으로
+		// 왼쪽
 		if (!board->IsMovable(cellRightXPos, m_cellYPos - 1, m_vehicle))
 		{
-			if (limit < m_ypos)
+			if (limit < (int)m_ypos)
 				y = -1;
 			else
 				if (cellRightXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetX > m_xpos
 					&& board->IsMovable(cellRightXPos-1, m_cellYPos-1, m_vehicle)) // 미끄러져서 도착한 칸이 갈 수 있는 곳인지
 					x = -1;
 		}
-		// 오른쪽으로
+		// 위로 올라갈때 플레이어 윗줄의 오른쪽을 갈 수 없다면
 		else if (!board->IsMovable(cellLeftXPos, m_cellYPos-1, m_vehicle))
 		{
-			if (limit < m_ypos)
+			if (limit < (int)m_ypos)
 				y = -1;
-			else
+			else // 플레이어의 y좌표가 아직 현재 cell 위치의 절반을 넘었다면
+				// 플레이어의 왼쪽옆구리 기준 cellXPos + 타일의 9/10 && 플레이어의 왼쪽 위를 갈 수 있
 				if (cellLeftXPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetX < m_xpos
-					&& board->IsMovable(cellLeftXPos+1, m_cellYPos-1, m_vehicle))
-					x = 1;
+					&& board->IsMovable(cellLeftXPos + 1, m_cellYPos - 1, m_vehicle))
+				{
+					x = 1; // 오른쪽으로 미끄러짐
+					//if(cellLeftXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 2) + stageFrameOffsetY < (int)(m_speed * deltaTime * x))
+				}
 		}
-		else
+		else // 당장 눈 앞에 아무것도 없을 경우
 			y = -1;
 
 		if (m_bKickable)
 		{
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos -1, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
 				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos-1);
 				if (pObj)
 				{
@@ -572,7 +577,7 @@ void CPlayer::MoveState()
 
 		if (!board->IsMovable(cellRightXPos, m_cellYPos + 1, m_vehicle))
 		{
-			if (limit > m_ypos)
+			if (limit > (int)m_ypos)
 				y = 1;
 			else
 				if (cellRightXPos * BOARD_BLOCK_SIZE + (BOARD_BLOCK_SIZE / 10) + stageFrameOffsetX > m_xpos
@@ -581,7 +586,7 @@ void CPlayer::MoveState()
 		}
 		else if (!board->IsMovable(cellLeftXPos, m_cellYPos + 1, m_vehicle))
 		{
-			if (limit > m_ypos)
+			if (limit > (int)m_ypos)
 				y = 1;
 			else
 				if (cellLeftXPos * BOARD_BLOCK_SIZE + ((BOARD_BLOCK_SIZE / 10) * 9) + stageFrameOffsetX < m_xpos
@@ -595,7 +600,7 @@ void CPlayer::MoveState()
 		{
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos + 1, eInGameObjType::Balloon))
 			{
-				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
+				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
 				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos+1);
 				if (pObj)
 				{
@@ -605,6 +610,8 @@ void CPlayer::MoveState()
 		}
 	}
 
+
+
 	m_xpos += m_speed * deltaTime * x;
 	m_ypos += m_speed * deltaTime * y;
 
@@ -613,6 +620,7 @@ void CPlayer::MoveState()
 	m_rect.top += m_speed * deltaTime * y;
 	m_rect.bottom += m_speed * deltaTime * y;
 
+
 	if (m_vehicle)
 	{
 		m_rideRect.left += m_speed * deltaTime * x;
@@ -620,6 +628,13 @@ void CPlayer::MoveState()
 		m_rideRect.top += m_speed * deltaTime * y;
 		m_rideRect.bottom += m_speed * deltaTime * y;
 	}
+
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%f, %f\n", m_xpos, m_ypos);
+	OutputDebugStringA(str);
+#endif
+
 }
 
 void CPlayer::ChangeState(State _state)

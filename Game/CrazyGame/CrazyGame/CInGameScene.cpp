@@ -79,7 +79,7 @@ void CInGameScene::Init()
 		layer->AddObj(tile);
 	}
 
-	layer = CreateLayer(L"Block",3);
+	layer = CreateLayer(L"Block",4);
 	for (int i = 0; i < size; i++)
 	{
 		if (mapData.vecBlockData[i].type != eType::Block)
@@ -170,7 +170,7 @@ void CInGameScene::Init()
 	m_stage->AddMoveObjCnt(MoveObjType::Boss); // 보스가 없으면 플레이어가 죽을때까지 게임 안끝남
 
 
-	layer = CreateLayer(L"Event", 4);
+	layer = CreateLayer(L"Event", 3);
 	layer = CreateLayer(L"Vehicle", 5);
 
 	layer = FindLayer(L"MonsterUI");

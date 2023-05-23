@@ -38,18 +38,13 @@ void CBoard::SetBoard()
 
 bool CBoard::IsMovable(int _xpos, int _ypos, CVehicle* _vehicle)
 {
-	if (_xpos < 0 || _ypos < 0) 
-		return false;
-	if (m_mapData.gridX <= _xpos) 
-		return false;
-	if (m_mapData.gridY <= _ypos) 
-		return false;
+	if (_xpos < 0 || _ypos < 0)  return false;
+	if (m_mapData.gridX <= _xpos)  return false;
+	if (m_mapData.gridY <= _ypos)  return false;
 
 	if (_vehicle && _vehicle->GetName().compare(L"UFO") == 0
 		&& m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
-	{
 		return true;
-	}
 
 	if (m_board[_ypos][_xpos] == eInGameObjType::Block_Destructible || m_board[_ypos][_xpos] == eInGameObjType::Block_InDestructible
 		|| m_board[_ypos][_xpos] == eInGameObjType::Balloon)
@@ -85,7 +80,7 @@ bool CBoard::PutObj(int _xpos, int _ypos, CGameObj* _obj, eInGameObjType _type)
 	if (m_board[_ypos][_xpos] != eInGameObjType::Balloon 
 		&& m_board[_ypos][_xpos] != eInGameObjType::Block_Destructible)
 	{
-		CLayer* layer = scene->FindLayer(L"Event");
+		CLayer* layer = scene->FindLayer(L"Block");
 
 		if (layer)
 		{
@@ -157,7 +152,7 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 	}
 	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Balloon))
 	{
-		RemoveObj(_cellXPos, _cellYPos, L"Event");
+		RemoveObj(_cellXPos, _cellYPos, L"Block");
 		return false;
 	}
 

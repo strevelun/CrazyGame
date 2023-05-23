@@ -7,14 +7,48 @@
 
 #include <algorithm>
 
-void CLayer::InsertListIterator(std::list<CObj*>& _where, std::list<CObj*>::iterator& _from, std::list<CObj*>::iterator& _to)
+void CLayer::SortYPosMoveObj()
 {
-	CObj* temp = *_from;
-	std::list<CObj*>::iterator iterTemp = _from;
-	iterTemp++;
-	_where.erase(_from);
-	_where.insert(_to, temp);
-	_from = iterTemp;
+	std::list<CObj*> tempList;
+	std::list<CObj*>::iterator iter = m_objList.begin();
+	std::list<CObj*>::iterator iterEnd = m_objList.end();
+
+	for (; iter != iterEnd;)
+	{
+		eInGameObjType type = (*iter)->GetType();
+		if (type == eInGameObjType::Character || type == eInGameObjType::Monster || type == eInGameObjType::Boss || type == eInGameObjType::Balloon)
+		{
+			std::list<CObj*>::iterator iterTemp = iter;
+			iterTemp++;
+			tempList.push_back(*iter);
+			m_objList.erase(iter);
+			iter = iterTemp;
+		}
+		else
+			iter++;
+	}
+
+	std::list<CObj*>::iterator it = tempList.begin();
+	std::list<CObj*>::iterator itEnd = tempList.end();
+
+	while (it != itEnd)
+	{
+		iter = m_objList.begin();
+
+		for (; iter != iterEnd; iter++)
+		{
+			if (((CGameObj*)*iter)->GetPoint().y > ((CGameObj*)*it)->GetPoint().y)
+			{
+				m_objList.insert(iter, *it);
+				break;
+			}
+		}
+
+		if (iter == iterEnd)
+			m_objList.insert(iter, *it);
+
+		it++;
+	}
 }
 
 CLayer::CLayer()
@@ -34,51 +68,22 @@ void CLayer::Update()
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
-
 	for (; iter != iterEnd; )
 	{
 		if (!(*iter)->IsAlive())
 		{
-			(*iter)->Die();
+ 			(*iter)->Die();
 			delete* iter;
 			iter = m_objList.erase(iter);
 		}
 		else
 		{
 			(*iter)->Update();
-
-			bool inserted = false;
-			eInGameObjType type = (*iter)->GetType();
-			if (type == eInGameObjType::Character
-				|| type == eInGameObjType::Monster
-				|| type == eInGameObjType::Boss)
-			{
-				std::list<CObj*>::iterator it = m_objList.begin();
-				std::list<CObj*>::iterator itEnd = m_objList.end();
-
-				for (; it != itEnd;)
-				{
-					if (((CGameObj*)*it)->GetPoint().y > ((CGameObj*)*iter)->GetPoint().y)
-					{
-						InsertListIterator(m_objList, iter, it);
-						inserted = true;
-						break;
-					}
-					it++;
-				}
-				if (it == itEnd)
-				{
-					InsertListIterator(m_objList, iter, it);
-					inserted = true;
-				}
-			}
-			if(!inserted)
-				++iter;
+			++iter;
 		}
 	}
 
-	//if (m_strTag.compare(L"Block") == 0)
-	//	m_objList.sort(CLayer::ObjYPosSort);
+	SortYPosMoveObj();
 }
 
 void CLayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
