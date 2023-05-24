@@ -244,19 +244,10 @@ bool CBoss::SetBossInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _obj)
 			if (board->IsMovable(_cellXPos + j, _cellYPos - i) == false)
 				return false;
 			board->SetObjTypeInMoveObjBoard(_cellXPos + j, _cellYPos - i, _obj);
-#ifdef _DEBUG
-			char str[50] = "";
-			sprintf_s(str, "(%d, %d), ", _cellXPos + j, _cellYPos - i);
-			OutputDebugStringA(str);
-#endif
+
 
 		}
 	}
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "\n");
-	OutputDebugStringA(str);
-#endif
 	return true;
 }
 

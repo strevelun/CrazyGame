@@ -10,13 +10,15 @@ class CBubble :
 {
     CMoveObj* m_pOwner = nullptr;
 
-    double m_angle = 45.0;
-    double m_gravity = 0.5;
+    float m_angle = 45.0f;
+    float m_gravity = 9.8f;
+    float m_ballTime = 0.0f;
+
     int m_throwLimit = 10;
     int m_curThrow = 0;
 
     float m_elapsedTime;
-    float m_dieTime = 3.0f;
+    float m_dieTime = 300.0f;
     u_int m_splashLength = 0;
     u_int m_attackPower = 25;
 
@@ -25,6 +27,10 @@ class CBubble :
     eDir m_eMovingDir = eDir::None;
 
     D2D1_POINT_2U m_prevCellPos;
+
+private:
+    void BounceMoveSkill();
+    void KickSkill();
 
 public:
     CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type);

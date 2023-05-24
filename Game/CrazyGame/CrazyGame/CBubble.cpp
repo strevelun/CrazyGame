@@ -8,6 +8,133 @@
 #include "CPlayer.h"
 #include "CBoss.h"
 
+void CBubble::BounceMoveSkill()
+{
+	CBoard* pBoard = ((CInGameScene*)m_pScene)->m_board;
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
+	int x = 0, y = 0;
+	float speed = 7;
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	D2D1_RECT_F rect = m_rect;
+
+	switch (m_eMovingDir)
+	{
+	case eDir::Left:
+		x = -1;
+		break;
+	case eDir::Right:
+		x = 1;
+		break;
+	case eDir::Up:
+		y = -1;
+		break;
+	case eDir::Down:
+		y = 1;
+		break;
+	}
+
+	if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
+	{
+		m_eMovingDir = eDir::None;
+		m_bBounceMoving = false;
+		m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
+		m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
+		m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		m_rect.bottom = m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		return;
+	}
+
+	float radian = m_angle * PI / 180.0;
+	float velocityY = 3 * std::sin(radian);
+	float ballX = speed;
+	float ballY = -velocityY + m_ballTime * 30;
+	if (m_rect.bottom >= m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY)
+		m_ballTime = 0.0f;
+	m_ballTime += deltaTime;
+
+	if (m_eMovingDir == eDir::Left || m_eMovingDir == eDir::Right)
+	{
+		y = 1;
+		rect.top += ballY * y;
+		rect.bottom += ballY * y;
+	}
+	else
+	{
+		rect.top += ballX * y;
+		rect.bottom += ballX * y;
+	}
+
+	rect.left += ballX * x;
+	rect.right += ballX * x;
+
+	m_prevCellPos.x = m_cellXPos;
+	m_prevCellPos.y = m_cellYPos;
+
+	m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+	pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
+	pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+
+	m_rect = rect;
+}
+
+void CBubble::KickSkill()
+{
+	CBoard* pBoard = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
+	int x = 0, y = 0;
+	float speed = 1000;
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+	D2D1_RECT_F rect = m_rect;
+
+	switch (m_eMovingDir)
+	{
+	case eDir::Left:
+		x = -1;
+		break;
+	case eDir::Right:
+		x = 1;
+		break;
+	case eDir::Up:
+		y = -1;
+		break;
+	case eDir::Down:
+		y = 1;
+		break;
+	}
+
+
+	if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
+	{
+		m_eMovingDir = eDir::None;
+		m_bMoving = false;
+		m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
+		m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
+		m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		m_rect.bottom = m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		return;
+	}
+
+	rect.left += speed * deltaTime * x;
+	rect.right += speed * deltaTime * x;
+	rect.top += speed * deltaTime * y;
+	rect.bottom += speed * deltaTime * y;
+
+	m_prevCellPos.x = m_cellXPos;
+	m_prevCellPos.y = m_cellYPos;
+
+	m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+	pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
+	pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+	m_rect = rect;
+}
+
 CBubble::CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {	
 	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip(L"bubble"));
@@ -42,110 +169,16 @@ void CBubble::Update()
 		m_isAlive = false;
 	}
 
-	int stageFrameOffsetX = 20;
+ 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
 
-	// 물풍선이 걷어차일때
 	if (m_bMoving)
 	{
-		D2D1_RECT_F rect = m_rect;
-
-
-		switch (m_eMovingDir)
-		{
-		case eDir::Left:
-			x = -1;
-			break;
-		case eDir::Right:
-			x = 1;
-			break;
-		case eDir::Up:
-			y = -1;
-			break;
-		case eDir::Down:
-			y = 1;
-			break;
-		}
-
-
-		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
-		{
-			m_eMovingDir = eDir::None;
-			m_bMoving = false;
-			m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
-			m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
-			m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-			m_rect.bottom = m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY;
-			return;
-		}
-
-		rect.left += speed * deltaTime * x;
-		rect.right += speed * deltaTime * x;
-		rect.top += speed * deltaTime * y;
-		rect.bottom += speed * deltaTime * y;
-
-		m_prevCellPos.x = m_cellXPos;
-		m_prevCellPos.y = m_cellYPos;
-
-		m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-		m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
-
-		pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
-		pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
-		m_rect = rect;
+		KickSkill();
 	} 
 	else if (m_bBounceMoving)
 	{
-		speed = 10;
-		double radian = m_angle * PI / 180.0;
-		double dx = speed * cos(radian);
-		double dy = 20 * sin(radian) - m_gravity * CTimer::GetInst()->GetDeltaTime();
-
-		D2D1_RECT_F rect = m_rect;
-
-
-		switch (m_eMovingDir)
-		{
-		case eDir::Left:
-			x = -1;
-			break;
-		case eDir::Right:
-			x = 1;
-			break;
-		case eDir::Up:
-			y = -1;
-			break;
-		case eDir::Down:
-			y = 1;
-			break;
-		}
-
-		if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
-		{
-			m_eMovingDir = eDir::None;
-			m_bBounceMoving = false;
-			m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
-			m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
-			m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-			m_rect.bottom = m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY;
-			return;
-		}
-
-		rect.left += dx * x;
-		rect.right += dx * x;
-		rect.top += dy * y;
-		rect.bottom += dy * y;
-
-		m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-		m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
-
-		if (m_cellXPos != m_prevCellXPos || m_cellYPos != m_prevCellYPos)
-		{
-			pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
-			pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
-		}
-
-		m_rect = rect;
+		BounceMoveSkill();
 	}
 
 	// 물풍선이 보스와 부딪히면
@@ -169,7 +202,7 @@ void CBubble::Move(eDir _eDir)
 
 void CBubble::BounceMove(eDir _eDir)
 {
-	m_bBounceMoving = true;
+   	m_bBounceMoving = true;
 	m_eMovingDir = _eDir;
 }
 

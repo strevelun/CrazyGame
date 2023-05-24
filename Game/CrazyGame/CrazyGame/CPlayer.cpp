@@ -211,8 +211,8 @@ void CPlayer::Input()
 	{
 		if (m_spaceCount >= 2)
 		{
- 			m_spaceCount = 0;
-			CObj* obj = ((CInGameScene*)m_pScene)->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos);
+   			m_spaceCount = 0;
+ 			CGameObj* obj = ((CInGameScene*)m_pScene)->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
 			if(obj != nullptr)
 				((CBubble*)obj)->BounceMove(m_eMoveDir);
 
@@ -381,7 +381,6 @@ void CPlayer::Update()
 	if (m_vehicle)
 		m_vehicle->Update(m_rideRect);
 
-	// 스페이스바를 한번 누르면 여러번 Bubble이 생성됨
 	if (m_bFire
 		&& m_curBubblePlaced < m_bubbleCarryLimit
 		&& (((CInGameScene*)m_pScene)->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
@@ -395,6 +394,7 @@ void CPlayer::Update()
 			},
 			eInGameObjType::Balloon);
 		bubble->SetOwner(this);
+		bubble->SetScene(m_pScene);
 		bubble->SetSplashLength(m_splashLength);
 		D2D1_POINT_2U point = bubble->GetPoint();
 		if (((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
@@ -478,7 +478,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos - 1, m_cellYPos, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
-				CObj* pObj = pLayer->FindGameObj(m_cellXPos - 1, m_cellYPos);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos - 1, m_cellYPos, eInGameObjType::Balloon);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Left);
@@ -520,7 +520,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos + 1, m_cellYPos, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
-				CObj* pObj = pLayer->FindGameObj(m_cellXPos + 1, m_cellYPos);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos + 1, m_cellYPos, eInGameObjType::Balloon);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Right);
@@ -563,7 +563,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos -1, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
-				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos-1);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos-1, eInGameObjType::Balloon);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Up);
@@ -601,7 +601,7 @@ void CPlayer::MoveState()
 			if (board->IsGameObjType(m_cellXPos, m_cellYPos + 1, eInGameObjType::Balloon))
 			{
 				CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block");
-				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos+1);
+				CObj* pObj = pLayer->FindGameObj(m_cellXPos, m_cellYPos+1, eInGameObjType::Balloon);
 				if (pObj)
 				{
 					((CBubble*)pObj)->Move(eDir::Down);
@@ -629,11 +629,6 @@ void CPlayer::MoveState()
 		m_rideRect.bottom += m_speed * deltaTime * y;
 	}
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%f, %f\n", m_xpos, m_ypos);
-	OutputDebugStringA(str);
-#endif
 
 }
 

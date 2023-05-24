@@ -18,11 +18,8 @@ void CLayer::SortYPosMoveObj()
 		eInGameObjType type = (*iter)->GetType();
 		if (type == eInGameObjType::Character || type == eInGameObjType::Monster || type == eInGameObjType::Boss || type == eInGameObjType::Balloon)
 		{
-			std::list<CObj*>::iterator iterTemp = iter;
-			iterTemp++;
 			tempList.push_back(*iter);
-			m_objList.erase(iter);
-			iter = iterTemp;
+			iter = m_objList.erase(iter);
 		}
 		else
 			iter++;
@@ -100,11 +97,6 @@ void CLayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 	}
 }
 
-bool CLayer::ObjYPosSort(CObj* _obj1, CObj* _obj2)
-{
-	return ((CGameObj*)_obj1)->GetPoint().y < ((CGameObj*)_obj2)->GetPoint().y;
-}
-
 void CLayer::DeleteAllObj()
 {
 	std::list<CObj*>::iterator iter = m_objList.begin();
@@ -133,7 +125,7 @@ CObj* CLayer::FindObj(D2D1_RECT_F _rect)
 	return nullptr;
 }
 
-CGameObj* CLayer::FindGameObj(int _xpos, int _ypos)
+CGameObj* CLayer::FindGameObj(int _xpos, int _ypos, eInGameObjType _type)
 {
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
@@ -142,7 +134,10 @@ CGameObj* CLayer::FindGameObj(int _xpos, int _ypos)
 	{
 		D2D1_POINT_2U point = ((CGameObj*)*iter)->GetPoint();
 		if (point.x == _xpos && point.y == _ypos)
-			return (CGameObj*)*iter;
+		{
+			if (_type == eInGameObjType::None || _type == (*iter)->GetType())
+				return (CGameObj*)*iter;
+		}
 	}
 
 	return nullptr;

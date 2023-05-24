@@ -28,7 +28,7 @@ class CPlayer :
     bool m_bIsRiding = false;
     bool m_bInvincible = false;
 
-    u_int m_bubbleCarryLimit = 1;
+    u_int m_bubbleCarryLimit = 5;
     u_int m_curBubblePlaced = 0;
     u_int m_splashLength = 3;
     float m_invincibleTime = 0.0f;

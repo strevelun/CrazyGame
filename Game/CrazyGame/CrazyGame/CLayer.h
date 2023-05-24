@@ -4,6 +4,8 @@
 #include <d2d1.h>
 #include <string>
 
+#include "Setting.h"
+
 class CObj;
 class CScene;
 class CGameObj;
@@ -26,8 +28,6 @@ public:
 	void Update();
 	void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 
-	static bool ObjYPosSort(CObj* _obj1, CObj* _obj2);
-
 	void SetZOrder(u_int _zOrder) { m_zOrder = _zOrder; }
 	void SetTag(std::wstring _strTag) { m_strTag = _strTag; }
 	void AddObj(CObj* _obj) { m_objList.push_back(_obj); }
@@ -37,6 +37,6 @@ public:
 	void DeleteAllObj();
 
 	CObj* FindObj(D2D1_RECT_F _rect);
-	CGameObj* FindGameObj(int _xpos, int _ypos);
+	CGameObj* FindGameObj(int _xpos, int _ypos, eInGameObjType _type = eInGameObjType::None);
 };
 
