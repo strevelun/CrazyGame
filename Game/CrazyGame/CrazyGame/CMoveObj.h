@@ -7,20 +7,20 @@ enum class State
     MoveDown,
     MoveLeft,
     MoveRight,
+    None,
     Ready,
     Idle,
     Attack,
     TrappedInBubble,
     Die,
     Hit,
-    None,
 };
 
 class CMoveObj :
     public CGameObj
 {
 protected:
-    CScene* m_pScene = nullptr;
+    //CScene* m_pScene = nullptr;
     float m_speed = 0.0f;
     eDir m_eMoveDir = eDir::Down;
     //Dir m_eLastMoveDir = Dir::Down;
@@ -38,7 +38,7 @@ protected:
     virtual void ChangeState(State _state);
 
 public:
-    void SetScene(CScene* _pScene) { m_pScene = _pScene; }
+    //void SetScene(CScene* _pScene) { m_pScene = _pScene; }
 
 };
 

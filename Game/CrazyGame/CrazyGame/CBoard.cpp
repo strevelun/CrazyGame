@@ -36,55 +36,55 @@ void CBoard::SetBoard()
 		m_itemBoard[i].resize(m_mapData.gridX);
 }
 
-bool CBoard::IsMovable(int _xpos, int _ypos, CVehicle* _vehicle)
+bool CBoard::IsMovable(int _cellXPos, int _cellYPos, CVehicle* _vehicle)
 {
-	if (_xpos < 0 || _ypos < 0)  return false;
-	if (m_mapData.gridX <= _xpos)  return false;
-	if (m_mapData.gridY <= _ypos)  return false;
+	if (_cellXPos < 0 || _cellYPos < 0)  return false;
+	if (m_mapData.gridX <= _cellXPos)  return false;
+	if (m_mapData.gridY <= _cellYPos)  return false;
 
 	if (_vehicle && _vehicle->GetName().compare(L"UFO") == 0
-		&& m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
+		&& m_board[_cellYPos][_cellXPos] != eInGameObjType::Block_InDestructible)
 		return true;
 
-	if (m_board[_ypos][_xpos] == eInGameObjType::Block_Destructible || m_board[_ypos][_xpos] == eInGameObjType::Block_InDestructible
-		|| m_board[_ypos][_xpos] == eInGameObjType::Balloon)
+	if (m_board[_cellYPos][_cellXPos] == eInGameObjType::Block_Destructible || m_board[_cellYPos][_cellXPos] == eInGameObjType::Block_InDestructible
+		|| m_board[_cellYPos][_cellXPos] == eInGameObjType::Balloon)
 		return false;
 
 	return true;
 }
 
-bool CBoard::IsGameObjType(int x, int y, eInGameObjType _type)
+bool CBoard::IsGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type)
 {
 
-	if (m_mapData.gridX <= x) return false;
-	if (m_mapData.gridY <= y) return false;
+	if (m_mapData.gridX <= _cellXPos) return false;
+	if (m_mapData.gridY <= _cellYPos) return false;
 
 	if (_type == eInGameObjType::Character || _type == eInGameObjType::Monster
 		|| _type == eInGameObjType::Boss)
 	{
-		if (m_moveObjBoard[y][x] == nullptr) return false;
-		return m_moveObjBoard[y][x]->GetType() == _type;
+		if (m_moveObjBoard[_cellYPos][_cellXPos] == nullptr) return false;
+		return m_moveObjBoard[_cellYPos][_cellXPos]->GetType() == _type;
 	}
 	else
-		return m_board[y][x] == _type;
+		return m_board[_cellYPos][_cellXPos] == _type;
 }
 
 // 사실상 물풍선 전용
-bool CBoard::PutObj(int _xpos, int _ypos, CGameObj* _obj, eInGameObjType _type)
+bool CBoard::PutObj(int _cellXPos, int _cellYPos, CGameObj* _obj, eInGameObjType _type)
 {
-	if (m_mapData.gridX <= _xpos) return false;
-	if (m_mapData.gridY <= _ypos) return false;
+	if (m_mapData.gridX <= _cellXPos) return false;
+	if (m_mapData.gridY <= _cellYPos) return false;
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	if (m_board[_ypos][_xpos] != eInGameObjType::Balloon 
-		&& m_board[_ypos][_xpos] != eInGameObjType::Block_Destructible)
+	if (m_board[_cellYPos][_cellXPos] != eInGameObjType::Balloon 
+		&& m_board[_cellYPos][_cellXPos] != eInGameObjType::Block_Destructible)
 	{
 		CLayer* layer = scene->FindLayer(L"Block");
 
 		if (layer)
 		{
-			m_board[_ypos][_xpos] = _type;
+			m_board[_cellYPos][_cellXPos] = _type;
 			if (_obj != nullptr)
 				layer->AddObj(_obj);
 		}
@@ -112,22 +112,22 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 	m_board[y][x] = eInGameObjType::None;
 }
 
-void CBoard::RemoveObj(int _xpos, int _ypos, std::wstring _strLayerKey)
+void CBoard::RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey)
 {
-	if (m_mapData.gridX <= _xpos) return;
-	if (m_mapData.gridY <= _ypos) return;
+	if (m_mapData.gridX <= _cellXPos) return;
+	if (m_mapData.gridY <= _cellYPos) return;
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
 	CLayer* layer = scene->FindLayer(_strLayerKey);
-	CObj* obj = layer->FindGameObj(_xpos, _ypos);
+	CObj* obj = layer->FindGameObj(_cellXPos, _cellYPos);
 	
 	//if (_strLayerKey.compare(L"Vehicle") == 0)
 	//	((CVehicle*)obj)->SetAvailable(false);
-	if (obj != nullptr && m_board[_ypos][_xpos] != eInGameObjType::Block_InDestructible)
+	if (obj != nullptr && m_board[_cellYPos][_cellXPos] != eInGameObjType::Block_InDestructible)
 		obj->SetAlive(false);
 
-	m_board[_ypos][_xpos] = eInGameObjType::None;
+	m_board[_cellYPos][_cellXPos] = eInGameObjType::None;
 }
 
 bool CBoard::PutSplash(D2D1_RECT_F _rect, std::wstring _animClipName)

@@ -38,5 +38,7 @@ public:
 private:
     void Attack01(CBoard* _pBoard);
     void Attack02(CBoard* _pBoard);
+
+    bool CanMoveTo(float _xpos, float _ypos, float _delta, eDir _eDir); // 기준점(x,y)가 deltaTime * speed를 적용받은 후 맵 밖을 나가는지 확인
 };
 

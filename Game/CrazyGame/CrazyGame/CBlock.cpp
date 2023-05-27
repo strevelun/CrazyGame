@@ -28,6 +28,12 @@ void CBlock::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 		m_sprite->rect);
 }
 
+void CBlock::Move(eDir _eDir)
+{
+	// 플레이어가 0.5초 이상 블록을 밀면, 자동으로 한칸 끝까지 이동
+
+}
+
 void CBlock::Die()
 {
 	// 블록이 파괴되면 그 자리에서 새로운 아이템 객체가 생성되고 Render

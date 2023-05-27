@@ -24,18 +24,16 @@ public:
     void SetMapData(tMapData _mapData) { m_mapData = _mapData; }
     void SetBoard();
 
-    bool IsMovable(int _xpos, int _ypos, CVehicle* _vehicle = nullptr);
-	bool IsGameObjType(int x, int y, eInGameObjType _type);
+    bool IsMovable(int _cellXPos, int _cellYPos, CVehicle* _vehicle = nullptr);
+	bool IsGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type);
 
-    bool PutObj(int _xpos, int _ypos, CGameObj* _obj, eInGameObjType _type);
+    bool PutObj(int _cellXPos, int _cellYPos, CGameObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
-    void RemoveObj(int _xpos, int _ypos, std::wstring _strLayerKey);
+    void RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey);
 
     tMapData GetMapData() const { return m_mapData; }
-    void SetInGameObjType(int _x, int _y, eInGameObjType _type) { 
-        m_board[_y][_x] = _type; 
-    }
-    void SetObjTypeInMoveObjBoard(int _x, int _y, CMoveObj* _pObj) { m_moveObjBoard[_y][_x] = _pObj; }
+    void SetInGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type) { m_board[_cellYPos][_cellXPos] = _type; }
+    void SetObjTypeInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _pObj) { m_moveObjBoard[_cellYPos][_cellXPos] = _pObj; }
     bool PutSplash(D2D1_RECT_F _rect, std::wstring _animClipName);
     bool PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipName);
 

@@ -212,7 +212,7 @@ void CPlayer::Input()
 		if (m_spaceCount >= 2)
 		{
    			m_spaceCount = 0;
- 			CGameObj* obj = ((CInGameScene*)m_pScene)->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+ 			CGameObj* obj = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
 			if(obj != nullptr)
 				((CBubble*)obj)->BounceMove(m_eMoveDir);
 
@@ -265,7 +265,7 @@ void CPlayer::Update()
 
 
 
-	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
+	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
 
 	int jumpHeight = BOARD_BLOCK_SIZE;
 
@@ -383,7 +383,7 @@ void CPlayer::Update()
 
 	if (m_bFire
 		&& m_curBubblePlaced < m_bubbleCarryLimit
-		&& (((CInGameScene*)m_pScene)->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
+		&& (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
 	{
 
 		CBubble* bubble = new CBubble({
@@ -394,10 +394,10 @@ void CPlayer::Update()
 			},
 			eInGameObjType::Balloon);
 		bubble->SetOwner(this);
-		bubble->SetScene(m_pScene);
+		//bubble->SetScene(m_pScene);
 		bubble->SetSplashLength(m_splashLength);
 		D2D1_POINT_2U point = bubble->GetPoint();
-		if (((CInGameScene*)m_pScene)->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
+		if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
 			m_curBubblePlaced++;
 		else
 			delete bubble;
@@ -430,9 +430,10 @@ void CPlayer::Die()
 
 void CPlayer::MoveState()
 {
+	//D2D_VECTOR_2F 
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
-	CBoard* board = ((CInGameScene*)m_pScene)->m_board;
+	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
 	int x = 0, y = 0;
@@ -628,8 +629,6 @@ void CPlayer::MoveState()
 		m_rideRect.top += m_speed * deltaTime * y;
 		m_rideRect.bottom += m_speed * deltaTime * y;
 	}
-
-
 }
 
 void CPlayer::ChangeState(State _state)

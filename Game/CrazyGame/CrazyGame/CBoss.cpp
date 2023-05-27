@@ -17,6 +17,7 @@
 
 #include <random>
 
+// m_size 비었음
 CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
 	CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(L"Boss_Front");
@@ -49,7 +50,7 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 	
 
 	m_xpos = _rect.left;
-	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);	
+	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);
 	
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
@@ -90,7 +91,7 @@ bool CBoss::Init()
 	// hp bar는 내가 선택한걸로
 	m_uiHPBar->SetBitmap(CResourceManager::GetInst()->GetBitmap(L"Boss_hp_blue.png"));
 	m_uiHPBar->SetHP(m_hp);
-	CLayer* layer = m_pScene->FindLayer(L"MonsterUI");
+	CLayer* layer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"MonsterUI");
 	layer->AddObj(m_uiHPBar);
 
 	return true;
@@ -175,7 +176,7 @@ void CBoss::Update()
 
 void CBoss::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(1.0f, 0.9f, D2D1::Point2F(m_rect.left, m_rect.bottom)));
+	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(0.9f, 0.9f, D2D1::Point2F(m_rect.left, m_rect.bottom)));
 	m_anim.Render(_pRenderTarget, m_rect);
 	_pRenderTarget->DrawRectangle(
 		D2D1::RectF(m_cellXPos * 40 + 20, m_cellYPos * 40 + 40,
@@ -185,6 +186,9 @@ void CBoss::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 void CBoss::Hit(u_int _attackPower)
 {
+	if (m_state == State::TrappedInBubble || m_state == State::Die)
+		return;
+
 	// 랜덤한 포지션에 몬스터 소환
 
 	//for (int i = m_cellYPos; i < m_cellYPos + 4; i++)
@@ -205,9 +209,10 @@ void CBoss::Hit(u_int _attackPower)
 		m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY
 	);
 
-	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
+	CInGameScene* pScene = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene());
+	CBoard* board = pScene->GetBoard();
 
-	CLayer* pLayer = m_pScene->FindLayer(L"Block");
+	CLayer* pLayer = pScene->FindLayer(L"Block");
 
 	CMonster* pMonster = new CMonster(rect, eInGameObjType::Monster);
 	pLayer->AddObj(pMonster);
@@ -235,6 +240,7 @@ bool CBoss::IsMovable(int _cellXPos, int _cellYPos)
 
 bool CBoss::SetBossInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _obj)
 {
+
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
 
 	for (int i = 0; i < 3; i++)
@@ -257,54 +263,103 @@ void CBoss::MoveState()
 	int stageFrameOffsetY = 40;
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+	int width = m_rect.right - m_rect.left;
+	int height = m_rect.bottom - m_rect.top;
 
 	SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
 
 	int x = 0, y = 0;
 	if (m_state == State::MoveLeft)
 	{
-		if (IsMovable(m_cellXPos, m_cellYPos) == false)
+		x = -1;
+
+		if (IsMovable(m_cellXPos - 1, m_cellYPos) == false) 
 		{
-			m_nextState = RandomDir();
+			// (BLOCK_SIZE / 2)만큼 왼쪽 공간을 더 가도록 함
+			if (BOARD_BLOCK_SIZE * m_cellXPos + stageFrameOffsetX < m_rect.left)
+			{
+				m_xpos += m_speed * deltaTime * x;
+				m_rect.left += m_speed * deltaTime * x;
+				m_rect.right += m_speed * deltaTime * x;
+			}
+			else
+			{
+				m_nextState = RandomDir();
+				m_xpos = BOARD_BLOCK_SIZE * m_cellXPos + stageFrameOffsetX;
+				m_rect.left = BOARD_BLOCK_SIZE * m_cellXPos + stageFrameOffsetX;
+				m_rect.right = m_rect.left + width;
+			}
 			return;
 		}
 		SetBossInMoveObjBoard(m_cellXPos - 1, m_cellYPos, this);
-
-		x = -1;
-
 	}
 	else if (m_state == State::MoveRight)
 	{
+		x = 1;
+
 		if (IsMovable(m_cellXPos + 1, m_cellYPos) == false)
 		{
-			m_nextState = RandomDir();
+			if (BOARD_BLOCK_SIZE * (m_cellXPos + 3) + stageFrameOffsetX > m_rect.right)
+			{
+				m_xpos += m_speed * deltaTime * x;
+				m_rect.left += m_speed * deltaTime * x;
+				m_rect.right += m_speed * deltaTime * x;
+			}
+			else
+			{
+				m_nextState = RandomDir();
+				m_xpos = BOARD_BLOCK_SIZE * m_cellXPos + stageFrameOffsetX;
+				m_rect.left = BOARD_BLOCK_SIZE * m_cellXPos + stageFrameOffsetX;
+				m_rect.right = m_rect.left + width;
+			}
 			return;
 		}
 		SetBossInMoveObjBoard(m_cellXPos + 1, m_cellYPos, this);
 
-		x = 1;
 	}
 	else if (m_state == State::MoveUp)
 	{
+		y = -1;
 		if (IsMovable(m_cellXPos, m_cellYPos - 1) == false)
 		{
-			m_nextState = RandomDir();
+			if (BOARD_BLOCK_SIZE * (m_cellYPos - 2) + stageFrameOffsetY < m_rect.bottom - (BOARD_BLOCK_SIZE * 3))
+			{
+				m_ypos += m_speed * deltaTime * y;
+				m_rect.top += m_speed * deltaTime * y;
+				m_rect.bottom += m_speed * deltaTime * y;
+			}
+			else
+			{
+				m_nextState = RandomDir();
+				m_ypos = BOARD_BLOCK_SIZE * (m_cellYPos + 1) + stageFrameOffsetY;
+				m_rect.bottom = BOARD_BLOCK_SIZE * (m_cellYPos + 1) + stageFrameOffsetY;
+				m_rect.top = m_rect.bottom - height;
+			}
 			return;
 		}
 		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos - 1, this);
-
-		y = -1;
 	}
 	else if (m_state == State::MoveDown)
 	{
+		y = 1;
+
 		if (IsMovable(m_cellXPos, m_cellYPos+1) == false)
 		{
-			m_nextState = RandomDir();
-			return;
+			if (BOARD_BLOCK_SIZE * (m_cellYPos) + stageFrameOffsetY > m_rect.bottom)
+			{
+				m_ypos += m_speed * deltaTime * y;
+				m_rect.top += m_speed * deltaTime * y;
+				m_rect.bottom += m_speed * deltaTime * y;
+			}
+			else
+			{
+				m_nextState = RandomDir();
+				m_ypos = BOARD_BLOCK_SIZE * (m_cellYPos + 1) + stageFrameOffsetY;
+				m_rect.bottom = BOARD_BLOCK_SIZE * (m_cellYPos + 1) + stageFrameOffsetY;
+				m_rect.top = m_rect.bottom - height;
+			}
 		}
 		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos + 1, this);
-
-		y = 1;
 	}
 
 
@@ -316,8 +371,15 @@ void CBoss::MoveState()
 	m_rect.top += m_speed * deltaTime * y;
 	m_rect.bottom += m_speed * deltaTime * y;
 
-	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+	m_cellXPos = (m_xpos + (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	m_cellYPos = (m_ypos - (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%f, %f\n", m_xpos, m_ypos);
+	OutputDebugStringA(str);
+#endif
+
 }
 
 void CBoss::ChangeState(State _state)
@@ -376,7 +438,7 @@ void CBoss::Attack()
 	std::uniform_int_distribution<int> distribution3(0, 1);
 	int choice = distribution3(engine);
 
-	CBoard* board = ((CInGameScene*)m_pScene)->GetBoard();
+	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
 
 	if (choice == 0)
 	{
@@ -468,4 +530,23 @@ void CBoss::Attack02(CBoard* _pBoard)
 			_pBoard->PutSplash(j, i, L"Explosion_center");
 		}
 	}
+}
+
+bool CBoss::CanMoveTo(float _xpos, float _ypos, float _delta, eDir _eDir)
+{
+	float stageFrameOffsetX = 20.0f;
+	float stageFrameOffsetY = 40.0f;
+
+	if (_eDir == eDir::Left)
+	{
+		if (_xpos - _delta < stageFrameOffsetX)
+			return false;
+	}
+	else if (_eDir == eDir::Right)
+	{
+		if (_xpos + _delta > stageFrameOffsetX + 15 * BOARD_BLOCK_SIZE)
+			return false;
+	}
+
+	return true;
 }

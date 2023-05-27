@@ -132,7 +132,7 @@ void CInGameScene::Init()
 			m_board->SetObjTypeInMoveObjBoard(x, y, m_pPlayer);
  
 			//m_pPlayer->SetSprite(sprite);
-			m_pPlayer->SetScene(this);
+			//m_pPlayer->SetScene(this);
 			layer->AddObj(m_pPlayer);
 		}
 		else if (mapData.vecEventData[i] == eMenuEvent::Spawn_Monster) // º¸½º
@@ -143,11 +143,11 @@ void CInGameScene::Init()
 			CBoss* boss = new CBoss({
 				(x * BOARD_BLOCK_SIZE) + stageFrameOffsetX,
 				(y * BOARD_BLOCK_SIZE) + stageFrameOffsetY - 170 + BOARD_BLOCK_SIZE,
-				(x * BOARD_BLOCK_SIZE) + 120 + stageFrameOffsetX ,
+				(x * BOARD_BLOCK_SIZE) + stageFrameOffsetX + 120,
 				(y * BOARD_BLOCK_SIZE)  + stageFrameOffsetY + BOARD_BLOCK_SIZE }
 			, eInGameObjType::Boss);
 
-			boss->SetScene(this);
+			//boss->SetScene(this);
 
 			if (boss->Init() == false)
 			{

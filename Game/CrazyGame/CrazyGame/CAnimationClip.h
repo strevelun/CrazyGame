@@ -27,6 +27,7 @@ public:
     tAnimationFrame* GetCurFrame() const { return m_vecFrame.at(m_frameIdx); }
     size_t GetNumOfFrame() const { return m_vecFrame.size(); }
     size_t GetCurFrameIdx() const { return m_frameIdx; }
+    tAnimationFrame* GetFrame(u_int _idx) { return m_vecFrame.at(_idx); }
     void SetCurFrameIdx(u_int _idx) { m_frameIdx = _idx; }
     tAnimationFrame* GetFirstFrame() const { return m_vecFrame.at(0); }
     size_t GetFrameSize() const { return m_vecFrame.size(); }

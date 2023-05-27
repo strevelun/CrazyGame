@@ -10,64 +10,68 @@
 
 void CBubble::BounceMoveSkill()
 {
-	CBoard* pBoard = ((CInGameScene*)m_pScene)->m_board;
+	CBoard* pBoard = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
-	int x = 0, y = 0;
 	float speed = 7;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
 	D2D1_RECT_F rect = m_rect;
 
-	switch (m_eMovingDir)
+	if(m_curThrow >= m_throwLimit) // limitÀ» ³ÑÀ¸¸é ÇÑÄ­¾¿ Âø·úÁöÁ¡ Ã¼Å©
 	{
-	case eDir::Left:
-		x = -1;
-		break;
-	case eDir::Right:
-		x = 1;
-		break;
-	case eDir::Up:
-		y = -1;
-		break;
-	case eDir::Down:
-		y = 1;
-		break;
+		//if (pBoard->IsMovable(m_cellXPos, m_cellYPos)) // ´øÁú¶© ¹°Ç³¼± °ãÄ¡±â °¡´ÉÀÌ¶ó¼­ »ç¿ë¾ÈÇÔ
+		if(pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) 
+			|| pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::None)
+			|| pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item))
+		{
+			m_eMovingDir = eDir::None;
+			m_bBounceMoving = false;
+			pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+
+			m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
+			m_rect.right = m_rect.left + BOARD_BLOCK_SIZE;
+			m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+			m_rect.bottom = m_rect.top + BOARD_BLOCK_SIZE;
+			return;
+		}
 	}
 
-	if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
-	{
-		m_eMovingDir = eDir::None;
-		m_bBounceMoving = false;
-		m_rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
-		m_rect.right = m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX;
-		m_rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-		m_rect.bottom = m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY;
-		return;
-	}
-
-	float radian = m_angle * PI / 180.0;
-	float velocityY = 3 * std::sin(radian);
 	float ballX = speed;
-	float ballY = -velocityY + m_ballTime * 30;
-	if (m_rect.bottom >= m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY)
-		m_ballTime = 0.0f;
-	m_ballTime += deltaTime;
-
+	float ballY;
+	
 	if (m_eMovingDir == eDir::Left || m_eMovingDir == eDir::Right)
 	{
-		y = 1;
-		rect.top += ballY * y;
-		rect.bottom += ballY * y;
+		if (m_curThrow == 4 && m_eThrowState == eThrowState::InAir)
+		{
+			rect.top += 20;
+			rect.bottom += 20;
+			m_eThrowState = eThrowState::Bounce;
+		}
+
+		if (m_curThrow >= 5)
+		{
+			float radian = m_angle * PI / 180.0;
+			float velocityY = 3 * std::sin(radian);
+			ballX = speed;
+			ballY = -velocityY + m_ballTime * 30;
+			if (m_rect.bottom >= m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY)
+				m_ballTime = 0.0f;
+			m_ballTime += deltaTime;
+
+			m_dirY = 1;
+			rect.top += ballY * m_dirY;
+			rect.bottom += ballY * m_dirY;
+		}
 	}
 	else
 	{
-		rect.top += ballX * y;
-		rect.bottom += ballX * y;
+		rect.top += speed * m_dirY;
+		rect.bottom += speed * m_dirY; 
 	}
 
-	rect.left += ballX * x;
-	rect.right += ballX * x;
+	rect.left += ballX * m_dirX;
+	rect.right += ballX * m_dirX;
 
 	m_prevCellPos.x = m_cellXPos;
 	m_prevCellPos.y = m_cellYPos;
@@ -75,8 +79,38 @@ void CBubble::BounceMoveSkill()
 	m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
-	pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
-	pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+	if (m_cellYPos < 0)
+	{
+		m_cellYPos = 12;
+		rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.bottom = rect.top + BOARD_BLOCK_SIZE;
+	}
+	else if (m_cellYPos > 12)
+	{
+		m_cellYPos = 0;
+		rect.top = m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.bottom = rect.top + BOARD_BLOCK_SIZE;
+	}
+	else if (m_cellXPos < 0)
+	{
+		m_cellXPos = 14;
+		rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.right = rect.left + BOARD_BLOCK_SIZE;
+	}
+	else if (m_cellXPos > 14)
+	{
+		m_cellXPos = 0;		
+		rect.left = m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.right = rect.left + BOARD_BLOCK_SIZE;
+	}
+
+	if (m_prevCellPos.x != m_cellXPos || m_prevCellPos.y != m_cellYPos)
+		m_curThrow++;
+
+	//pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
+	//pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+
+
 
 	m_rect = rect;
 }
@@ -86,29 +120,11 @@ void CBubble::KickSkill()
 	CBoard* pBoard = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
-	int x = 0, y = 0;
 	float speed = 1000;
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 	D2D1_RECT_F rect = m_rect;
 
-	switch (m_eMovingDir)
-	{
-	case eDir::Left:
-		x = -1;
-		break;
-	case eDir::Right:
-		x = 1;
-		break;
-	case eDir::Up:
-		y = -1;
-		break;
-	case eDir::Down:
-		y = 1;
-		break;
-	}
-
-
-	if (!pBoard->IsMovable(m_cellXPos + x, m_cellYPos + y))
+	if (!pBoard->IsMovable(m_cellXPos + m_dirX, m_cellYPos + m_dirY))
 	{
 		m_eMovingDir = eDir::None;
 		m_bMoving = false;
@@ -119,10 +135,10 @@ void CBubble::KickSkill()
 		return;
 	}
 
-	rect.left += speed * deltaTime * x;
-	rect.right += speed * deltaTime * x;
-	rect.top += speed * deltaTime * y;
-	rect.bottom += speed * deltaTime * y;
+	rect.left += speed * deltaTime * m_dirX;
+	rect.right += speed * deltaTime * m_dirX;
+	rect.top += speed * deltaTime * m_dirY;
+	rect.bottom += speed * deltaTime * m_dirY;
 
 	m_prevCellPos.x = m_cellXPos;
 	m_prevCellPos.y = m_cellYPos;
@@ -133,6 +149,27 @@ void CBubble::KickSkill()
 	pBoard->SetInGameObjType(m_prevCellPos.x, m_prevCellPos.y, eInGameObjType::None);
 	pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
 	m_rect = rect;
+}
+
+void CBubble::SetDir(eDir _eDir)
+{
+	m_dirX = 0; m_dirY = 0;
+
+	switch (_eDir)
+	{
+	case eDir::Left:
+		m_dirX = -1;
+		break;
+	case eDir::Right:
+		m_dirX = 1;
+		break;
+	case eDir::Up:
+		m_dirY = -1;
+		break;
+	case eDir::Down:
+		m_dirY = 1;
+		break;
+	}
 }
 
 CBubble::CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
@@ -198,12 +235,27 @@ void CBubble::Move(eDir _eDir)
 {
 	m_bMoving = true;
 	m_eMovingDir = _eDir;
+
+	SetDir(_eDir);
 }
 
 void CBubble::BounceMove(eDir _eDir)
 {
    	m_bBounceMoving = true;
 	m_eMovingDir = _eDir;
+
+	//m_dir.x = 1;
+	//m_dir.y = 0;
+	if (_eDir == eDir::Left || _eDir == eDir::Right)
+	{
+		m_rect.top -= 20;
+		m_rect.bottom -= 20;
+		m_eThrowState = eThrowState::InAir;
+	}
+
+	SetDir(_eDir);
+	CBoard* pBoard = ((CInGameScene*)(CSceneManager::GetInst()->GetCurScene()))->m_board;
+	pBoard->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::None);
 }
 
 void CBubble::Die()

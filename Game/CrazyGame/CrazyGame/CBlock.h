@@ -14,6 +14,7 @@ public:
 
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
 
+    void Move(eDir _eDir);
     void Die() override;
 };
 

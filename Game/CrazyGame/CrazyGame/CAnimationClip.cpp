@@ -40,19 +40,9 @@ void CAnimationClip::Render(ID2D1BitmapRenderTarget* _pRenderTarget, D2D1_RECT_F
 	D2D1_RECT_F target = { _rect.left, _rect.top,
 		_rect.left + (source.right - source.left), _rect.top + (source.bottom - source.top) };
 
-
 	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(current->bitmapIdx)->GetBitmap(),
 		target, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		current->rect);
-
-	/*
-	_pRenderTarget->DrawBitmap(CResourceManager::GetInst()->GetIdxBitmap(GetCurFrame()->bitmapIdx)->GetBitmap(),
-		_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		GetCurFrame()->rect);
-		*/
-	//_pRenderTarget->DrawBitmap(m_vecBitmap[m_curFrame->bitmapIdx]->GetBitmap(),
-	//		_rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-	//		m_curFrame->rect);
 }
 
 void CAnimationClip::AddFrame(tAnimationFrame* _frame)

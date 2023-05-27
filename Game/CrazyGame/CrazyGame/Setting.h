@@ -46,7 +46,6 @@ enum class eItem
     Gift_Turtle,
     Gift_UFO,
     Gift_None
-
 };
 
 enum class eDir
@@ -55,7 +54,7 @@ enum class eDir
     Down,
     Right,
     Left,
-    None
+    None // 정지 상태
 };
 
 typedef struct _tBlockData

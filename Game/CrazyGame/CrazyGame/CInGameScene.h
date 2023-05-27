@@ -18,7 +18,6 @@ private:
     friend class CPlayer;
     friend class CMoveObj;
     friend class CBubble;
-    friend class CLayer;
 
     Stage*  m_stage;
 
