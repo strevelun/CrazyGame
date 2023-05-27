@@ -59,6 +59,12 @@ void CSplash::Update()
 				player->GetOffVehicle();
 		}
 	}
+
+	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Monster))
+	{
+		CMoveObj* obj = pBoard->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
+		obj->Die();
+	}
 	/*
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
 	{

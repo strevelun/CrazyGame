@@ -24,6 +24,10 @@ CMonster::CMonster(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_r
 	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Monster01_Right");
 	animClip->SetFrametimeLimit(0.2f);
 	m_anim.AddClip(L"Monster01_Right", animClip);
+	animClip = CResourceManager::GetInst()->GetAnimationClip(L"Monster01_Die");
+	animClip->SetFrametimeLimit(0.2f);
+	m_anim.AddClip(L"Monster01_Die", animClip);
+
 	m_anim.SetClip(L"Monster01_Front");
 
 
@@ -131,6 +135,8 @@ void CMonster::ChangeState(State _state)
 	case State::MoveDown:
 		m_anim.SetClip(L"Monster01_Front");
 		break;
+	case State::Die:
+		m_anim.SetClip(L"Monster01_Die");
 	}
 }
 
@@ -155,19 +161,23 @@ State CMonster::RandomDir()
 	return state;
 }
 
-void CMonster::Hit()
+void CMonster::Die()
 {
+	m_nextState = State::Die;
 }
 
 void CMonster::Update()
 {
 	CGameObj::Update();
 
+	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
+
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
 
 	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+	CAnimationClip* clip = nullptr;
 
 	ChangeState(m_nextState);
 
@@ -184,13 +194,22 @@ void CMonster::Update()
 		MoveState();
 		break;
 	case State::Die:
+		board->SetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
+		clip = m_anim.GetCurClip();
+		if (!clip) return;
 
-		m_isAlive = false;
-		break;
+		if (clip->IsCurClipEnd())
+		{
+			m_isAlive = false;
+			return;
+		}
 	}
 }
 
 void CMonster::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
-	m_anim.Render(_pRenderTarget, m_rect);
+	m_anim.Render(_pRenderTarget, m_rect); 
+	_pRenderTarget->DrawRectangle(
+		D2D1::RectF(m_cellXPos * 40 + 20, m_cellYPos * 40 + 40,
+			m_cellXPos * 40 + 20 + 40, m_cellYPos * 40 + 40 + 40), CCore::GetInst()->GetBrush());
 }

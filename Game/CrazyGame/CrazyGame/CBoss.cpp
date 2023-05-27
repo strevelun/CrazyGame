@@ -531,22 +531,3 @@ void CBoss::Attack02(CBoard* _pBoard)
 		}
 	}
 }
-
-bool CBoss::CanMoveTo(float _xpos, float _ypos, float _delta, eDir _eDir)
-{
-	float stageFrameOffsetX = 20.0f;
-	float stageFrameOffsetY = 40.0f;
-
-	if (_eDir == eDir::Left)
-	{
-		if (_xpos - _delta < stageFrameOffsetX)
-			return false;
-	}
-	else if (_eDir == eDir::Right)
-	{
-		if (_xpos + _delta > stageFrameOffsetX + 15 * BOARD_BLOCK_SIZE)
-			return false;
-	}
-
-	return true;
-}
