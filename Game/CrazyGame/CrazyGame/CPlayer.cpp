@@ -81,7 +81,7 @@ void CPlayer::Input()
 		{
 			m_nextState = State::MoveDown;
 		}
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
 		{
 			m_bFire = true;
 			
@@ -109,7 +109,7 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
 		{
 			m_bFire = true;
 		}
@@ -136,7 +136,7 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
 		{
 			m_bFire = true;
 		}
@@ -162,7 +162,7 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
 		{
 			m_bFire = true;
 		}
@@ -189,7 +189,7 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
 		{
 			m_bFire = true;
 		}
@@ -197,28 +197,6 @@ void CPlayer::Input()
 		break;
 	}
 
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
-	{
-		m_attackDelay = 0; 
-		m_spaceCount++;
-		if (!m_spacePressed)
-		{
-			m_spacePressed = true;
-		}
-	}
-
-	if (m_spacePressed && m_doubleSpaceDeltaTime <= 0.5f)
-	{
-		if (m_spaceCount >= 2)
-		{
-   			m_spaceCount = 0;
- 			CGameObj* obj = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
-			if(obj != nullptr)
-				((CBubble*)obj)->BounceMove(m_eMoveDir);
-
-		}
-		m_spacePressed = false;
-	}
 }
 
 void CPlayer::Update()
@@ -237,11 +215,7 @@ void CPlayer::Update()
 
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
-	if (m_spacePressed)
-	{
-		m_doubleSpaceDeltaTime += deltaTime;
-	}
-		m_attackDelay += deltaTime;
+
 
 	if (m_bInvincible)
 	{
@@ -381,19 +355,36 @@ void CPlayer::Update()
 	if (m_vehicle)
 		m_vehicle->Update(m_rideRect);
 
+
+	if (m_bFire )
+	{
+		m_attackDelay = 0;
+		m_spaceCount++;
+		if (!m_spacePressed)
+		{
+			m_spacePressed = true;
+		}
+	}
+
+
 	if (m_bFire
 		&& m_curBubblePlaced < m_bubbleCarryLimit
 		&& (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
 	{
+#ifdef _DEBUG
+		char str[50] = "";
+		sprintf_s(str, "new bubble\n");
+		OutputDebugStringA(str);
+#endif
 
-		CBubble* bubble = new CBubble({
+ 		CBubble* bubble = new CBubble({
 			(float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX,
 			(float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY,
 			(float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
 			(float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
 			},
 			eInGameObjType::Balloon);
-		bubble->SetOwner(this);
+ 		bubble->SetOwner(this);
 		//bubble->SetScene(m_pScene);
 		bubble->SetSplashLength(m_splashLength);
 		D2D1_POINT_2U point = bubble->GetPoint();
@@ -401,8 +392,40 @@ void CPlayer::Update()
 			m_curBubblePlaced++;
 		else
 			delete bubble;
+	}	
+	
+	if (m_spacePressed && m_doubleSpaceDeltaTime <= 0.5f)
+	{
+		if (m_spaceCount >= 2)
+		{
+			m_spaceCount = 0;
+			m_doubleSpaceDeltaTime = 0.0f;
+			m_spacePressed = false;
+			CGameObj* obj = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+			if (obj != nullptr)
+			{
+				((CBubble*)obj)->BounceMove(m_eMoveDir);
+#ifdef _DEBUG
+				char str[50] = "";
+				sprintf_s(str, "throw bubble\n");
+				OutputDebugStringA(str);
+#endif
+			}
+
+		}
+	}
+	else if (m_doubleSpaceDeltaTime >= 0.5f)
+	{
+		m_spaceCount = 0;
+		m_doubleSpaceDeltaTime = 0.0f;
+		m_spacePressed = false;
 	}
 
+	if (m_spacePressed)
+	{
+		m_doubleSpaceDeltaTime += deltaTime;
+	}
+	m_attackDelay += deltaTime;
 
 	m_bFire = false;
 
