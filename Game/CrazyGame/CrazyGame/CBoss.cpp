@@ -374,12 +374,6 @@ void CBoss::MoveState()
 	m_cellXPos = (m_xpos + (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = (m_ypos - (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%f, %f\n", m_xpos, m_ypos);
-	OutputDebugStringA(str);
-#endif
-
 }
 
 void CBoss::ChangeState(State _state)

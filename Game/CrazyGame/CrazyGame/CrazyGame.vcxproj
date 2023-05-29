@@ -129,6 +129,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\D2DCore\CApp.cpp" />
     <ClCompile Include="..\..\D2DCore\CCore.cpp" />
+    <ClCompile Include="BounceMoveSkill.cpp" />
+    <ClCompile Include="BubbleSkill.cpp" />
     <ClCompile Include="CAnimationClip.cpp" />
     <ClCompile Include="CAnimator.cpp" />
     <ClCompile Include="CAstar.cpp" />
@@ -161,6 +163,8 @@
     <ClCompile Include="CUIHPBar.cpp" />
     <ClCompile Include="CUIPanel.cpp" />
     <ClCompile Include="CVehicle.cpp" />
+    <ClCompile Include="KickSkill.cpp" />
+    <ClCompile Include="Skill.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageManager.cpp" />
     <ClCompile Include="UIManager.cpp" />
@@ -168,6 +172,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\D2DCore\CApp.h" />
     <ClInclude Include="..\..\D2DCore\CCore.h" />
+    <ClInclude Include="BounceMoveSkill.h" />
+    <ClInclude Include="BubbleSkill.h" />
     <ClInclude Include="CAStar.h" />
     <ClInclude Include="CAnimationClip.h" />
     <ClInclude Include="CAnimator.h" />
@@ -198,8 +204,10 @@
     <ClInclude Include="CUIButton.h" />
     <ClInclude Include="CUIHPBar.h" />
     <ClInclude Include="CUIPanel.h" />
+    <ClInclude Include="KickSkill.h" />
     <ClInclude Include="Setting.h" />
     <ClInclude Include="CVehicle.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageManager.h" />
     <ClInclude Include="UIManager.h" />

@@ -371,11 +371,6 @@ void CPlayer::Update()
 		&& m_curBubblePlaced < m_bubbleCarryLimit
 		&& (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon) == false))
 	{
-#ifdef _DEBUG
-		char str[50] = "";
-		sprintf_s(str, "new bubble\n");
-		OutputDebugStringA(str);
-#endif
 
  		CBubble* bubble = new CBubble({
 			(float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX,
@@ -405,11 +400,6 @@ void CPlayer::Update()
 			if (obj != nullptr)
 			{
 				((CBubble*)obj)->BounceMove(m_eMoveDir);
-#ifdef _DEBUG
-				char str[50] = "";
-				sprintf_s(str, "throw bubble\n");
-				OutputDebugStringA(str);
-#endif
 			}
 
 		}
