@@ -3,6 +3,10 @@
 class CMonster :
     public CMoveObj
 {
+private:
+    float m_passiveTime = 0.0f;
+    float m_passiveTimeLimit = 1.0f;
+
 public:
     CMonster(const D2D1_RECT_F& _rect, eInGameObjType _type);
     ~CMonster();

@@ -16,6 +16,6 @@ void CAStar::Init(CBoard* _board)
 	tMapData mapData = _board->GetMapData();
 
 	m_board.resize(mapData.gridY);
-	for (int i = 0; i < mapData.gridY; i++)
+	for (u_int i = 0; i < mapData.gridY; i++)
 		m_board[i].resize(mapData.gridX);
 }

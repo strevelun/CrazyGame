@@ -24,15 +24,15 @@ CBoard::~CBoard()
 void CBoard::SetBoard()
 {
 	m_board.resize(m_mapData.gridY);
-	for (int i = 0; i < m_mapData.gridY; i++)
+	for (u_int i = 0; i < m_mapData.gridY; i++)
 		m_board[i].resize(m_mapData.gridX);
 
 	m_moveObjBoard.resize(m_mapData.gridY);
-	for (int i = 0; i < m_mapData.gridY; i++)
+	for (u_int i = 0; i < m_mapData.gridY; i++)
 		m_moveObjBoard[i].resize(m_mapData.gridX);
 
 	m_itemBoard.resize(m_mapData.gridY);
-	for (int i = 0; i < m_mapData.gridY; i++)
+	for (u_int i = 0; i < m_mapData.gridY; i++)
 		m_itemBoard[i].resize(m_mapData.gridX);
 }
 
@@ -130,15 +130,15 @@ void CBoard::RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey)
 	m_board[_cellYPos][_cellXPos] = eInGameObjType::None;
 }
 
-bool CBoard::PutSplash(D2D1_RECT_F _rect, std::wstring _animClipName)
+bool CBoard::PutSplash(D2D1_RECT_F _rect, std::wstring _animClipName, CMoveObj* _pOwner)
 {
 	int x, y;
 	CObj::RectToPos(_rect, x, y);
 
-	return PutSplash(x, y, _animClipName);
+	return PutSplash(x, y, _animClipName, _pOwner);
 }
 
-bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipName)
+bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipName, CMoveObj* _pOwner)
 {
 	if (m_mapData.gridX <= _cellXPos) return false;
 	if (m_mapData.gridY <= _cellYPos) return false;
@@ -170,7 +170,7 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 			(float)_cellYPos* BOARD_BLOCK_SIZE + stageFrameOffsetY,
 			(float)_cellXPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
 			(float)_cellYPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
-			}, _animClipName);
+			}, _animClipName, _pOwner);
 
 		layer->AddObj(splash);
 	}

@@ -37,7 +37,6 @@ public:
 	void SetFrameLimit(int _limit) { m_frameLimit = _limit; }
 
 	float GetDeltaTime() const { return m_deltaTime; }
-	int GetFps() const { return  m_fps; }
 	bool Update();
 };
 

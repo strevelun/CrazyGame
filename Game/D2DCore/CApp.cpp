@@ -69,7 +69,7 @@ HRESULT CApp::Init(HINSTANCE hInstance, int nCmdShow, int _width, int _height)
 	//CTimer::GetInst()->SetFrameLimit(10);
 
 	m_pRenderTarget->CreateCompatibleRenderTarget(
-		D2D1::SizeF(_width, _height),
+		D2D1::SizeF((FLOAT)_width, (FLOAT)_height),
 		&m_pBitmapRenderTarget
 	);
 

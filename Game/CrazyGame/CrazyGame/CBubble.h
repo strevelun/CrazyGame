@@ -14,7 +14,7 @@ class CBubble :
     friend class BounceMoveSkill;
     friend class KickSkill;
 
-    CMoveObj* m_pOwner = nullptr;
+    CMoveObj* m_pOwner = nullptr; // ex. 보스가 만든 물풍선이 터지면 그 스플래시에 몬스터는 데미지를 입지 않음
 
     Skill* m_pSkill = nullptr;
 

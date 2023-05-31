@@ -10,8 +10,9 @@
 #include "CPlayer.h"
 #include "CVehicle.h"
 #include "CBoss.h"
+#include "CMoveObj.h"
 
-CSplash::CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName) : CStaticObj(_rect)
+CSplash::CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName, CMoveObj* _pOwner) : CStaticObj(_rect)
 {
 	m_animClip = *(CResourceManager::GetInst()->GetAnimationClip(_animClipName));
 	m_animClip.SetFrametimeLimit(0.1f);
@@ -20,6 +21,7 @@ CSplash::CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName) : CStatic
 
 	m_rect = _rect;
 	CObj::RectToPos(m_rect, m_cellXPos, m_cellYPos);
+	m_pOwner = _pOwner;
 }
 
 CSplash::~CSplash()
@@ -62,8 +64,11 @@ void CSplash::Update()
 
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Monster))
 	{
-		CMoveObj* obj = pBoard->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
-		obj->Die();
+		if (m_pOwner->GetType() == eInGameObjType::Character)
+		{
+			CMoveObj* obj = pBoard->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos);
+			obj->Die();
+		}
 	}
 	/*
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))

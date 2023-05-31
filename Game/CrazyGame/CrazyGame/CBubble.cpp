@@ -102,7 +102,7 @@ void CBubble::Die()
 	bool hitBoss = false;
 	int hitBossCellXPos = m_cellXPos, hitBossCellYPos = m_cellYPos;
 
-	board->PutSplash(m_rect, L"Explosion_center");
+	board->PutSplash(m_rect, L"Explosion_center", m_pOwner);
 
 	D2D1_RECT_F rect = m_rect;
 
@@ -118,7 +118,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, L"Explosion_left") == false)
+		if (board->PutSplash(rect, L"Explosion_left", m_pOwner) == false)
 			break;
 	}
 
@@ -136,7 +136,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, L"Explosion_right") == false)
+		if (board->PutSplash(rect, L"Explosion_right", m_pOwner) == false)
 			break;
 	}
 
@@ -154,7 +154,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, L"Explosion_up") == false)
+		if (board->PutSplash(rect, L"Explosion_up", m_pOwner) == false)
 			break;
 	}
 
@@ -172,7 +172,7 @@ void CBubble::Die()
 			hitBoss = true;
 		}
 
-		if (board->PutSplash(rect, L"Explosion_down") == false)
+		if (board->PutSplash(rect, L"Explosion_down", m_pOwner) == false)
 			break;
 	}
 

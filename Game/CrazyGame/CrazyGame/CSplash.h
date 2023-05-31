@@ -5,11 +5,16 @@
 
 #include <string>
 
+class CMoveObj;
+
 class CSplash :
     public CStaticObj
 {
+private:
+    CMoveObj* m_pOwner = nullptr;
+
 public:
-    CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName);
+    CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName, CMoveObj* _pOwner);
     ~CSplash();
 
     void Update();

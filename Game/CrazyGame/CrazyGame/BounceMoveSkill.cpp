@@ -38,10 +38,10 @@ void BounceMoveSkill::Update()
 			m_skillEnd = true;
 			pBoard->SetInGameObjType(bubble->m_cellXPos, bubble->m_cellYPos, eInGameObjType::Balloon);
 
-			bubble->m_rect.left = bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
-			bubble->m_rect.right = bubble->m_rect.left + BOARD_BLOCK_SIZE;
-			bubble->m_rect.top = bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-			bubble->m_rect.bottom = bubble->m_rect.top + BOARD_BLOCK_SIZE;
+			bubble->m_rect.left = (FLOAT)bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX;
+			bubble->m_rect.right = (FLOAT)bubble->m_rect.left + BOARD_BLOCK_SIZE;
+			bubble->m_rect.top = (FLOAT)bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+			bubble->m_rect.bottom = (FLOAT)bubble->m_rect.top + BOARD_BLOCK_SIZE;
 			return;
 		}
 	}
@@ -60,7 +60,7 @@ void BounceMoveSkill::Update()
 
 		if (m_curThrow >= 5)
 		{
-			float radian = m_angle * PI / 180.0;
+			float radian = m_angle * (float)PI / 180.0f;
 			float velocityY = 3 * std::sin(radian);
 			ballX = speed;
 			ballY = -velocityY + m_ballTime * 30;
@@ -89,32 +89,32 @@ void BounceMoveSkill::Update()
 	m_prevCellPos.x = bubble->m_cellXPos;
 	m_prevCellPos.y = bubble->m_cellYPos;
 
-	bubble->m_cellXPos = ((rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-	bubble->m_cellYPos = ((rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+	bubble->m_cellXPos = (((int)rect.right - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	bubble->m_cellYPos = (((int)rect.bottom - BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
 	if (bubble->m_cellYPos < 0)
 	{
 		bubble->m_cellYPos = 12;
-		rect.top = bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-		rect.bottom = rect.top + BOARD_BLOCK_SIZE;
+		rect.top = (FLOAT)bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.bottom = (FLOAT)rect.top + BOARD_BLOCK_SIZE;
 	}
 	else if (bubble->m_cellYPos > 12)
 	{
 		bubble->m_cellYPos = 0;
-		rect.top = bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-		rect.bottom = rect.top + BOARD_BLOCK_SIZE;
+		rect.top = (FLOAT)bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.bottom = (FLOAT)rect.top + BOARD_BLOCK_SIZE;
 	}
 	else if (bubble->m_cellXPos < 0)
 	{
 		bubble->m_cellXPos = 14;
-		rect.left = bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-		rect.right = rect.left + BOARD_BLOCK_SIZE;
+		rect.left = (FLOAT)bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.right = (FLOAT)rect.left + BOARD_BLOCK_SIZE;
 	}
 	else if (bubble->m_cellXPos > 14)
 	{
 		bubble->m_cellXPos = 0;
-		rect.left = bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
-		rect.right = rect.left + BOARD_BLOCK_SIZE;
+		rect.left = (FLOAT)bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+		rect.right = (FLOAT)rect.left + BOARD_BLOCK_SIZE;
 	}
 
 	/*

@@ -52,8 +52,8 @@ enum class eDir
 {
     Up,
     Down,
-    Right,
     Left,
+    Right,
     None // 정지 상태
 };
 
