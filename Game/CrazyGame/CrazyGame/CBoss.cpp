@@ -50,13 +50,13 @@ CBoss::CBoss(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 	
 
 	m_xpos = _rect.left;
-	m_ypos = _rect.bottom - (BOARD_BLOCK_SIZE / 2);
+	m_ypos = _rect.bottom ;
 	
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
 
-	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
-	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+	m_cellXPos = (m_xpos ) / BOARD_BLOCK_SIZE;
+	m_cellYPos = (m_ypos - (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
 
 
@@ -76,7 +76,7 @@ CBoss::~CBoss()
 
 bool CBoss::Init()
 {
-	if (SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, this) == false)
+	if (IsMovable(m_cellXPos, m_cellYPos) == false)
 	{
 		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
 		m_isAlive = false;
@@ -178,10 +178,25 @@ void CBoss::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(0.9f, 0.9f, D2D1::Point2F(m_rect.left, m_rect.bottom)));
 	m_anim.Render(_pRenderTarget, m_rect);
-	_pRenderTarget->DrawRectangle(
-		D2D1::RectF(m_cellXPos * 40 + 20, m_cellYPos * 40 + 40,
-			m_cellXPos * 40 + 20 + 40, m_cellYPos * 40 + 40 + 40), CCore::GetInst()->GetBrush());
+
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+
+	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
+
+	for (int i = 0; i < 13; i++)
+	{
+		for (int j = 0; j < 15; j++)
+		{
+			CMoveObj* obj = board->GetObjTypeInMoveObjBoard(j, i);
+			if (obj == nullptr) continue;
+			if (obj->GetType() == eInGameObjType::Boss)
+			{
+				_pRenderTarget->DrawRectangle(
+					D2D1::RectF(j * 40 + 20, i * 40 + 40,
+						j * 40 + 20 + 40, i * 40 + 40 + 40), CCore::GetInst()->GetBrush());
+			}
+		}
+	}
 }
 
 void CBoss::Hit(u_int _attackPower)
@@ -228,13 +243,17 @@ void CBoss::Hit(u_int _attackPower)
 
 bool CBoss::IsMovable(int _cellXPos, int _cellYPos)
 {
-	if (SetBossInMoveObjBoard(_cellXPos, _cellYPos, this) == false)
-	{
-		SetBossInMoveObjBoard(_cellXPos, _cellYPos, nullptr);
-		return false;
-	}
 
-	SetBossInMoveObjBoard(_cellXPos, _cellYPos, nullptr);
+	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (board->IsMovable(_cellXPos + j, _cellYPos - i) == false)
+				return false;
+		}
+	}
 	return true;
 }
 
@@ -247,11 +266,7 @@ bool CBoss::SetBossInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _obj)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			if (board->IsMovable(_cellXPos + j, _cellYPos - i) == false)
-				return false;
 			board->SetObjTypeInMoveObjBoard(_cellXPos + j, _cellYPos - i, _obj);
-
-
 		}
 	}
 	return true;
@@ -266,8 +281,6 @@ void CBoss::MoveState()
 	int width = m_rect.right - m_rect.left;
 	int height = m_rect.bottom - m_rect.top;
 
-	SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
-
 	int x = 0, y = 0;
 	if (m_state == State::MoveLeft)
 	{
@@ -275,7 +288,6 @@ void CBoss::MoveState()
 
 		if (IsMovable(m_cellXPos - 1, m_cellYPos) == false) 
 		{
-			// (BLOCK_SIZE / 2)만큼 왼쪽 공간을 더 가도록 함
 			if (BOARD_BLOCK_SIZE * m_cellXPos + stageFrameOffsetX < m_rect.left)
 			{
 				m_xpos += m_speed * deltaTime * x;
@@ -291,7 +303,6 @@ void CBoss::MoveState()
 			}
 			return;
 		}
-		SetBossInMoveObjBoard(m_cellXPos - 1, m_cellYPos, this);
 	}
 	else if (m_state == State::MoveRight)
 	{
@@ -314,7 +325,6 @@ void CBoss::MoveState()
 			}
 			return;
 		}
-		SetBossInMoveObjBoard(m_cellXPos + 1, m_cellYPos, this);
 
 	}
 	else if (m_state == State::MoveUp)
@@ -337,7 +347,6 @@ void CBoss::MoveState()
 			}
 			return;
 		}
-		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos - 1, this);
 	}
 	else if (m_state == State::MoveDown)
 	{
@@ -358,10 +367,11 @@ void CBoss::MoveState()
 				m_rect.bottom = BOARD_BLOCK_SIZE * (m_cellYPos + 1) + stageFrameOffsetY;
 				m_rect.top = m_rect.bottom - height;
 			}
+			return;
 		}
-		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos + 1, this);
 	}
 
+	SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, nullptr);
 
 	m_xpos += m_speed * deltaTime * x;
 	m_ypos += m_speed * deltaTime * y;
@@ -371,8 +381,10 @@ void CBoss::MoveState()
 	m_rect.top += m_speed * deltaTime * y;
 	m_rect.bottom += m_speed * deltaTime * y;
 
-	m_cellXPos = (m_xpos + (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
+	m_cellXPos = m_xpos / BOARD_BLOCK_SIZE; // m_pos가 40이면 1, 39면 0 (즉 타일 가운데를 넘어가느냐 마느냐에 따라 cellPos가 바뀜)
 	m_cellYPos = (m_ypos - (BOARD_BLOCK_SIZE / 2) - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
+
+	SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, this);
 
 }
 

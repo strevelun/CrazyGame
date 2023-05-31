@@ -79,6 +79,10 @@ void BounceMoveSkill::Update()
 		rect.bottom += speed * m_dirY;
 	}
 
+	//rect.top += ballY * m_dirY;
+	//rect.bottom += ballY * m_dirY;
+
+
 	rect.left += ballX * m_dirX;
 	rect.right += ballX * m_dirX;
 
@@ -113,15 +117,19 @@ void BounceMoveSkill::Update()
 		rect.right = rect.left + BOARD_BLOCK_SIZE;
 	}
 
+	/*
+	if (bubble->m_cellYPos < 0)		bubble->m_cellYPos = 12;
+	if (bubble->m_cellYPos > 12)	bubble->m_cellYPos = 0;
+	if (bubble->m_cellXPos < 0)		bubble->m_cellXPos = 14;
+	if (bubble->m_cellXPos > 14)	bubble->m_cellXPos = 0;
+
+	rect.top = bubble->m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+	rect.bottom = rect.top + BOARD_BLOCK_SIZE;
+	rect.left = bubble->m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetY;
+	rect.right = rect.left + BOARD_BLOCK_SIZE;
+	*/
 	if (m_prevCellPos.x != bubble->m_cellXPos || m_prevCellPos.y != bubble->m_cellYPos)
 		m_curThrow++;
-
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%d\n", m_eThrowState);
-	OutputDebugStringA(str);
-#endif
-
 
 	bubble->m_rect = rect;
 }

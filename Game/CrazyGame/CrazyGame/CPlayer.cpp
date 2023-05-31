@@ -84,7 +84,6 @@ void CPlayer::Input()
 		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
 		{
 			m_bFire = true;
-			
 		}
 		break;
 
@@ -298,6 +297,8 @@ void CPlayer::Update()
 
 	if (item)
 	{
+		//item->Benfit(this);
+
 		switch (item->GetItemEnum())
 		{
 		case eItem::Gift_Skate:
