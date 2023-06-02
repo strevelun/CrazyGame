@@ -30,7 +30,7 @@ class CPlayer :
 
     u_int m_bubbleCarryLimit = 5;
     u_int m_curBubblePlaced = 0;
-    u_int m_splashLength = 3;
+    u_int m_splashLength = 1;
     float m_invincibleTime = 0.0f;
 
     CVehicle* m_vehicle = nullptr;

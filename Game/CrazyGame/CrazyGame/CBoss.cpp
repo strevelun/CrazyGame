@@ -141,6 +141,7 @@ void CBoss::Update()
 		clip = m_anim.GetCurClip();
 		if (!clip) return;
 
+		SetBossInMoveObjBoard(m_cellXPos, m_cellYPos, this);
 		if (clip->IsCurClipEnd())
 		{
 			m_nextState = State::Die;

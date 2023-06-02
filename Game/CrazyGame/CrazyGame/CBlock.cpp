@@ -49,14 +49,15 @@ void CBlock::Die()
 	CLayer* pLayer = CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Event");
 	if (pLayer != nullptr)
 	{
-		//m_pItem = new CItem(m_rect, eInGameObjType::Item);
-		//pLayer->AddObj(m_pItem);
-		return;
+		m_pItem = new CItem(m_rect, eInGameObjType::Item);
+		pLayer->AddObj(m_pItem);
 	}
 
 	std::wstring strName;
 
-	switch (eItem::Gift_UFO)
+	generated = 5;
+
+	switch ((eItem)generated)
 	{
 	case eItem::Gift_Boom:
 		strName = L"Gift_Boom";
@@ -64,15 +65,16 @@ void CBlock::Die()
 	case eItem::Gift_Bubble:
 		strName = L"Gift_Bubble";
 		break;
-	case eItem::Gift_Dart:
-		strName = L"Gift_Dart";
-		break;
-	case eItem::Gift_Devil:
-		strName = L"Gift_Devil";
-		break;
-	case eItem::Gift_Owl:
-		strName = L"Gift_Owl";
-		break;
+	//case eItem::Gift_Dart:
+	//	strName = L"Gift_Dart";
+	//	break;
+	//case eItem::Gift_Devil:
+	//	strName = L"Gift_Devil";
+	//	break;
+	//
+	// case eItem::Gift_Owl:
+	//	strName = L"Gift_Owl";
+	//	break;
 	case eItem::Gift_Potion:
 		strName = L"Gift_Potion";
 		break;
@@ -82,9 +84,9 @@ void CBlock::Die()
 	case eItem::Gift_Skate:
 		strName = L"Gift_Skate";
 		break;
-	case eItem::Gift_Turtle:
-		strName = L"Gift_Turtle";
-		break;
+	//case eItem::Gift_Turtle:
+		//strName = L"Gift_Turtle";
+		//break;
 	case eItem::Gift_UFO:
 		strName = L"Gift_UFO";
 		break;

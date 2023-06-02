@@ -304,8 +304,8 @@ void CPlayer::Update()
 		case eItem::Gift_Skate:
 			m_speed += 70;
 			break;
-		case eItem::Gift_Turtle:
-			break;
+		//case eItem::Gift_Turtle:
+		//	break;
 		case eItem::Gift_UFO:
 		{
 			// 캐릭터는 그 자리에서 점프 애니메이션 취한 후 탑승
@@ -338,12 +338,12 @@ void CPlayer::Update()
 		case eItem::Gift_Bubble:
 			m_bubbleCarryLimit += 1;
 			break;
-		case eItem::Gift_Dart: // 일정 거리 내에서 다트 투척
-			break;
-		case eItem::Gift_Devil: // 일정 시간동안 방향키 반대로 작동함
-			break;
-		case eItem::Gift_Owl:
-			break;
+		//case eItem::Gift_Dart:
+		//	break;
+		//case eItem::Gift_Devil: // 일정 시간동안 방향키 반대로 작동함
+		//	break;
+		//case eItem::Gift_Owl:
+		//	break;
 		case eItem::Gift_Potion:
 			m_splashLength++;
 			break;

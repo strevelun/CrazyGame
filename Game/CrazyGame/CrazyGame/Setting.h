@@ -37,13 +37,13 @@ enum class eItem
 {
     Gift_Boom,
     Gift_Bubble,
-    Gift_Dart,
-    Gift_Devil,
-    Gift_Owl,
+    //Gift_Dart,
+    //Gift_Devil,
+    //Gift_Owl,
     Gift_Potion,
     Gift_Shoes,
     Gift_Skate,
-    Gift_Turtle,
+    //Gift_Turtle,
     Gift_UFO,
     Gift_None
 };

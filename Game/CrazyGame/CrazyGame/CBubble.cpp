@@ -60,11 +60,15 @@ void CBubble::Update()
 	}
 
 	// 물풍선이 보스와 부딪히면
+	CBoss* boss = (CBoss*)(pBoard->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos));
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
 	{
-		m_isAlive = false;
-		delete m_pSkill;
-		m_pSkill = nullptr;
+		if (boss->GetState() != State::TrappedInBubble)
+		{
+			m_isAlive = false;
+			delete m_pSkill;
+			m_pSkill = nullptr;
+		}
 	}
 }
 
