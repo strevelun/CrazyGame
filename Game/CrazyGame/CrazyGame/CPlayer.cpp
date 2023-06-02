@@ -280,6 +280,7 @@ void CPlayer::Update()
 
 		m_rect.top += 100 * deltaTime;
 		m_rect.bottom += 100 * deltaTime;
+
 		return;
 	}
 
@@ -289,7 +290,7 @@ void CPlayer::Update()
 			m_bIsGettingOff = false;
 
 		m_rect.top += 100 * deltaTime;
-		m_rect.bottom += 100 * deltaTime;
+		m_rect.bottom += 100 * deltaTime;		
 		return;
 	}
 
@@ -498,13 +499,13 @@ void CPlayer::Update()
 		if (obj->GetBitmapIdx() == 1 || obj->GetBitmapIdx() == 4)
 		{
 			bool canMove = false;
-			if (m_eMoveDir == eDir::Left && obj->GetRect().right >= m_rect.left)
+			if (m_eMoveDir == eDir::Left && obj->GetRect().right >= (int)m_rect.left)
 				canMove = true;
-			else if (m_eMoveDir == eDir::Right && obj->GetRect().left <= m_rect.right)
+			else if (m_eMoveDir == eDir::Right && obj->GetRect().left <= (int)m_rect.right)
 				canMove = true;
-			else if (m_eMoveDir == eDir::Up && obj->GetRect().bottom >= m_rect.top)
+			else if (m_eMoveDir == eDir::Up && obj->GetRect().bottom >= (int)m_rect.top)
 				canMove = true;
-			else if (m_eMoveDir == eDir::Down && obj->GetRect().top <= m_rect.bottom)
+			else if (m_eMoveDir == eDir::Down && obj->GetRect().top <= (int)m_rect.bottom)
 				canMove = true;
 
 			if (canMove)
@@ -515,6 +516,12 @@ void CPlayer::Update()
 				obj->Move(eDir::None);
 		}
 	}
+
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%f, %f\n", m_rect.left, m_rect.right);
+	OutputDebugStringA(str);
+#endif
 
 }
 
@@ -532,7 +539,7 @@ void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 void CPlayer::Die() 
 {
-	if (m_bInvincible || m_state == State::TrappedInBubble) // º¸½º¿¡ ºÎµúÈú¶§ 
+	if (m_bInvincible)
 		return;
 	m_nextState = State::Die;
 }

@@ -255,6 +255,7 @@ bool CBoss::IsMovable(int _cellXPos, int _cellYPos)
 
 bool CBoss::SetBossInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _obj)
 {
+	if (_cellXPos < 0 || _cellXPos > 14 || _cellYPos < 0 || _cellYPos > 12) return false;
 
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetBoard();
 

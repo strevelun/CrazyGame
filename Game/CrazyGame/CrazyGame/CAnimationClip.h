@@ -34,7 +34,10 @@ public:
     void SetCurFrameIdx(u_int _idx) { m_frameIdx = _idx; }
     tAnimationFrame* GetFirstFrame() const { return m_vecFrame.at(0); }
     size_t GetFrameSize() const { return m_vecFrame.size(); }
-    bool IsCurClipEnd() const { return m_frameIdx >= m_vecFrame.size() - 1; }
+    bool IsCurClipEnd() const { 
+        int a = 1 + 1;
+        return m_frameIdx >= m_vecFrame.size() - 1; 
+    }
 
     void Update();
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget, D2D1_RECT_F _rect);

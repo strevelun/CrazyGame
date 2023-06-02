@@ -27,19 +27,46 @@ void CBlock::Update()
 
 	if (m_eBlockState == eBlockState::Moving)
 	{
-		m_rect.left += 120 * deltaTime * m_dirX;
-		m_rect.right += 120 * deltaTime * m_dirX;
-		m_rect.top += 120 * deltaTime * m_dirY;
-		m_rect.bottom += 120 * deltaTime * m_dirY;
+ 		m_rect.left += 210 * deltaTime * m_dirX;
+		m_rect.right += 210 * deltaTime * m_dirX;
+		m_rect.top += 210 * deltaTime * m_dirY;
+		m_rect.bottom += 210 * deltaTime * m_dirY;
 
-		if ((m_cellXPos + m_dirX) * BOARD_BLOCK_SIZE + 20 >= m_rect.left)
+		if (m_dirX == -1 && (m_cellXPos + m_dirX) * BOARD_BLOCK_SIZE + 20 >= m_rect.left) // 왼쪽으로 밀었을떄
 		{
 			m_rect.left = (m_cellXPos + m_dirX)* BOARD_BLOCK_SIZE + 20;
 			m_rect.right = m_rect.left + BOARD_BLOCK_SIZE;
 			m_eBlockState = eBlockState::Idle;
 			m_cellXPos += m_dirX;
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj(m_cellXPos, m_cellYPos, L"Event", eInGameObjType::Item);
 			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::Block_Destructible);
-			// 그곳에 아이템이 있다면 없애기
+		}
+		else if (m_dirX == 1 && (m_cellXPos + m_dirX) * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 20 <= m_rect.right) // 오른쪽으로 밀었을때
+		{
+			m_rect.left = (m_cellXPos + m_dirX) * BOARD_BLOCK_SIZE + 20;
+			m_rect.right = m_rect.left + BOARD_BLOCK_SIZE;
+			m_eBlockState = eBlockState::Idle;
+			m_cellXPos += m_dirX;
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj(m_cellXPos, m_cellYPos, L"Event", eInGameObjType::Item);
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::Block_Destructible);
+		}
+		else if (m_dirY == -1 && (m_cellYPos + m_dirY) * BOARD_BLOCK_SIZE + 40 >= m_rect.top) // 위쪽으로 밀었을때
+		{
+			m_rect.bottom = (m_cellYPos + m_dirY) * BOARD_BLOCK_SIZE + 40 + BOARD_BLOCK_SIZE;
+			m_rect.top = m_rect.bottom - m_size.height;
+			m_eBlockState = eBlockState::Idle;
+			m_cellYPos += m_dirY;
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj(m_cellXPos, m_cellYPos, L"Event", eInGameObjType::Item);
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::Block_Destructible);
+		}
+		else if (m_dirY == 1 && (m_cellYPos + m_dirY) * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + 40 <= m_rect.bottom) // 아래쪽으로 밀었을때
+		{
+			m_rect.bottom = (m_cellYPos + m_dirY) * BOARD_BLOCK_SIZE + 40 + BOARD_BLOCK_SIZE;
+			m_rect.top = m_rect.bottom - m_size.height;
+			m_eBlockState = eBlockState::Idle;
+			m_cellYPos += m_dirY;
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->RemoveObj(m_cellXPos, m_cellYPos, L"Event", eInGameObjType::Item);
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::Block_Destructible);
 		}
 	}
 }
@@ -77,6 +104,7 @@ void CBlock::Move(eDir _eDir)
 			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::None);
 
 			m_eBlockState = eBlockState::Moving;
+			m_moveTime = 0.0f;
 		}
 	}
 

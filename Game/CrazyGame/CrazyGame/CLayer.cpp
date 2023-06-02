@@ -13,17 +13,28 @@ void CLayer::SortYPosMoveObj()
 	std::list<CObj*>::iterator iter = m_objList.begin();
 	std::list<CObj*>::iterator iterEnd = m_objList.end();
 
+	CObj* pPlayer = nullptr;
+
 	for (; iter != iterEnd;)
 	{
 		eInGameObjType type = (*iter)->GetType();
-		if (type == eInGameObjType::Character || type == eInGameObjType::Monster || type == eInGameObjType::Boss || type == eInGameObjType::Balloon)
+		if (type == eInGameObjType::Character || type == eInGameObjType::Monster || type == eInGameObjType::Boss || type == eInGameObjType::Balloon || type == eInGameObjType::Block_Destructible)
 		{
+			if (type == eInGameObjType::Character && ((CPlayer*)(*iter))->GetVehicle() != nullptr)
+			{
+				pPlayer = * iter;
+				iter = m_objList.erase(iter);
+				continue; // 플레이어가 우주선 탑승 중이면 맨 뒤로
+			}
 			tempList.push_back(*iter);
 			iter = m_objList.erase(iter);
 		}
 		else
 			iter++;
 	}
+
+	if (pPlayer != nullptr)
+		tempList.push_back(pPlayer);
 
 	std::list<CObj*>::iterator it = tempList.begin();
 	std::list<CObj*>::iterator itEnd = tempList.end();

@@ -79,6 +79,7 @@ bool CBoard::PutObj(int _cellXPos, int _cellYPos, CGameObj* _obj, eInGameObjType
 	if (_type == eInGameObjType::Block_Destructible || _type == eInGameObjType::None)
 	{
 		m_board[_cellYPos][_cellXPos] = _type;
+		return true;
 	}
 
 	if (m_board[_cellYPos][_cellXPos] != eInGameObjType::Balloon 
@@ -116,7 +117,7 @@ void CBoard::RemoveObj(D2D1_RECT_F _rect)
 	m_board[y][x] = eInGameObjType::None;
 }
 
-void CBoard::RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey)
+void CBoard::RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey, eInGameObjType _objType)
 {
 	if (m_mapData.gridX <= _cellXPos) return;
 	if (m_mapData.gridY <= _cellYPos) return;
@@ -124,12 +125,17 @@ void CBoard::RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey)
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
 	CLayer* layer = scene->FindLayer(_strLayerKey);
-	CObj* obj = layer->FindGameObj(_cellXPos, _cellYPos);
+	CObj* obj = layer->FindGameObj(_cellXPos, _cellYPos); // 만약 물풍선 위에 우주선을 타고 있으면 물풍선밖에 찾지 않는다.
 	
-	//if (_strLayerKey.compare(L"Vehicle") == 0)
-	//	((CVehicle*)obj)->SetAvailable(false);
 	if (obj != nullptr && m_board[_cellYPos][_cellXPos] != eInGameObjType::Block_InDestructible)
-		obj->SetAlive(false);
+	{
+		if (_objType == obj->GetType())
+		{
+			obj->SetAlive(false);
+			if (obj->GetType() == eInGameObjType::Item)
+				m_itemBoard[_cellYPos][_cellXPos] = nullptr;
+		}
+	}
 
 	m_board[_cellYPos][_cellXPos] = eInGameObjType::None;
 }
@@ -151,12 +157,12 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 		return false;
 	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Block_Destructible))
 	{
-		RemoveObj(_cellXPos, _cellYPos, L"Block");
+		RemoveObj(_cellXPos, _cellYPos, L"Block", eInGameObjType::Block_Destructible);
 		return false;
 	}
 	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Balloon))
 	{
-		RemoveObj(_cellXPos, _cellYPos, L"Block");
+		RemoveObj(_cellXPos, _cellYPos, L"Block", eInGameObjType::Balloon);
 		return false;
 	}
 

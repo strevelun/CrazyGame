@@ -10,6 +10,8 @@ CObj::CObj()
 CObj::CObj(const D2D1_RECT_F& _rect)
 {
 	m_rect = _rect;
+	m_size.width = _rect.right - _rect.left;
+	m_size.height = _rect.bottom - _rect.top;
 }
 
 CObj::~CObj()

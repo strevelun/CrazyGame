@@ -29,17 +29,21 @@ public:
 
     bool PutObj(int _cellXPos, int _cellYPos, CGameObj* _obj, eInGameObjType _type);
     void RemoveObj(D2D1_RECT_F _rect);
-    void RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey);
+    void RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey, eInGameObjType _objType);
 
     tMapData GetMapData() const { return m_mapData; }
-    void SetInGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type) { m_board[_cellYPos][_cellXPos] = _type; }
+    void SetInGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type) { 
+        if (_cellXPos < 0 || _cellXPos > 14 || _cellYPos < 0 || _cellYPos > 12) return;
+        m_board[_cellYPos][_cellXPos] = _type; }
     void SetObjTypeInMoveObjBoard(int _cellXPos, int _cellYPos, CMoveObj* _pObj) { m_moveObjBoard[_cellYPos][_cellXPos] = _pObj; }
     bool PutSplash(D2D1_RECT_F _rect, std::wstring _animClipName, CMoveObj* _pOwner);
     bool PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipName, CMoveObj* _pOwner);
 
     CItem* GetItem(D2D1_RECT_F _rect);
     CItem* GetItem(u_int _cellXPos, u_int _cellYPos);
-    CMoveObj* GetObjTypeInMoveObjBoard(int _cellXPos, int _cellYPos) { return m_moveObjBoard[_cellYPos][_cellXPos]; }
+    CMoveObj* GetObjTypeInMoveObjBoard(int _cellXPos, int _cellYPos) {
+        if (_cellXPos < 0 || _cellXPos > 14 || _cellYPos < 0 || _cellYPos > 12) return nullptr; 
+        return m_moveObjBoard[_cellYPos][_cellXPos]; }
 
     void PutItem(D2D1_RECT_F _rect, CItem* _pItem);
 };

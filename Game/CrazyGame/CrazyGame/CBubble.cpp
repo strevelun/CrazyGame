@@ -63,7 +63,7 @@ void CBubble::Update()
 	CBoss* boss = (CBoss*)(pBoard->GetObjTypeInMoveObjBoard(m_cellXPos, m_cellYPos));
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
 	{
-		if (boss->GetState() != State::TrappedInBubble)
+		if (boss && boss->GetState() != State::TrappedInBubble)
 		{
 			m_isAlive = false;
 			delete m_pSkill;
