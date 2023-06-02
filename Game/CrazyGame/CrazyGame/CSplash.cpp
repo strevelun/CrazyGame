@@ -56,7 +56,7 @@ void CSplash::Update()
 		if (player)
 		{
 			if (player->GetVehicle() == nullptr)
-				player->Die();
+				player->Hit();
 			else
 				player->GetOffVehicle();
 		}

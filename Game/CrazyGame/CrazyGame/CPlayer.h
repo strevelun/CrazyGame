@@ -50,12 +50,12 @@ public:
     void Update();
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
     void Die() override;
+    void Hit();
 
     //CVehicle* GetVehicle() const { return m_vehicle; }
 
     // state func
     void MoveState();
-    void ReadyState();
 
     void ChangeState(State _state) override;
 

@@ -8,22 +8,21 @@ CVehicle::CVehicle(const D2D1_RECT_F& _rect, std::wstring _strVehicleName) : CMo
 	if (_strVehicleName.compare(L"UFO") == 0)
 	{
 		CAnimationClip* animClip = CResourceManager::GetInst()->GetAnimationClip(L"UFO_Back");
-		animClip->SetFrametimeLimit(0.1f);
+		animClip->SetFrametimeLimit(0.5f);
 		m_anim.AddClip(L"UFO_Back", animClip);
 		animClip = CResourceManager::GetInst()->GetAnimationClip(L"UFO_Front");
-		animClip->SetFrametimeLimit(0.1f);
+		animClip->SetFrametimeLimit(0.5f);
 		m_anim.AddClip(L"UFO_Front", animClip);
 		animClip = CResourceManager::GetInst()->GetAnimationClip(L"UFO_Left");
-		animClip->SetFrametimeLimit(0.1f);
+		animClip->SetFrametimeLimit(0.5f);
 		m_anim.AddClip(L"UFO_Left", animClip);
 		animClip = CResourceManager::GetInst()->GetAnimationClip(L"UFO_Right");
-		animClip->SetFrametimeLimit(0.1f);
+		animClip->SetFrametimeLimit(0.5f);
 		m_anim.AddClip(L"UFO_Right", animClip);
 		m_anim.SetClip(L"UFO_Front");
 		m_size.height = animClip->GetFirstFrame()->size.height;
 		m_size.width = animClip->GetFirstFrame()->size.width;
 		m_strName = L"UFO";
-		m_rideHeight = 40.0f;
 		m_speed = 350.0f;
 	}
 }

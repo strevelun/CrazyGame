@@ -17,14 +17,12 @@ class CVehicle
 
 	eDir m_eMoveDir = eDir::Down;
 
-	u_int m_rideHeight = 0;
 	float m_speed = 0.0f;
 
 public:
 	CVehicle(const D2D1_RECT_F& _rect, std::wstring _strVehicleName);
 	~CVehicle();
 
-	u_int GetRideHeight() const { return m_rideHeight; }
 	std::wstring GetName() const { return m_strName; }
 	float GetSpeed() const { return m_speed; }
 

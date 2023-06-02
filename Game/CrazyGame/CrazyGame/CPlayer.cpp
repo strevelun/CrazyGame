@@ -29,11 +29,16 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rec
 	animClip = CResourceManager::GetInst()->GetAnimationClip(L"bazzi_down");
 	animClip->SetFrametimeLimit(0.1f);
 	m_anim.AddClip(L"bazzi_down", animClip);
-
+	
 	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip(L"bazzi_die"));
 	animClip->SetLoop(false);
 	animClip->SetFrametimeLimit(0.2f);
 	m_anim.AddClip(L"bazzi_die", animClip);
+
+	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip(L"bazzi_trap"));
+	animClip->SetLoop(false);
+	animClip->SetFrametimeLimit(0.2f);
+	m_anim.AddClip(L"bazzi_trap", animClip);
 
 	animClip = new CAnimationClip(*CResourceManager::GetInst()->GetAnimationClip(L"bazzi_ready"));
 	animClip->SetLoop(false);
@@ -261,7 +266,10 @@ void CPlayer::Update()
 		if (boss->GetState() == State::TrappedInBubble)
 			boss->Die();
 		else if (m_state != State::Die)
-			Die();
+		{
+			if(m_vehicle == nullptr)
+				Die();
+		}
 	}
 
 	if (m_bIsJumping)
@@ -302,6 +310,19 @@ void CPlayer::Update()
 	case State::MoveDown:
 		MoveOnMoveObjBoard(this);
 		MoveState();
+		break;
+	case State::Hit:
+		break;
+	case State::TrappedInBubble:
+		clip = m_anim.GetCurClip();
+		if (!clip) return;
+		// 다트 아이템 쓰면 SetClip(live)하고 Idle상태로.
+
+		if (clip->IsCurClipEnd())
+		{
+			Die();
+			return;
+		}
 		break;
 	case State::Die:
 		clip = m_anim.GetCurClip();
@@ -428,8 +449,8 @@ void CPlayer::Update()
 		else
 			delete bubble;
 	}	
-	
-	if (m_spacePressed && m_doubleSpaceDeltaTime <= 0.5f)
+
+	if (m_spacePressed && m_doubleSpaceDeltaTime <= 0.5f && m_doubleSpaceDeltaTime >= 0.2f)
 	{
 		if (m_spaceCount >= 2)
 		{
@@ -475,10 +496,16 @@ void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 void CPlayer::Die() 
 {
-	if (m_bInvincible)
+	if (m_bInvincible || m_state == State::TrappedInBubble) // 보스에 부딪힐때 
 		return;
-
 	m_nextState = State::Die;
+}
+
+void CPlayer::Hit()
+{
+	if (m_bInvincible || m_state == State::TrappedInBubble) // 물줄기에 
+		return;
+	m_nextState = State::TrappedInBubble;
 }
 
 void CPlayer::MoveState()
@@ -716,6 +743,9 @@ void CPlayer::ChangeState(State _state)
 		m_anim.SetClip(L"bazzi_down");
 		if (m_vehicle)
 			m_vehicle->SetDir(eDir::Down);
+		break;
+	case State::TrappedInBubble:
+		m_anim.SetClip(L"bazzi_trap");
 		break;
 	case State::Die:
 		m_anim.SetClip(L"bazzi_die");

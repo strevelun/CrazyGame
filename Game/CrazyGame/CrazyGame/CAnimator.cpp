@@ -44,5 +44,6 @@ void CAnimator::Update()
 void CAnimator::Render(ID2D1BitmapRenderTarget* _pRenderTarget, D2D1_RECT_F _rect)
 {
 	if (m_curClip == nullptr) return;
+
 	m_curClip->Render(_pRenderTarget, _rect);
 }

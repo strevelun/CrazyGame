@@ -213,7 +213,7 @@ void CResourceManager::LoadAnimFiles(std::wstring folderName)
 
 				fread(arr, sizeof(tSpriteData), clipSize, pFile);
 
-				CAnimationClip* animClip = new CAnimationClip;
+				CAnimationClip* animClip = new CAnimationClip(animName);
 
 				std::wstring wstring_string(animName);
 				std::wstring string_string(wstring_string.begin(), wstring_string.end());
@@ -318,7 +318,7 @@ CAnimationClip* CResourceManager::GetAnimationClip(const std::wstring& _str)
 
 		fread(arr, sizeof(tSpriteData), clipSize, pFile);
 
-		pAnimClip = new CAnimationClip;
+		pAnimClip = new CAnimationClip(_str);
 
 		std::wstring wstring_string(animName);
 		std::wstring string_string(wstring_string.begin(), wstring_string.end());

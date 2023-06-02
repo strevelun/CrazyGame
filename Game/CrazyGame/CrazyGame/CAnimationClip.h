@@ -1,12 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "Setting.h"
 
 class CBitmap;
 
 class CAnimationClip
 {
+    std::wstring m_clipName;
     std::vector<tAnimationFrame*> m_vecFrame;
     std::vector<CBitmap*> m_vecBitmap;
     size_t m_frameIdx = 0;
@@ -22,6 +24,7 @@ class CAnimationClip
 
 public:
     CAnimationClip();
+    CAnimationClip(const std::wstring& _str);
     CAnimationClip(const CAnimationClip& _animClip);
 
     tAnimationFrame* GetCurFrame() const { return m_vecFrame.at(m_frameIdx); }
