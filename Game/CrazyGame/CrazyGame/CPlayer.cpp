@@ -377,7 +377,7 @@ void CPlayer::Update()
 				m_rideRect.right -= (size.width - BOARD_BLOCK_SIZE) / 2;
 				m_vehicle->SetRect(m_rideRect);
 				m_vehicle->SetDir(m_eMoveDir);
-				layer->AddObj(m_vehicle);
+				//layer->AddObj(m_vehicle);
 
 				m_xpos = (float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX + (BOARD_BLOCK_SIZE / 2);
 				m_ypos = (float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY + (BOARD_BLOCK_SIZE / 2);
