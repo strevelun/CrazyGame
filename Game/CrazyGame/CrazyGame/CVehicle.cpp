@@ -20,7 +20,8 @@ CVehicle::CVehicle(const D2D1_RECT_F& _rect, std::wstring _strVehicleName) : CMo
 		animClip->SetFrametimeLimit(0.1f);
 		m_anim.AddClip(L"UFO_Right", animClip);
 		m_anim.SetClip(L"UFO_Front");
-
+		m_size.height = animClip->GetFirstFrame()->size.height;
+		m_size.width = animClip->GetFirstFrame()->size.width;
 		m_strName = L"UFO";
 		m_rideHeight = 40.0f;
 		m_speed = 350.0f;

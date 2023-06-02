@@ -17,7 +17,7 @@ class CVehicle
 
 	eDir m_eMoveDir = eDir::Down;
 
-	u_int m_rideHeight;
+	u_int m_rideHeight = 0;
 	float m_speed = 0.0f;
 
 public:

@@ -40,7 +40,11 @@ public:
 	virtual ~CObj();
 
 	D2D1_RECT_F GetRect() const { return m_rect; }
+	D2D1_SIZE_U GetSize() const { return m_size; }
 	eInGameObjType GetType() const { return m_eType; }
+
+
+	void SetRect(D2D1_RECT_F _rect) { m_rect = _rect; }
 
 
 	template <typename T>

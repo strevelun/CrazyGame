@@ -32,9 +32,12 @@ class CPlayer :
     u_int m_curBubblePlaced = 0;
     u_int m_splashLength = 1;
     float m_invincibleTime = 0.0f;
+    bool m_bIsJumping = false;
 
     CVehicle* m_vehicle = nullptr;
     StageManager* m_smInst;
+
+    ID2D1Bitmap* m_pShadow = nullptr;
 
 private:
 

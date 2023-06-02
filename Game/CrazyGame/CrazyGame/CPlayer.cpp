@@ -13,6 +13,7 @@
 #include "CBoss.h"
 #include "Stage.h"
 #include "StageManager.h"
+#include "CUI.h"
 
 CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
@@ -48,6 +49,8 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rec
 
 	m_smInst = StageManager::GetInst();
 	m_smInst->GetStage()->AddMoveObjCnt(MoveObjType::Player);
+
+	m_pShadow = CResourceManager::GetInst()->GetBitmap(L"ShadowCharacter.png")->GetBitmap();
 }
 
 CPlayer::~CPlayer()
@@ -258,6 +261,15 @@ void CPlayer::Update()
 			Die();
 	}
 
+	if (m_bIsJumping)
+	{
+		if (m_rect.bottom >= m_vehicle->GetRect().bottom - 10)
+			m_bIsJumping = false;
+
+		m_rect.top += 100 * deltaTime;
+		m_rect.bottom += 100 * deltaTime;
+	}
+
 	switch (m_state)
 	{
 	case State::Ready:
@@ -320,16 +332,25 @@ void CPlayer::Update()
 			if (layer)
 			{
 				m_rideRect = m_rect;
+				m_rideRect.bottom -= BOARD_BLOCK_SIZE / 3;
 				m_vehicle = new CVehicle(m_rideRect, L"UFO");
+				D2D1_SIZE_U size = m_vehicle->GetSize();
+				m_rideRect.top = m_rideRect.bottom - size.height;
+				m_rideRect.left -= (size.width - BOARD_BLOCK_SIZE )/ 2;
+				m_rideRect.right -= (size.width - BOARD_BLOCK_SIZE) / 2;
+				m_vehicle->SetRect(m_rideRect);
+				m_vehicle->SetDir(m_eMoveDir);
 				layer->AddObj(m_vehicle);
-				m_rect.top -= m_vehicle->GetRideHeight();
-				m_rect.bottom -= m_vehicle->GetRideHeight();
+
+				int height = m_rect.bottom - m_rect.top;
+				m_rect.bottom = m_vehicle->GetRect().top;
+				m_rect.top = m_rect.bottom - height;
 				m_prevSpeed = m_speed;
 				m_speed = m_vehicle->GetSpeed();
 				m_bIsRiding = true;
+				m_bIsJumping = true;
 			}
 
-			//m_bIsJumping = true;
 		}
 		break;
 		case eItem::Gift_Boom:
@@ -424,6 +445,8 @@ void CPlayer::Update()
 
 void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 {
+	_pRenderTarget->DrawBitmap(m_pShadow, { m_rect.left, m_ypos+10, m_rect.left + 40, m_ypos+20 });
+	
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(0.9f, 0.8f, D2D1::Point2F(m_rect.left - 80, m_rect.bottom )));
 	m_anim.Render(_pRenderTarget, m_rect);
 	_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -438,8 +461,6 @@ void CPlayer::Die()
 		return;
 
 	m_nextState = State::Die;
-	//MessageBox(NULL, L"»ç¸Á", L"»ç¸Á", MB_OK);
-	m_anim.SetClip(L"bazzi_die");
 }
 
 void CPlayer::MoveState()
@@ -679,6 +700,7 @@ void CPlayer::ChangeState(State _state)
 			m_vehicle->SetDir(eDir::Down);
 		break;
 	case State::Die:
+		m_anim.SetClip(L"bazzi_die");
 
 		break;
 	}
