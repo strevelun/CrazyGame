@@ -14,6 +14,7 @@
 #include "Stage.h"
 #include "StageManager.h"
 #include "CUI.h"
+#include "CBlock.h"
 
 CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rect)
 {
@@ -479,6 +480,41 @@ void CPlayer::Update()
 	m_attackDelay += deltaTime;
 
 	m_bFire = false;
+
+	D2D1_RECT_F rectCheck = m_rect;
+	int x = 0, y = 0;
+	if (m_eMoveDir == eDir::Left)
+		x = -1;
+	else if (m_eMoveDir == eDir::Right)
+		x = 1;
+	else if (m_eMoveDir == eDir::Up)
+		y = -1;
+	else if (m_eMoveDir == eDir::Down)
+		y = 1;
+
+	CBlock* obj = (CBlock*)(CSceneManager::GetInst()->GetCurScene()->FindLayer(L"Block")->FindGameObj(m_cellXPos + x, m_cellYPos+ y, eInGameObjType::Block_Destructible));
+	if (obj)
+	{
+		if (obj->GetBitmapIdx() == 1 || obj->GetBitmapIdx() == 4)
+		{
+			bool canMove = false;
+			if (m_eMoveDir == eDir::Left && obj->GetRect().right >= m_rect.left)
+				canMove = true;
+			else if (m_eMoveDir == eDir::Right && obj->GetRect().left <= m_rect.right)
+				canMove = true;
+			else if (m_eMoveDir == eDir::Up && obj->GetRect().bottom >= m_rect.top)
+				canMove = true;
+			else if (m_eMoveDir == eDir::Down && obj->GetRect().top <= m_rect.bottom)
+				canMove = true;
+
+			if (canMove)
+			{
+				obj->Move(m_eMoveDir);
+			}
+			else
+				obj->Move(eDir::None);
+		}
+	}
 
 }
 

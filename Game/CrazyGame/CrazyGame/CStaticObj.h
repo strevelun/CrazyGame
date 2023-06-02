@@ -16,5 +16,7 @@ public:
 
     void SetBitmapIdx(u_int _bitmapIdx) { m_bitmapIdx = _bitmapIdx; }
     void SetSprite(tSprite* _sprite) { m_sprite = _sprite; }
+
+    u_int GetBitmapIdx() const { return m_bitmapIdx; }
 };
 

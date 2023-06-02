@@ -96,7 +96,7 @@ void CInGameScene::Init()
 			right,
 			mapData.vecBlockData[i].y * (float)BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE - (sprite->size.width < 30 ? 2 : 0) + stageFrameOffsetY
 		));
-
+		
 		block->SetBitmapIdx(mapData.vecBlockData[i].idx);
 		block->SetSprite(sprite);
 		if (sprite->size.width < 30)

@@ -69,13 +69,17 @@ bool CBoard::IsGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type)
 		return m_board[_cellYPos][_cellXPos] == _type;
 }
 
-// 사실상 물풍선 전용
 bool CBoard::PutObj(int _cellXPos, int _cellYPos, CGameObj* _obj, eInGameObjType _type)
 {
 	if (m_mapData.gridX <= _cellXPos) return false;
 	if (m_mapData.gridY <= _cellYPos) return false;
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
+
+	if (_type == eInGameObjType::Block_Destructible || _type == eInGameObjType::None)
+	{
+		m_board[_cellYPos][_cellXPos] = _type;
+	}
 
 	if (m_board[_cellYPos][_cellXPos] != eInGameObjType::Balloon 
 		&& m_board[_cellYPos][_cellXPos] != eInGameObjType::Block_Destructible)

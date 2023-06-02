@@ -6,16 +6,42 @@
 #include "CInGameScene.h"
 #include "CAnimator.h"
 #include "CAnimationClip.h"
+#include "CTimer.h"
 
 #include <random>
 
 CBlock::CBlock(const D2D1_RECT_F& _rect) : CStaticObj( _rect )
 {
 	//m_pItem = new CItem();
+	m_eType = eInGameObjType::Block_Destructible; // 일단 파괴가능한 블록으로 세팅
+	m_eBlockState = eBlockState::Idle;
 }
 
 CBlock::~CBlock()
 {
+}
+
+void CBlock::Update()
+{
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	if (m_eBlockState == eBlockState::Moving)
+	{
+		m_rect.left += 120 * deltaTime * m_dirX;
+		m_rect.right += 120 * deltaTime * m_dirX;
+		m_rect.top += 120 * deltaTime * m_dirY;
+		m_rect.bottom += 120 * deltaTime * m_dirY;
+
+		if ((m_cellXPos + m_dirX) * BOARD_BLOCK_SIZE + 20 >= m_rect.left)
+		{
+			m_rect.left = (m_cellXPos + m_dirX)* BOARD_BLOCK_SIZE + 20;
+			m_rect.right = m_rect.left + BOARD_BLOCK_SIZE;
+			m_eBlockState = eBlockState::Idle;
+			m_cellXPos += m_dirX;
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::Block_Destructible);
+			// 그곳에 아이템이 있다면 없애기
+		}
+	}
 }
 
 void CBlock::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
@@ -31,6 +57,29 @@ void CBlock::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 void CBlock::Move(eDir _eDir)
 {
 	// 플레이어가 0.5초 이상 블록을 밀면, 자동으로 한칸 끝까지 이동
+	if (_eDir == eDir::None)
+	{
+		m_moveTime = 0.0f;
+		return;
+	}
+
+	m_dirX = 0, m_dirY = 0;
+	if (_eDir == eDir::Left) m_dirX = -1;
+	else if (_eDir == eDir::Right) m_dirX = 1;
+	if (_eDir == eDir::Up) m_dirY = -1;
+	if (_eDir == eDir::Down) m_dirY = 1;
+	
+	if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsMovable(m_cellXPos + m_dirX, m_cellYPos + m_dirY))
+	{
+		m_moveTime += CTimer::GetInst()->GetDeltaTime();
+		if (m_moveTime >= m_moveTimeLimit)
+		{
+			((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(m_cellXPos, m_cellYPos, this, eInGameObjType::None);
+
+			m_eBlockState = eBlockState::Moving;
+		}
+	}
+
 
 }
 
