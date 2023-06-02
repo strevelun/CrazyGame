@@ -6,6 +6,8 @@
 #include "CInGameScene.h"
 #include "CSceneManager.h"
 #include "CTimer.h"
+#include "StageManager.h"
+#include "Stage.h"
 
 #include <random>
 
@@ -237,6 +239,7 @@ void CMonster::Update()
 		if (clip->IsCurClipEnd())
 		{
 			m_isAlive = false;
+			StageManager::GetInst()->GetStage()->SubMoveObjCnt(MoveObjType::Monster);
 			return;
 		}
 	}

@@ -33,6 +33,7 @@ class CPlayer :
     u_int m_splashLength = 1;
     float m_invincibleTime = 0.0f;
     bool m_bIsJumping = false;
+    bool m_bIsGettingOff = false;
 
     CVehicle* m_vehicle = nullptr;
     StageManager* m_smInst;

@@ -46,6 +46,8 @@ CPlayer::CPlayer(const D2D1_RECT_F& _rect, eInGameObjType _type) : CMoveObj(_rec
 
 	m_speed = 210.0f;
 	m_eType = _type;
+	m_size.width = _rect.right - _rect.left;
+	m_size.height = _rect.bottom - _rect.top;
 
 	m_smInst = StageManager::GetInst();
 	m_smInst->GetStage()->AddMoveObjCnt(MoveObjType::Player);
@@ -62,8 +64,9 @@ CPlayer::~CPlayer()
 
 void CPlayer::Input()
 {
-	if (m_nextState == State::Die)
-		return;
+	if (m_nextState == State::Die) return;
+	if (m_bIsJumping == true) return;
+	if (m_bIsGettingOff == true) return;
 
 	switch (m_state)
 	{
@@ -268,6 +271,17 @@ void CPlayer::Update()
 
 		m_rect.top += 100 * deltaTime;
 		m_rect.bottom += 100 * deltaTime;
+		return;
+	}
+
+	if (m_bIsGettingOff)
+	{
+		if (m_rect.bottom >= m_ypos + (BOARD_BLOCK_SIZE / 2))
+			m_bIsGettingOff = false;
+
+		m_rect.top += 100 * deltaTime;
+		m_rect.bottom += 100 * deltaTime;
+		return;
 	}
 
 	switch (m_state)
@@ -331,7 +345,8 @@ void CPlayer::Update()
 
 			if (layer)
 			{
-				m_rideRect = m_rect;
+				m_rideRect = { (float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX, (float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY, (float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX, (float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY };
+
 				m_rideRect.bottom -= BOARD_BLOCK_SIZE / 3;
 				m_vehicle = new CVehicle(m_rideRect, L"UFO");
 				D2D1_SIZE_U size = m_vehicle->GetSize();
@@ -342,9 +357,12 @@ void CPlayer::Update()
 				m_vehicle->SetDir(m_eMoveDir);
 				layer->AddObj(m_vehicle);
 
-				int height = m_rect.bottom - m_rect.top;
+				m_xpos = (float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX + (BOARD_BLOCK_SIZE / 2);
+				m_ypos = (float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY + (BOARD_BLOCK_SIZE / 2);
+				m_rect.left = m_xpos - (m_size.width / 3) - 3;
+				m_rect.right = m_xpos + (m_size.width / 3) - 3;
 				m_rect.bottom = m_vehicle->GetRect().top;
-				m_rect.top = m_rect.bottom - height;
+				m_rect.top = m_rect.bottom - m_size.height;
 				m_prevSpeed = m_speed;
 				m_speed = m_vehicle->GetSpeed();
 				m_bIsRiding = true;
@@ -735,8 +753,7 @@ void CPlayer::GetOffVehicle()
 	m_bIsRiding = false;
 	m_speed = m_prevSpeed;
 
-	m_rect.top += m_vehicle->GetRideHeight();
-	m_rect.bottom += m_vehicle->GetRideHeight();
+	m_bIsGettingOff = true;
 	m_vehicle->SetAlive(false);
 	m_vehicle = nullptr;
 }

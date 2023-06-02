@@ -46,7 +46,7 @@ void Stage::CheckState()
 			m_uiManager->ShowAndAddUIPanel(L"draw.png");
 			m_fPlayTime = 0.0f;
 		}
-		else if (m_mapMoveObjCnt[MoveObjType::Boss] <= 0)
+		else if (m_mapMoveObjCnt[MoveObjType::Boss] <= 0 && m_mapMoveObjCnt[MoveObjType::Monster] <= 0)
 		{
 			m_eState = eStageState::End;
 			m_uiManager->ShowAndAddUIPanel(L"win.png");
