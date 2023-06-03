@@ -66,7 +66,14 @@ bool CBoard::IsGameObjType(int _cellXPos, int _cellYPos, eInGameObjType _type)
 		return m_moveObjBoard[_cellYPos][_cellXPos]->GetType() == _type;
 	}
 	else
+	{
+		if (_type == eInGameObjType::Item)
+		{
+			if(m_itemBoard[_cellYPos][_cellXPos] != nullptr)
+				return true;
+		}
 		return m_board[_cellYPos][_cellXPos] == _type;
+	}
 }
 
 bool CBoard::PutObj(int _cellXPos, int _cellYPos, CGameObj* _obj, eInGameObjType _type)
@@ -132,7 +139,7 @@ void CBoard::RemoveObj(int _cellXPos, int _cellYPos, std::wstring _strLayerKey, 
 		if (_objType == obj->GetType())
 		{
 			obj->SetAlive(false);
-			if (obj->GetType() == eInGameObjType::Item)
+			if (_objType == eInGameObjType::Item)
 				m_itemBoard[_cellYPos][_cellXPos] = nullptr;
 		}
 	}
@@ -153,8 +160,23 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 	if (m_mapData.gridX <= _cellXPos) return false;
 	if (m_mapData.gridY <= _cellYPos) return false;
 
+	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
+
+	CLayer* layer = scene->FindLayer(L"Event");
+
+	int stageFrameOffsetX = 20;
+	int stageFrameOffsetY = 40;
+
+	D2D1_RECT_F rect = {
+			(float)_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY,
+			(float)_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
+			(float)_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
+	};
+
 	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Block_InDestructible))
 		return false;
+
 	if (IsGameObjType(_cellXPos, _cellYPos, eInGameObjType::Block_Destructible))
 	{
 		RemoveObj(_cellXPos, _cellYPos, L"Block", eInGameObjType::Block_Destructible);
@@ -166,21 +188,10 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 		return false;
 	}
 
-	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
-
-	CLayer* layer = scene->FindLayer(L"Event");
-
-	int stageFrameOffsetX = 20;
-	int stageFrameOffsetY = 40;
 
 	if (layer)
 	{
-		CSplash* splash = new CSplash({
-			(float)_cellXPos* BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)_cellYPos* BOARD_BLOCK_SIZE + stageFrameOffsetY,
-			(float)_cellXPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX,
-			(float)_cellYPos* BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY
-			}, _animClipName, _pOwner);
+		CSplash* splash = new CSplash(rect, _animClipName, _pOwner);
 
 		layer->AddObj(splash);
 	}
@@ -214,10 +225,13 @@ CItem* CBoard::GetItem(u_int _cellXPos, u_int _cellYPos)
 	return item;
 }
 
-void CBoard::PutItem(D2D1_RECT_F _rect, CItem* _pItem)
+void CBoard::PutItem(int _cellXPos, int _cellYPos, CItem* _pItem)
 {
-	int x, y;
-	CObj::RectToPos(_rect, x, y);
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%d, %d\n", _cellXPos, _cellYPos);
+	OutputDebugStringA(str);
+#endif
 
-	m_itemBoard[y][x] = _pItem;
+	m_itemBoard[_cellYPos][_cellXPos] = _pItem;
 }

@@ -45,5 +45,5 @@ public:
         if (_cellXPos < 0 || _cellXPos > 14 || _cellYPos < 0 || _cellYPos > 12) return nullptr; 
         return m_moveObjBoard[_cellYPos][_cellXPos]; }
 
-    void PutItem(D2D1_RECT_F _rect, CItem* _pItem);
+    void PutItem(int _cellXPos, int _cellYPos, CItem* _pItem);
 };

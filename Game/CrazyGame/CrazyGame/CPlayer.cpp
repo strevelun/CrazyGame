@@ -457,11 +457,6 @@ void CPlayer::Update()
 			break;
 		}
 	}
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%d\n", m_bSpaceClicked);
-	OutputDebugStringA(str);
-#endif
 
 	if (m_vehicle)
 		m_vehicle->Update(m_rideRect);

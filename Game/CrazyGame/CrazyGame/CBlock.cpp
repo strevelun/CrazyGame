@@ -175,5 +175,5 @@ void CBlock::Die()
 	m_pItem->Init((eItem)generated, strName);
 	
 	scene->m_board->SetInGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item);
-	scene->m_board->PutItem(m_rect, m_pItem);
+	scene->m_board->PutItem(m_cellXPos, m_cellYPos, m_pItem);
 }
