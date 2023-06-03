@@ -91,6 +91,12 @@ void CBubble::Move(eDir _eDir)
 	else if (_eDir == eDir::Up) dirY = -1;
 	else if (_eDir == eDir::Down) dirY = 1;
 
+	if (m_pOwner->GetType() == eInGameObjType::Boss)
+	{
+		m_pSkill = new KickSkill(this, _eDir);
+		return;
+	}
+
 	if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsMovable(m_cellXPos + dirX, m_cellYPos + dirY))
 	{
 		m_moveTime += CTimer::GetInst()->GetDeltaTime();

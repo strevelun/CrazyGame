@@ -494,7 +494,7 @@ void CBoss::Attack01(CBoard* _pBoard)
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
 
-	if (startX < 0 || startY < 0 || startX > 14 || startY > 12) return;
+	if (_pBoard->IsMovable(startX, startY) == false) return;
 
 	CBubble* bubble = new CBubble({
 		(float)startX * BOARD_BLOCK_SIZE + stageFrameOffsetX,

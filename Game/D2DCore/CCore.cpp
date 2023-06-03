@@ -42,9 +42,6 @@ HRESULT CCore::InitDevice()
 		&m_textFormat
 	);
 
-
-
-
 	return hr;
 }
 
