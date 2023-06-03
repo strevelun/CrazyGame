@@ -18,8 +18,6 @@ class CPlayer :
     D2D1_RECT_F m_rideRect;
     //CAnimationClip* m_animDir[4];
 
-    float m_doubleSpaceDeltaTime = 0.0f;
-    bool m_bThrowReady = false;
     bool m_bSpaceClicked = false;
     bool m_bSpacePressed = false;
     u_int m_throwCount = 0;

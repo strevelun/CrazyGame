@@ -497,8 +497,6 @@ void CPlayer::Update()
 		if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
 		{
 			m_curBubblePlaced++;
-			m_doubleSpaceDeltaTime = 0.0f;// 방금 놓은 물풍선만 던질 수 있다. 다른 칸으로 넘어가면 0으로 초기화
-			m_bThrowReady = true;
 			m_throwCount = 0;
 		}
 		else

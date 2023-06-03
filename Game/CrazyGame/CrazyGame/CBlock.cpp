@@ -83,11 +83,6 @@ void CBlock::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 void CBlock::Move(eDir _eDir)
 {
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%f\n", m_moveTime);
-	OutputDebugStringA(str);
-#endif
 	// 플레이어가 0.5초 이상 블록을 밀면, 자동으로 한칸 끝까지 이동
 	if (_eDir == eDir::None)
 	{
@@ -98,8 +93,8 @@ void CBlock::Move(eDir _eDir)
 	m_dirX = 0, m_dirY = 0;
 	if (_eDir == eDir::Left) m_dirX = -1;
 	else if (_eDir == eDir::Right) m_dirX = 1;
-	if (_eDir == eDir::Up) m_dirY = -1;
-	if (_eDir == eDir::Down) m_dirY = 1;
+	else if (_eDir == eDir::Up) m_dirY = -1;
+	else if (_eDir == eDir::Down) m_dirY = 1;
 	
 	if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsMovable(m_cellXPos + m_dirX, m_cellYPos + m_dirY))
 	{
@@ -112,8 +107,6 @@ void CBlock::Move(eDir _eDir)
 			m_moveTime = 0.0f;
 		}
 	}
-
-
 }
 
 void CBlock::Die()

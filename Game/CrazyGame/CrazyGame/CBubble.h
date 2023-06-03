@@ -23,6 +23,8 @@ class CBubble :
     u_int m_splashLength = 0;
     u_int m_attackPower = 25;
 
+    float m_moveTime = 0.0f, m_moveTimeLimit = 0.2f;
+
 public:
     CBubble(const D2D1_RECT_F& _rect, eInGameObjType _type);
     ~CBubble();

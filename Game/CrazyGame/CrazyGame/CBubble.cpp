@@ -79,7 +79,27 @@ void CBubble::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 void CBubble::Move(eDir _eDir)
 {
-	m_pSkill = new KickSkill(this, _eDir);
+	if (_eDir == eDir::None)
+	{
+		m_moveTime = 0.0f;
+		return;
+	}
+
+	int dirX = 0, dirY = 0;
+	if (_eDir == eDir::Left) dirX = -1;
+	else if (_eDir == eDir::Right) dirX = 1;
+	else if (_eDir == eDir::Up) dirY = -1;
+	else if (_eDir == eDir::Down) dirY = 1;
+
+	if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsMovable(m_cellXPos + dirX, m_cellYPos + dirY))
+	{
+		m_moveTime += CTimer::GetInst()->GetDeltaTime();
+		if (m_moveTime >= m_moveTimeLimit)
+		{
+			m_pSkill = new KickSkill(this, _eDir);
+			m_moveTime = 0.0f;
+		}
+	}
 }
 
 void CBubble::BounceMove(eDir _eDir)

@@ -101,6 +101,7 @@ void CInGameScene::Init()
 		block->SetSprite(sprite);
 		if (sprite->size.width < 30)
 		{
+			//m_board->RemoveObj(block->GetPoint().x, block->GetPoint().y, L"Block", eInGameObjType::Block_Destructible);
 			layer = CreateLayer(L"Flag", INT_MAX);
 			layer->AddObj(block);
 			layer = FindLayer(L"Block");
