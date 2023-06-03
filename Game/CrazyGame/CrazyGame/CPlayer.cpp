@@ -93,10 +93,17 @@ void CPlayer::Input()
 		{
 			m_nextState = State::MoveDown;
 		}
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_bSpacePressed == false)
 		{
 			m_bFire = true;
+			m_bSpacePressed = true;
 		}
+		else if (!(GetAsyncKeyState(VK_SPACE) & 0x8000) && m_bSpacePressed == true)
+		{
+			m_bSpacePressed = false;
+			m_bSpaceClicked = true;
+		}
+
 		break;
 
 	case State::MoveLeft:
@@ -120,9 +127,15 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_bSpacePressed == false)
 		{
 			m_bFire = true;
+			m_bSpacePressed = true;
+		}
+		else if (!(GetAsyncKeyState(VK_SPACE) & 0x8000) && m_bSpacePressed == true)
+		{
+			m_bSpacePressed = false;
+			m_bSpaceClicked = true;
 		}
 
 		break;
@@ -147,10 +160,17 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_bSpacePressed == false)
 		{
 			m_bFire = true;
+			m_bSpacePressed = true;
 		}
+		else if (!(GetAsyncKeyState(VK_SPACE) & 0x8000) && m_bSpacePressed == true)
+		{
+			m_bSpacePressed = false;
+			m_bSpaceClicked = true;
+		}
+
 		break;
 	case State::MoveUp:
 		m_eMoveDir = eDir::Up;
@@ -173,10 +193,17 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_bSpacePressed == false)
 		{
 			m_bFire = true;
+			m_bSpacePressed = true;
 		}
+		else if (!(GetAsyncKeyState(VK_SPACE) & 0x8000) && m_bSpacePressed == true)
+		{
+			m_bSpacePressed = false;
+			m_bSpaceClicked = true;
+		}
+
 		break;
 
 	case State::MoveDown:
@@ -200,9 +227,15 @@ void CPlayer::Input()
 		else
 			m_nextState = State::Idle;
 
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_attackDelay >= 0.2f)
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_bSpacePressed == false)
 		{
 			m_bFire = true;
+			m_bSpacePressed = true;
+		}
+		else if (!(GetAsyncKeyState(VK_SPACE) & 0x8000) && m_bSpacePressed == true)
+		{
+			m_bSpacePressed = false;
+			m_bSpaceClicked = true;
 		}
 		
 		break;
@@ -213,6 +246,28 @@ void CPlayer::Input()
 void CPlayer::Update()
 {
 	Input();
+	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+
+	if (m_bIsJumping)
+	{
+		if (m_rect.bottom >= m_vehicle->GetRect().bottom - 10) // 우주선에서 내리고 바로 아이템 먹었을때 m_vehicle = nullptr
+			m_bIsJumping = false;
+
+		m_rect.top += 100 * deltaTime;
+		m_rect.bottom += 100 * deltaTime;
+
+		return;
+	}
+
+	if (m_bIsGettingOff)
+	{
+		if (m_rect.bottom >= m_ypos + (BOARD_BLOCK_SIZE / 2))
+			m_bIsGettingOff = false;
+
+		m_rect.top += 100 * deltaTime;
+		m_rect.bottom += 100 * deltaTime;
+		return;
+	}
 
 	if (!m_vehicle && m_state != State::Idle)
 		CGameObj::Update();
@@ -224,7 +279,6 @@ void CPlayer::Update()
 		return;
 	}
 
-	float deltaTime = CTimer::GetInst()->GetDeltaTime();
 
 
 
@@ -273,26 +327,7 @@ void CPlayer::Update()
 		}
 	}
 
-	if (m_bIsJumping)
-	{
-		if (m_rect.bottom >= m_vehicle->GetRect().bottom - 10)
-			m_bIsJumping = false;
 
-		m_rect.top += 100 * deltaTime;
-		m_rect.bottom += 100 * deltaTime;
-
-		return;
-	}
-
-	if (m_bIsGettingOff)
-	{
-		if (m_rect.bottom >= m_ypos + (BOARD_BLOCK_SIZE / 2))
-			m_bIsGettingOff = false;
-
-		m_rect.top += 100 * deltaTime;
-		m_rect.bottom += 100 * deltaTime;		
-		return;
-	}
 
 	switch (m_state)
 	{
@@ -338,6 +373,9 @@ void CPlayer::Update()
 		}
 	break;
 	}
+
+
+
 
 	CItem* item = board->GetItem(m_cellXPos, m_cellYPos);
 
@@ -415,20 +453,30 @@ void CPlayer::Update()
 		}
 	}
 
+
 	if (m_vehicle)
 		m_vehicle->Update(m_rideRect);
 
-
-	if (m_bFire )
+	if (m_bSpaceClicked && ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
 	{
-		m_attackDelay = 0;
-		m_spaceCount++;
-		if (!m_spacePressed)
-		{
-			m_spacePressed = true;
-		}
+		m_throwCount++;
+		m_bSpaceClicked = false;
 	}
 
+	// 클릭 2번했고 그 자리에 물풍선이 있고, 우주선에 안 탔을 경우
+	// throwCount는 처음 물풍선을 놓은 그 자리에서 두번 '클릭' 했을 경우 올라감. 
+	if (m_throwCount >= 2)
+	{
+		CGameObj* obj = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
+		if (obj != nullptr)
+		{
+			if (m_vehicle == nullptr)
+			{
+				((CBubble*)obj)->BounceMove(m_eMoveDir);
+				m_throwCount = 0;
+			}
+		}
+	}
 
 	if (m_bFire
 		&& m_curBubblePlaced < m_bubbleCarryLimit
@@ -447,38 +495,19 @@ void CPlayer::Update()
 		bubble->SetSplashLength(m_splashLength);
 		D2D1_POINT_2U point = bubble->GetPoint();
 		if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
+		{
 			m_curBubblePlaced++;
+			m_doubleSpaceDeltaTime = 0.0f;// 방금 놓은 물풍선만 던질 수 있다. 다른 칸으로 넘어가면 0으로 초기화
+			m_bThrowReady = true;
+			m_throwCount = 0;
+		}
 		else
-			delete bubble;
+		{
+			delete bubble; 
+		}
 	}	
 
-	if (m_spacePressed && m_doubleSpaceDeltaTime <= 0.5f && m_doubleSpaceDeltaTime >= 0.2f)
-	{
-		if (m_spaceCount >= 2)
-		{
-			m_spaceCount = 0;
-			m_doubleSpaceDeltaTime = 0.0f;
-			m_spacePressed = false;
-			CGameObj* obj = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
-			if (obj != nullptr)
-			{
-				((CBubble*)obj)->BounceMove(m_eMoveDir);
-			}
-
-		}
-	}
-	else if (m_doubleSpaceDeltaTime >= 0.5f)
-	{
-		m_spaceCount = 0;
-		m_doubleSpaceDeltaTime = 0.0f;
-		m_spacePressed = false;
-	}
-
-	if (m_spacePressed)
-	{
-		m_doubleSpaceDeltaTime += deltaTime;
-	}
-	m_attackDelay += deltaTime;
+	
 
 	m_bFire = false;
 
@@ -516,9 +545,6 @@ void CPlayer::Update()
 				obj->Move(eDir::None);
 		}
 	}
-
-
-
 }
 
 void CPlayer::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
