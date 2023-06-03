@@ -7,6 +7,8 @@
 #include "CAnimator.h"
 #include "CAnimationClip.h"
 #include "CTimer.h"
+#include "CSceneManager.h"
+#include "CPlayer.h"
 
 #include <random>
 
@@ -24,13 +26,15 @@ CBlock::~CBlock()
 void CBlock::Update()
 {
 	float deltaTime = CTimer::GetInst()->GetDeltaTime();
+	CPlayer *player = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->GetPlayer();
+	float speed = player->GetSpeed();
 
 	if (m_eBlockState == eBlockState::Moving)
 	{
- 		m_rect.left += 210 * deltaTime * m_dirX;
-		m_rect.right += 210 * deltaTime * m_dirX;
-		m_rect.top += 210 * deltaTime * m_dirY;
-		m_rect.bottom += 210 * deltaTime * m_dirY;
+ 		m_rect.left += speed * deltaTime * m_dirX;
+		m_rect.right += speed * deltaTime * m_dirX;
+		m_rect.top += speed * deltaTime * m_dirY;
+		m_rect.bottom += speed * deltaTime * m_dirY;
 
 		if (m_dirX == -1 && (m_cellXPos + m_dirX) * BOARD_BLOCK_SIZE + 20 >= m_rect.left) // 왼쪽으로 밀었을떄
 		{
@@ -116,8 +120,11 @@ void CBlock::Die()
 
 	std::random_device random;                              
 	std::mt19937 engine(random());                        
-	std::uniform_int_distribution<int> distribution(0, (int)eItem::Gift_None - 1);
+	std::uniform_int_distribution<int> distribution(0, (int)eItem::Gift_None);
 	auto generated = distribution(engine);
+
+	if ((eItem)generated == eItem::Gift_None)
+		return;
 
 	CInGameScene* scene = dynamic_cast<CInGameScene*>(CSceneManager::GetInst()->GetCurScene());
 

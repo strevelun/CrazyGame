@@ -62,6 +62,7 @@ public:
     std::wstring GetStrDir(eDir _dir);
     //void ReduceCurBubble(u_int _numOfBubbles) { m_curBubblePlaced -= _numOfBubbles; }
     void GetOffVehicle();
+    float GetSpeed() const { return m_speed; }
 
 
     CVehicle*   GetVehicle() const { return m_vehicle; }
