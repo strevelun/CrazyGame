@@ -534,7 +534,7 @@ void CPlayer::Update()
 			bool canMove = false;
 			if (m_state == State::MoveLeft && obj->GetRect().right >= (int)m_rect.left)
 				canMove = true;
-			else if (m_state == State::MoveRight && obj->GetRect().left <= (int)m_rect.right)
+			else if (m_state == State::MoveRight && obj->GetRect().left <= (int)m_xpos + 40)
 				canMove = true;
 			else if (m_state == State::MoveUp && obj->GetRect().bottom >= (int)m_rect.top)
 				canMove = true;
@@ -572,7 +572,7 @@ void CPlayer::Die()
 
 void CPlayer::Hit()
 {
-	if (m_bInvincible || m_state == State::TrappedInBubble) // 물줄기에 
+	if (m_bInvincible || m_state == State::TrappedInBubble || m_state == State::Die) // 물줄기에 
 		return;
 	m_nextState = State::TrappedInBubble;
 }

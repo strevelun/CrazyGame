@@ -18,7 +18,7 @@ void CLayer::SortYPosMoveObj()
 	for (; iter != iterEnd;)
 	{
 		eInGameObjType type = (*iter)->GetType();
-		if (type == eInGameObjType::Character || type == eInGameObjType::Monster || type == eInGameObjType::Boss || type == eInGameObjType::Balloon || type == eInGameObjType::Block_Destructible || type == eInGameObjType::Item)
+		if (type == eInGameObjType::Character || type == eInGameObjType::Monster || type == eInGameObjType::Boss || type == eInGameObjType::Balloon || type == eInGameObjType::Item || type == eInGameObjType::Splash)
 		{
 			if (type == eInGameObjType::Character && ((CPlayer*)(*iter))->GetVehicle() != nullptr)
 			{

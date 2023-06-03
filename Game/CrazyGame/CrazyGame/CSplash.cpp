@@ -22,6 +22,7 @@ CSplash::CSplash(const D2D1_RECT_F& _rect, std::wstring _animClipName, CMoveObj*
 	m_rect = _rect;
 	CObj::RectToPos(m_rect, m_cellXPos, m_cellYPos);
 	m_pOwner = _pOwner;
+	m_eType = eInGameObjType::Splash;
 }
 
 CSplash::~CSplash()
@@ -38,13 +39,12 @@ void CSplash::Update()
 	
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Item))
 	{
-		pBoard->RemoveObj(m_cellXPos, m_cellYPos, L"Event", eInGameObjType::Item);
-		//pBoard->PutItem(m_cellXPos, m_cellYPos, nullptr);
+		pBoard->RemoveObj(m_cellXPos, m_cellYPos, L"Block", eInGameObjType::Item);
 	}
 
 	if (pBoard->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
 	{
-		CLayer* layer = scene->FindLayer(L"Event");		
+		CLayer* layer = scene->FindLayer(L"Block");		
 		CObj* obj = layer->FindGameObj(m_cellXPos, m_cellYPos);
 		if (obj)
 		{

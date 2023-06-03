@@ -31,6 +31,7 @@ enum class eInGameObjType
     Item,
     Monster,
     Boss,
+    Splash
 };
 
 enum class eItem

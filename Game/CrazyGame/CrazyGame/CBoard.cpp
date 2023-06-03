@@ -162,7 +162,7 @@ bool CBoard::PutSplash(u_int _cellXPos, u_int _cellYPos, std::wstring _animClipN
 
 	CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
 
-	CLayer* layer = scene->FindLayer(L"Event");
+	CLayer* layer = scene->FindLayer(L"Block");
 
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
