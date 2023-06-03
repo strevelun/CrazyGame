@@ -392,7 +392,8 @@ void CPlayer::Update()
 		switch (item->GetItemEnum())
 		{
 		case eItem::Gift_Skate:
-			m_speed += 70;
+			if(m_speed < 280.0f)
+				m_speed += 70;
 			break;
 		//case eItem::Gift_Turtle:
 		//	break;
@@ -448,7 +449,8 @@ void CPlayer::Update()
 		//case eItem::Gift_Owl:
 		//	break;
 		case eItem::Gift_Potion:
-			m_splashLength++;
+			if(m_splashLength < m_splashLengthLimit)
+				m_splashLength++;
 			break;
 		case eItem::Gift_Shoes:
 			m_bKickable = true;
