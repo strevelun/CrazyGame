@@ -299,10 +299,13 @@ void CPlayer::Update()
 	int stageFrameOffsetX = 20;
 	int stageFrameOffsetY = 40;
 
+	int prevXPos = m_cellXPos;
+	int prevYPos = m_cellYPos;
+
 	m_cellXPos = (m_xpos - stageFrameOffsetX) / BOARD_BLOCK_SIZE;
 	m_cellYPos = (m_ypos - stageFrameOffsetY) / BOARD_BLOCK_SIZE;
 
-
+	if (prevXPos != m_cellXPos || prevYPos != m_cellYPos) m_throwCount = 0;
 
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
 
@@ -452,15 +455,22 @@ void CPlayer::Update()
 			break;
 		}
 	}
-
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%d\n", m_bSpaceClicked);
+	OutputDebugStringA(str);
+#endif
 
 	if (m_vehicle)
 		m_vehicle->Update(m_rideRect);
 
-	if (m_bSpaceClicked && ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
+	if (m_bSpaceClicked)
 	{
-		m_throwCount++;
 		m_bSpaceClicked = false;
+		if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Balloon))
+		{
+			m_throwCount++;
+		}
 	}
 
 	// 클릭 2번했고 그 자리에 물풍선이 있고, 우주선에 안 탔을 경우
@@ -497,7 +507,6 @@ void CPlayer::Update()
 		if (((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board->PutObj(point.x, point.y, bubble, eInGameObjType::Balloon))
 		{
 			m_curBubblePlaced++;
-			m_throwCount = 0;
 		}
 		else
 		{
