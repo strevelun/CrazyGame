@@ -83,6 +83,11 @@ void CBlock::Render(ID2D1BitmapRenderTarget* _pRenderTarget)
 
 void CBlock::Move(eDir _eDir)
 {
+#ifdef _DEBUG
+	char str[50] = "";
+	sprintf_s(str, "%f\n", m_moveTime);
+	OutputDebugStringA(str);
+#endif
 	// 플레이어가 0.5초 이상 블록을 밀면, 자동으로 한칸 끝까지 이동
 	if (_eDir == eDir::None)
 	{

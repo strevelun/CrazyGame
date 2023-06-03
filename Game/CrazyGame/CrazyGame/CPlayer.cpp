@@ -499,13 +499,13 @@ void CPlayer::Update()
 		if (obj->GetBitmapIdx() == 1 || obj->GetBitmapIdx() == 4)
 		{
 			bool canMove = false;
-			if (m_eMoveDir == eDir::Left && obj->GetRect().right >= (int)m_rect.left)
+			if (m_state == State::MoveLeft && obj->GetRect().right >= (int)m_rect.left)
 				canMove = true;
-			else if (m_eMoveDir == eDir::Right && obj->GetRect().left <= (int)m_rect.right)
+			else if (m_state == State::MoveRight && obj->GetRect().left <= (int)m_rect.right)
 				canMove = true;
-			else if (m_eMoveDir == eDir::Up && obj->GetRect().bottom >= (int)m_rect.top)
+			else if (m_state == State::MoveUp && obj->GetRect().bottom >= (int)m_rect.top)
 				canMove = true;
-			else if (m_eMoveDir == eDir::Down && obj->GetRect().top <= (int)m_rect.bottom)
+			else if (m_state == State::MoveDown && obj->GetRect().top <= (int)m_rect.bottom)
 				canMove = true;
 
 			if (canMove)
@@ -517,11 +517,7 @@ void CPlayer::Update()
 		}
 	}
 
-#ifdef _DEBUG
-	char str[50] = "";
-	sprintf_s(str, "%f, %f\n", m_rect.left, m_rect.right);
-	OutputDebugStringA(str);
-#endif
+
 
 }
 
