@@ -2,6 +2,8 @@
 #include "CStaticObj.h"
 #include <string>
 
+class CPlayer;
+
 class CItem :
     public CStaticObj
 {
@@ -15,6 +17,7 @@ public:
     void Render(ID2D1BitmapRenderTarget* _pRenderTarget);
     void SetItemEnum(eItem _eItem) { m_eItem = _eItem; }
     void SetItemName(std::wstring _strName) { m_itemName = _strName; }
+    void Benefit(CPlayer* _pPlayer);
     
     eItem GetItemEnum() { return m_eItem; }
     std::wstring GetItemName() { return m_itemName; }

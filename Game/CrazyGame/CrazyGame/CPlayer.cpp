@@ -279,9 +279,6 @@ void CPlayer::Update()
 		return;
 	}
 
-
-
-
 	if (m_bInvincible)
 	{
 		m_invincibleTime += deltaTime;
@@ -309,14 +306,9 @@ void CPlayer::Update()
 
 	CBoard* board = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->m_board;
 
-	int jumpHeight = BOARD_BLOCK_SIZE;
-
 	CAnimationClip* clip = nullptr;
 
-	// 현재 != 이전 상태 : PlayClip
-
 	ChangeState(m_nextState);
-
 
 	if (board->IsGameObjType(m_cellXPos, m_cellYPos, eInGameObjType::Boss))
 	{
@@ -377,86 +369,10 @@ void CPlayer::Update()
 	break;
 	}
 
-
-
-
 	CItem* item = board->GetItem(m_cellXPos, m_cellYPos);
 
-	// 탑승 아이템
-	CItem* rideItem = nullptr;
-
 	if (item)
-	{
-		//item->Benfit(this);
-
-		switch (item->GetItemEnum())
-		{
-		case eItem::Gift_Skate:
-			if(m_speed < 280.0f)
-				m_speed += 70;
-			break;
-		//case eItem::Gift_Turtle:
-		//	break;
-		case eItem::Gift_UFO:
-		{
-			// 캐릭터는 그 자리에서 점프 애니메이션 취한 후 탑승
-
-			if (m_vehicle)
-				break;
-
-			CInGameScene* scene = (CInGameScene*)CSceneManager::GetInst()->GetCurScene();
-
-			CLayer* layer = scene->FindLayer(L"Vehicle");
-
-			if (layer)
-			{
-				m_rideRect = { (float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX, (float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY, (float)m_cellXPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetX, (float)m_cellYPos * BOARD_BLOCK_SIZE + BOARD_BLOCK_SIZE + stageFrameOffsetY };
-
-				m_rideRect.bottom -= BOARD_BLOCK_SIZE / 3;
-				m_vehicle = new CVehicle(m_rideRect, L"UFO");
-				D2D1_SIZE_U size = m_vehicle->GetSize();
-				m_rideRect.top = m_rideRect.bottom - size.height;
-				m_rideRect.left -= (size.width - BOARD_BLOCK_SIZE )/ 2;
-				m_rideRect.right -= (size.width - BOARD_BLOCK_SIZE) / 2;
-				m_vehicle->SetRect(m_rideRect);
-				m_vehicle->SetDir(m_eMoveDir);
-				//layer->AddObj(m_vehicle);
-
-				m_xpos = (float)m_cellXPos * BOARD_BLOCK_SIZE + stageFrameOffsetX + (BOARD_BLOCK_SIZE / 2);
-				m_ypos = (float)m_cellYPos * BOARD_BLOCK_SIZE + stageFrameOffsetY + (BOARD_BLOCK_SIZE / 2);
-				m_rect.left = m_xpos - (m_size.width / 3) - 3;
-				m_rect.right = m_xpos + (m_size.width / 3) - 3;
-				m_rect.bottom = m_vehicle->GetRect().top;
-				m_rect.top = m_rect.bottom - m_size.height;
-				m_prevSpeed = m_speed;
-				m_speed = m_vehicle->GetSpeed();
-				m_bIsRiding = true;
-				m_bIsJumping = true;
-			}
-
-		}
-		break;
-		case eItem::Gift_Boom:
-			m_splashLength = 8;
-			break;
-		case eItem::Gift_Bubble:
-			m_bubbleCarryLimit += 1;
-			break;
-		//case eItem::Gift_Dart:
-		//	break;
-		//case eItem::Gift_Devil: // 일정 시간동안 방향키 반대로 작동함
-		//	break;
-		//case eItem::Gift_Owl:
-		//	break;
-		case eItem::Gift_Potion:
-			if(m_splashLength < m_splashLengthLimit)
-				m_splashLength++;
-			break;
-		case eItem::Gift_Shoes:
-			m_bKickable = true;
-			break;
-		}
-	}
+		item->Benefit(this);
 
 	if (m_vehicle)
 		m_vehicle->Update(m_rideRect);
@@ -470,8 +386,6 @@ void CPlayer::Update()
 		}
 	}
 
-	// 클릭 2번했고 그 자리에 물풍선이 있고, 우주선에 안 탔을 경우
-	// throwCount는 처음 물풍선을 놓은 그 자리에서 두번 '클릭' 했을 경우 올라감. 
 	if (m_throwCount >= 2)
 	{
 		CGameObj* obj = ((CInGameScene*)CSceneManager::GetInst()->GetCurScene())->FindLayer(L"Block")->FindGameObj(m_cellXPos, m_cellYPos, eInGameObjType::Balloon);
@@ -510,8 +424,6 @@ void CPlayer::Update()
 			delete bubble; 
 		}
 	}	
-
-	
 
 	m_bFire = false;
 

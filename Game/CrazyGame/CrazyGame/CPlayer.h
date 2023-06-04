@@ -12,6 +12,7 @@ class StageManager;
 class CPlayer :
     public CMoveObj
 {
+    friend class CItem;
  
     float m_prevSpeed = 210.0f; // 탑승 전 속도
     //float m_jumpRate = 1.0f;
